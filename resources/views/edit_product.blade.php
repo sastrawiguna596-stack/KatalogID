@@ -227,117 +227,94 @@
 <span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span>
 <span class="text-on-surface">Edit Product</span>
 </nav>
-<!-- Header Action Row -->
-<div class="flex flex-col md:flex-row md:items-end justify-between gap-gutter mb-stack-lg">
-<div>
-<h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">Edit Product</h2>
-<p class="text-secondary font-body-md">Refine your product details and manage its availability.</p>
-</div>
-<div class="flex items-center gap-4">
-<button class="flex items-center gap-2 px-gutter py-3 border-2 border-error text-error font-label-md rounded-lg hover:bg-error-container/20 transition-colors active:scale-95" onclick="toggleDeleteModal()">
-<span class="material-symbols-outlined" data-icon="delete">delete</span>
-                        Delete
-                    </button>
-<a href="{{ route('inventories') }}" class="px-gutter py-3 bg-primary text-on-secondary font-label-md rounded-lg hover:bg-[#704f00] transition-colors active:scale-95 shadow-sm inline-block">
+        <form action="{{ route('products.update', $product->id) }}" method="POST" enctype="multipart/form-data" class="space-y-gutter">
+            @csrf
+            @method('PUT')
+            <!-- Header Action Row -->
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-gutter mb-stack-lg">
+                <div>
+                    <h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">Edit Product: {{ $product->nama_produk }}</h2>
+                    <p class="text-secondary font-body-md">Refine your product details and manage its availability.</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <a href="{{ route('inventories') }}" class="px-gutter py-3 border border-outline-variant text-on-surface font-label-md rounded-lg hover:bg-surface-container-high transition-colors">
+                        Cancel
+                    </a>
+                    <button type="submit" class="px-gutter py-3 bg-primary text-on-secondary font-label-md rounded-lg hover:bg-[#704f00] transition-colors shadow-sm font-bold">
                         Update Product
-</a>
-</div>
-</div>
-<!-- Edit Grid (Bento Style) -->
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
-<!-- Left Column: Primary Details & Media -->
-<div class="lg:col-span-2 space-y-gutter">
-<!-- Basic Information Card -->
-<section class="bg-surface-container-lowest p-gutter rounded-xl border border-[#EDEDED]">
-<h3 class="font-headline-sm text-headline-sm mb-stack-md text-on-surface">Basic Information</h3>
-<div class="space-y-6">
-<div>
-<label class="block font-label-md text-label-md text-secondary mb-2">Product Name</label>
-<input class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-on-background transition-all outline-none" type="text" value="Minimalist Felt Desk Mat"/>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-<div>
-<label class="block font-label-md text-label-md text-secondary mb-2">Category</label>
-<select class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-on-background transition-all outline-none appearance-none cursor-pointer">
-<option>Office Accessories</option>
-<option>Furniture</option>
-<option>Stationery</option>
-<option>Technology</option>
-</select>
-</div>
-<div>
-<label class="block font-label-md text-label-md text-secondary mb-2">Brand</label>
-<input class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-on-background transition-all outline-none" type="text" value="Luminous Home"/>
-</div>
-</div>
-<div>
-<label class="block font-label-md text-label-md text-secondary mb-2">Description</label>
-<textarea class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-on-background transition-all outline-none" rows="5">Hand-crafted from sustainable Merino wool felt, this desk mat provides a soft, warm surface for your hands while protecting your desk from scratches. The minimalist design ensures it complements any modern workspace aesthetic. Non-slip backing included.</textarea>
-</div>
-</div>
-</section>
-<!-- Media Assets Card -->
-<section class="bg-surface-container-lowest p-gutter rounded-xl border border-[#EDEDED]">
-<div class="flex items-center justify-between mb-stack-md">
-<h3 class="font-headline-sm text-headline-sm text-on-surface">Product Media</h3>
-<button class="text-primary font-label-md flex items-center gap-1 hover:underline">
-<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
-                                Add Image
-                            </button>
-</div>
-<div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-<!-- Main Image -->
-<div class="col-span-2 row-span-2 relative group rounded-lg overflow-hidden aspect-square border border-outline-variant bg-surface-variant">
-<img class="w-full h-full object-cover" data-alt="A high-end, top-down product photography of a dark charcoal gray minimalist felt desk mat placed on a light oak wood desk. The lighting is soft and natural from a side window, highlighting the texture of the felt. A wireless metallic keyboard and a sleek designer mouse sit neatly on top of the mat. The mood is calm and professional." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIdj3fG7wMnvf9LxT6oj2xMtMkWgpOMt4x2vqne8lB1gdIJt-rL2_wlL08c6xNy19LACWwcR0IzJxx3-0_icZSDJJyp28vj-uaSnA10CW1C-2wLQu4K5gXYMsHoKGxna7CSINhRRyh0Yy6ET1tjLVFzBR-G9ZTQl0uknJZOr_LwiCkfQqjo441HFdba4CWg5MINkTB-tHVzD_jGmi_xJxEB6AeZ-Gkv2uMhKgy9d4_DkPhuukEPUif"/>
-<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-<button class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-secondary hover:text-primary"><span class="material-symbols-outlined" data-icon="edit">edit</span></button>
-<button class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-error"><span class="material-symbols-outlined" data-icon="delete">delete</span></button>
-</div>
-<div class="absolute top-3 left-3 bg-primary-container text-on-primary-container px-2 py-1 rounded text-[10px] font-bold">MAIN</div>
-</div>
-<!-- Secondary Images -->
-<div class="relative group rounded-lg overflow-hidden aspect-square border border-outline-variant bg-surface-variant">
-<img class="w-full h-full object-cover" data-alt="Close-up macro shot of the edge of a charcoal gray felt desk mat showing the intricate wool fibers and the premium stitching. The lighting is bright and clean, emphasizing the quality of the sustainable material. The background is a soft-focus wooden desk texture. High-end, professional commercial photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgVGhk3GIO0VekKBoEm0wGs6Dsd-zXGcUfeyqUbFHNLNoj4Iqa-NTxVh0NYU56DJlaK9xmRx6bY1SaVnU4cKbhmq3Li-WznazSayREvE8GF4LloeVDazzJkzemh-M1nSITRRc0F4rXlSlwOjFP4nTbKSgGlh2YnUEscethj7Zm4IFgFLPxnwVZ6QE2aUVr-CBBNxOLsDc2JzRtH8gcGBdmEslSMpOh3F8Poq4dlgQhNPG4kyxNq9I_"/>
-<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-<button class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-error"><span class="material-symbols-outlined text-sm" data-icon="delete">delete</span></button>
-</div>
-</div>
-<div class="relative group rounded-lg overflow-hidden aspect-square border border-outline-variant bg-surface-variant">
-<img class="w-full h-full object-cover" data-alt="Side profile view of a thin felt desk mat lying flat on a minimalist desk. A sleek laptop sits open on one end. The composition shows the low profile of the mat and its non-slip underlay. Bright, airy workspace aesthetic with neutral tones and soft amber highlights." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDPx4x8jCX4rJ7Kr4CGH8E5bCJZYH5iZyi8yF2mFs-offHFdK6641h8gia-oajdO0-fZ4bfme0Wu1rsd5e4mBK0OoevmAL91L4lQnucV2Wn6fUscLjOnTTAYiNa2dIEfVTVjg9XDg68cARDHEOrCiOJHbH3amXA2TXnVFBdlvP6uOj7fLMh8rRaptKYKPyFmI8F3_kpe2VUmfM4LkJLHCBwYKvaKplIcgzO_9wnL-08BPv70cVSilFi"/>
-<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-<button class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-error"><span class="material-symbols-outlined text-sm" data-icon="delete">delete</span></button>
-</div>
-</div>
-<div class="border-2 border-dashed border-outline-variant rounded-lg flex flex-col items-center justify-center gap-2 aspect-square group hover:border-primary transition-colors cursor-pointer">
-<span class="material-symbols-outlined text-secondary group-hover:text-primary" data-icon="upload">upload</span>
-<span class="text-[10px] font-label-md text-secondary group-hover:text-primary">UPLOAD</span>
-</div>
-</div>
-</section>
-</div>
-<!-- Right Column: Sidebar Settings -->
-<div class="space-y-gutter">
-<!-- Pricing & Inventory -->
-<section class="bg-surface-container-lowest p-gutter rounded-xl border border-[#EDEDED] custom-shadow">
-<h3 class="font-headline-sm text-headline-sm mb-stack-md text-on-surface">Sales &amp; Stocks</h3>
-<div class="space-y-6">
-<div>
-<label class="block font-label-md text-label-md text-secondary mb-2">Price (USD)</label>
-<div class="relative">
-<span class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">$</span>
-<input class="w-full bg-transparent border border-outline-variant rounded-lg pl-8 pr-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-on-background outline-none" type="number" value="45.00"/>
-</div>
-</div>
-<div>
-<label class="block font-label-md text-label-md text-secondary mb-2">SKU</label>
-<input class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-on-background outline-none" type="text" value="ACC-MAT-001-FELT"/>
-</div>
-<div class="pt-4 border-t border-surface-container">
-<div class="flex items-center justify-between mb-4">
-<span class="font-label-md text-on-surface">Available Stock</span>
-<span class="px-2 py-0.5 bg-primary-container text-on-primary-container text-[10px] font-bold rounded">IN STOCK</span>
-</div>
-<div class="flex items-center gap-4">
+                    </button>
+                </div>
+            </div>
+
+            <!-- Edit Grid (Bento Style) -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+                <!-- Left Column: Primary Details & Media -->
+                <div class="lg:col-span-2 space-y-gutter">
+                    <!-- Basic Information Card -->
+                    <section class="bg-surface-container-lowest p-gutter rounded-xl border border-[#EDEDED]">
+                        <h3 class="font-headline-sm text-headline-sm mb-stack-md text-on-surface">Basic Information</h3>
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block font-label-md text-label-md text-secondary mb-2">Product Name</label>
+                                <input name="nama_produk" value="{{ $product->nama_produk }}" required class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-on-background transition-all outline-none" type="text"/>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block font-label-md text-label-md text-secondary mb-2">Category</label>
+                                    <select name="category_id" required class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-on-background transition-all outline-none appearance-none cursor-pointer">
+                                        @foreach($categories as $cat)
+                                        <option value="{{ $cat->id }}" {{ $product->category_id == $cat->id ? 'selected' : '' }}>{{ $cat->nama_kategori }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block font-label-md text-label-md text-secondary mb-2">Berat (Gram)</label>
+                                    <input name="berat_gram" value="{{ $product->berat_gram }}" required class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-on-background transition-all outline-none" type="number"/>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block font-label-md text-label-md text-secondary mb-2">Description</label>
+                                <textarea name="deskripsi_lengkap" required class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-on-background transition-all outline-none" rows="5">{{ $product->deskripsi_lengkap }}</textarea>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Media Upload -->
+                    <section class="bg-surface-container-lowest p-gutter rounded-xl border border-[#EDEDED]">
+                        <h3 class="font-headline-sm text-headline-sm mb-stack-md text-on-surface">Tambah Foto Produk Baru</h3>
+                        <div class="border-2 border-dashed border-outline-variant rounded-xl p-8 text-center flex flex-col items-center justify-center gap-3">
+                            <span class="material-symbols-outlined text-4xl text-primary">cloud_upload</span>
+                            <input type="file" name="gambar[]" multiple class="block w-full text-sm text-secondary file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-container file:text-on-primary-container hover:file:bg-[#ffaa00]"/>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Right Column: Sidebar Settings -->
+                <div class="space-y-gutter">
+                    <section class="bg-surface-container-lowest p-gutter rounded-xl border border-[#EDEDED]">
+                        <h3 class="font-headline-sm text-headline-sm mb-stack-md text-on-surface">Harga & Stok</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block font-label-md text-secondary mb-2">Harga (Rp) *</label>
+                                <input name="harga" value="{{ $product->harga }}" required class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 outline-none" type="number"/>
+                            </div>
+                            <div>
+                                <label class="block font-label-md text-secondary mb-2">Harga Diskon (Rp)</label>
+                                <input name="harga_diskon" value="{{ $product->harga_diskon }}" class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 outline-none" type="number"/>
+                            </div>
+                            <div>
+                                <label class="block font-label-md text-secondary mb-2">Stok *</label>
+                                <input name="stok" value="{{ $product->stok }}" required class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 outline-none" type="number"/>
+                            </div>
+                            <div>
+                                <label class="block font-label-md text-secondary mb-2">Badge</label>
+                                <input name="badge" value="{{ $product->badge }}" class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 outline-none" type="text"/>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </form>
 <button class="w-10 h-10 border border-outline-variant rounded flex items-center justify-center hover:bg-surface-container transition-colors">-</button>
 <input class="w-full text-center border-none bg-transparent font-bold" type="number" value="124"/>
 <button class="w-10 h-10 border border-outline-variant rounded flex items-center justify-center hover:bg-surface-container transition-colors">+</button>

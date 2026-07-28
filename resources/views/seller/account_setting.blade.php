@@ -198,7 +198,7 @@
 <span class="material-symbols-outlined text-on-primary-container">store</span>
 </div>
 <div>
-<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface leading-tight">Acme Corp</h3>
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface leading-tight">{{ Auth::user()->store->nama_toko ?? Auth::user()->name . ' Store' }}</h3>
 <p class="font-body-sm text-body-sm text-on-surface-variant">Verified Seller</p>
 </div>
 </div>
@@ -211,6 +211,9 @@
     </a>
 <a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('inventories') }}" onclick="closeSidebar()">
 <span class="material-symbols-outlined">inventory</span> Inventory
+    </a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md font-bold" href="{{ route('seller.store') }}" onclick="closeSidebar()">
+<span class="material-symbols-outlined">storefront</span> My Store
     </a>
 <a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('sales_analytics') }}" onclick="closeSidebar()">
 <span class="material-symbols-outlined">analytics</span> Sales Analytic
@@ -236,179 +239,127 @@
 <!-- Page Header -->
 <div class="mb-stack-lg">
 <h1 class="font-headline-xl text-2xl md:text-headline-xl text-on-surface mb-2">Account Settings</h1>
-<p class="font-body-lg text-body-md md:text-body-lg text-on-surface-variant">Manage your profile, shipping preferences, and account security.</p>
+<p class="font-body-lg text-body-md md:text-body-lg text-on-surface-variant">Kelola profil, informasi toko, dan keamanan akun penjual Anda.</p>
+
+@if(session('success'))
+<div class="mt-4 p-4 bg-emerald-100 border border-emerald-300 text-emerald-800 rounded-xl font-bold">
+    {{ session('success') }}
 </div>
+@endif
+
+@if($errors->any())
+<div class="mt-4 p-4 bg-rose-100 border border-rose-300 text-rose-800 rounded-xl font-bold space-y-1">
+    @foreach($errors->all() as $error)
+        <p>• {{ $error }}</p>
+    @endforeach
+</div>
+@endif
+</div>
+
 <!-- Bento Grid Layout for Settings -->
 <div class="grid grid-cols-12 gap-4 md:gap-gutter">
 <!-- Profile Information Card -->
 <section class="col-span-12 lg:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-xl p-4 md:p-stack-md">
-<div class="flex flex-col sm:flex-row sm:items-center justify-between mb-stack-md border-b border-outline-variant pb-4 gap-3">
-<div class="flex items-center gap-3">
-<span class="material-symbols-outlined text-primary text-3xl">person</span>
-<h2 class="font-headline-sm text-headline-sm">Profile Information</h2>
-</div>
-<button class="bg-primary text-on-primary px-4 md:px-6 py-2 rounded-lg font-label-md text-label-md hover:brightness-90 active:scale-95 transition-all self-start sm:self-auto">Save Changes</button>
-</div>
-<div class="flex flex-col md:flex-row gap-stack-lg">
-<!-- Avatar Column -->
-<div class="flex flex-col items-center gap-4">
-<div class="relative group">
-<div class="w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-surface-container">
-<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJKGosgrQlVuugOrVrXww1UF85b0uzUkGgp6UqijZO44uuQaQYIN0E5htYzIKgorPiDcPFgavj3XVNN5PrpXsIBeT5_6sPpksa9ynRYOpUZXoWgGV1Lnqn5f_24s2fk58WCK8i6534QQQdOy-kEsp6h_YRfSP52DGhR_Rc4lFN5xJeanFxrdA8q0P3NY-ULf_Tk8yVaZjrCzQIyjT5bBqT0PP_eRLcR9EpGSV4BwRQ0BFFe58YxAh1" alt="Avatar"/>
-</div>
-<button class="absolute bottom-1 right-1 bg-surface border border-outline-variant w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center hover:bg-surface-variant transition-colors shadow-sm">
-<span class="material-symbols-outlined text-on-surface-variant">photo_camera</span>
-</button>
-</div>
-<p class="font-body-sm text-body-sm text-on-surface-variant text-center max-w-[120px]">JPG or PNG. Max size 2MB.</p>
-</div>
-<!-- Form Column -->
-<div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-stack-md">
-<div class="flex flex-col gap-2">
-<label class="font-label-md text-label-md text-on-surface">Full Name</label>
-<input class="border border-outline-variant rounded-lg px-4 py-3 bg-surface-container-low font-body-md focus:border-on-surface" type="text" value="Alexander Sterling"/>
-</div>
-<div class="flex flex-col gap-2">
-<label class="font-label-md text-label-md text-on-surface">Email Address</label>
-<input class="border border-outline-variant rounded-lg px-4 py-3 bg-surface-container-low font-body-md focus:border-on-surface" type="email" value="alexander@acmecorp.com"/>
-</div>
-<div class="flex flex-col gap-2">
-<label class="font-label-md text-label-md text-on-surface">Phone Number</label>
-<input class="border border-outline-variant rounded-lg px-4 py-3 bg-surface-container-low font-body-md focus:border-on-surface" type="tel" value="+1 (555) 000-0000"/>
-</div>
-<div class="flex flex-col gap-2">
-<label class="font-label-md text-label-md text-on-surface">Language</label>
-<select class="border border-outline-variant rounded-lg px-4 py-3 bg-surface-container-low font-body-md focus:border-on-surface">
-<option>English (US)</option>
-<option>Spanish</option>
-<option>French</option>
-</select>
-</div>
-<div class="col-span-1 md:col-span-2 flex flex-col gap-2">
-<label class="font-label-md text-label-md text-on-surface">Short Bio</label>
-<textarea class="border border-outline-variant rounded-lg px-4 py-3 bg-surface-container-low font-body-md focus:border-on-surface" rows="3">Founder and CEO at Acme Corp. Specialized in eco-friendly manufacturing solutions.</textarea>
-</div>
-</div>
-</div>
+<form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
+    @csrf
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-stack-md border-b border-outline-variant pb-4 gap-3">
+        <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-primary text-3xl">person</span>
+            <h2 class="font-headline-sm text-headline-sm font-bold">Profile & Store Information</h2>
+        </div>
+        <button type="submit" class="bg-primary text-on-primary px-4 md:px-6 py-2 rounded-lg font-label-md text-label-md hover:brightness-90 active:scale-95 transition-all self-start sm:self-auto font-bold">Save Changes</button>
+    </div>
+    <div class="flex flex-col md:flex-row gap-stack-lg">
+        <!-- Avatar Column -->
+        <div class="flex flex-col items-center gap-4">
+            <div class="relative group cursor-pointer" onclick="document.getElementById('avatar-input').click()">
+                <div class="w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-surface-container bg-surface-container">
+                    <img id="avatar-preview" class="w-full h-full object-cover" src="{{ Auth::user()->avatar ? asset(Auth::user()->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) . '&background=7c5800&color=ffffff&size=128' }}" alt="Avatar"/>
+                </div>
+                <div class="absolute bottom-1 right-1 bg-surface border border-outline-variant w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center hover:bg-surface-variant transition-colors shadow-sm">
+                    <span class="material-symbols-outlined text-on-surface-variant">photo_camera</span>
+                </div>
+            </div>
+            <input type="file" name="avatar" id="avatar-input" class="hidden" accept="image/*" onchange="previewAvatar(this)">
+            <p class="font-body-sm text-body-sm text-on-surface-variant text-center max-w-[140px]">Klik foto untuk ubah avatar. Maks 2MB.</p>
+        </div>
+        <!-- Form Column -->
+        <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-stack-md">
+            <div class="flex flex-col gap-2">
+                <label class="font-label-md text-label-md text-on-surface font-bold">Full Name</label>
+                <input name="name" class="border border-outline-variant rounded-lg px-4 py-3 bg-surface-container-low font-body-md focus:border-on-surface" type="text" value="{{ old('name', Auth::user()->name) }}" required/>
+            </div>
+            <div class="flex flex-col gap-2">
+                <label class="font-label-md text-label-md text-on-surface font-bold">Email Address</label>
+                <input name="email" class="border border-outline-variant rounded-lg px-4 py-3 bg-surface-container-low font-body-md focus:border-on-surface" type="email" value="{{ old('email', Auth::user()->email) }}" required/>
+            </div>
+            <div class="flex flex-col gap-2">
+                <label class="font-label-md text-label-md text-on-surface font-bold">Phone Number</label>
+                <input name="phone" class="border border-outline-variant rounded-lg px-4 py-3 bg-surface-container-low font-body-md focus:border-on-surface" type="tel" value="{{ old('phone', Auth::user()->phone) }}"/>
+            </div>
+            <div class="flex flex-col gap-2">
+                <label class="font-label-md text-label-md text-on-surface font-bold">Nama Toko (Store Name)</label>
+                <input name="nama_toko" class="border border-outline-variant rounded-lg px-4 py-3 bg-surface-container-low font-body-md focus:border-on-surface" type="text" value="{{ old('nama_toko', Auth::user()->store->nama_toko ?? '') }}"/>
+            </div>
+            <div class="col-span-1 md:col-span-2 flex flex-col gap-2">
+                <label class="font-label-md text-label-md text-on-surface font-bold">Alamat (Address)</label>
+                <textarea name="address" class="border border-outline-variant rounded-lg px-4 py-3 bg-surface-container-low font-body-md focus:border-on-surface" rows="2">{{ old('address', Auth::user()->address) }}</textarea>
+            </div>
+            <div class="col-span-1 md:col-span-2 flex flex-col gap-2">
+                <label class="font-label-md text-label-md text-on-surface font-bold">Deskripsi Toko</label>
+                <textarea name="deskripsi_toko" class="border border-outline-variant rounded-lg px-4 py-3 bg-surface-container-low font-body-md focus:border-on-surface" rows="3">{{ old('deskripsi_toko', Auth::user()->store->deskripsi ?? '') }}</textarea>
+            </div>
+        </div>
+    </div>
+</form>
 </section>
+
 <!-- Security Quick Actions -->
 <aside class="col-span-12 lg:col-span-4 flex flex-col gap-4 md:gap-gutter">
 <div class="bg-primary-container text-on-primary-container p-4 md:p-stack-md rounded-xl shadow-sm border border-primary/20">
 <div class="flex items-center gap-3 mb-2">
 <span class="material-symbols-outlined text-2xl">verified_user</span>
-<h3 class="font-headline-sm text-headline-sm">Security Level: High</h3>
+<h3 class="font-headline-sm text-headline-sm font-bold">Status Keamanan: Tinggi</h3>
 </div>
-<p class="font-body-sm text-body-sm mb-4 opacity-90">Your account is well-protected. Last password change was 30 days ago.</p>
-<button class="w-full bg-on-primary-container text-on-primary py-3 rounded-lg font-label-md text-label-md hover:opacity-90 transition-opacity">Run Security Check</button>
+<p class="font-body-sm text-body-sm mb-4 opacity-90">Akun penjual Anda terlindungi dengan baik dalam sistem Katalag IDN.</p>
 </div>
 <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 md:p-stack-md">
-<h3 class="font-headline-sm text-headline-sm mb-4">Account Status</h3>
+<h3 class="font-headline-sm text-headline-sm mb-4 font-bold">Informasi Akun</h3>
 <div class="space-y-4">
 <div class="flex justify-between items-center">
-<span class="font-body-md text-on-surface-variant">Membership</span>
-<span class="bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded-full font-label-md text-[12px]">Premium Plus</span>
+<span class="font-body-md text-on-surface-variant">Role Akun</span>
+<span class="bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded-full font-label-md text-[12px] font-bold">Verified Seller</span>
 </div>
 <div class="flex justify-between items-center">
-<span class="font-body-md text-on-surface-variant">Next Billing</span>
-<span class="font-label-md text-on-surface">Oct 24, 2024</span>
-</div>
-<div class="pt-2">
-<button class="text-primary hover:underline font-label-md text-label-md flex items-center gap-1">
-                                    Manage Subscription <span class="material-symbols-outlined text-sm">arrow_forward</span>
-</button>
+<span class="font-body-md text-on-surface-variant">Toko Terdaftar</span>
+<span class="font-label-md text-on-surface font-bold">{{ Auth::user()->store->nama_toko ?? '-' }}</span>
 </div>
 </div>
 </div>
 </aside>
-<!-- Address Book Section -->
-<section class="col-span-12 bg-surface-container-lowest border border-outline-variant rounded-xl p-4 md:p-stack-md">
-<div class="flex flex-col sm:flex-row sm:items-center justify-between mb-stack-md gap-3">
-<div class="flex items-center gap-3">
-<span class="material-symbols-outlined text-primary text-3xl">location_on</span>
-<h2 class="font-headline-sm text-headline-sm">Address Book</h2>
-</div>
-<button class="border-2 border-on-surface text-on-surface px-4 md:px-6 py-2 rounded-lg font-label-md text-label-md hover:bg-on-surface hover:text-white transition-all flex items-center gap-2 self-start sm:self-auto">
-<span class="material-symbols-outlined">add</span> Add New Address
-                    </button>
-</div>
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-gutter">
-<!-- Default Address Card -->
-<div class="border-2 border-primary rounded-xl p-stack-sm relative bg-primary-fixed/10">
-<div class="absolute top-4 right-4 flex gap-2">
-<button class="text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined">edit</span></button>
-<button class="text-on-surface-variant hover:text-error"><span class="material-symbols-outlined">delete</span></button>
-</div>
-<div class="bg-primary text-on-primary inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider mb-3">Default Shipping</div>
-<h4 class="font-label-md text-on-surface mb-1">Office Headquarters</h4>
-<p class="font-body-sm text-on-surface-variant leading-relaxed">
-                                Alexander Sterling<br/>
-                                123 Business Avenue, Suite 400<br/>
-                                San Francisco, CA 94105<br/>
-                                United States
-                            </p>
-</div>
-<!-- Secondary Address Card -->
-<div class="border border-outline-variant rounded-xl p-stack-sm relative hover:border-outline transition-colors">
-<div class="absolute top-4 right-4 flex gap-2">
-<button class="text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined">edit</span></button>
-<button class="text-on-surface-variant hover:text-error"><span class="material-symbols-outlined">delete</span></button>
-</div>
-<div class="invisible h-6 mb-3">Placeholder</div>
-<h4 class="font-label-md text-on-surface mb-1">Warehouse East</h4>
-<p class="font-body-sm text-on-surface-variant leading-relaxed">
-                                Logistics Manager<br/>
-                                890 Industrial Way<br/>
-                                Brooklyn, NY 11201<br/>
-                                United States
-                            </p>
-<button class="mt-4 text-primary font-label-md text-label-md hover:underline">Set as Default</button>
-</div>
-<!-- Empty Placeholder -->
-<div class="border border-dashed border-outline-variant rounded-xl p-stack-sm flex flex-col items-center justify-center text-on-surface-variant min-h-[160px]">
-<span class="material-symbols-outlined text-4xl opacity-20 mb-2">add_location</span>
-<p class="font-label-md text-label-md opacity-40">Add another destination</p>
-</div>
-</div>
-</section>
+
 <!-- Security Settings Section -->
 <section class="col-span-12 bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden">
 <div class="p-4 md:p-stack-md border-b border-outline-variant">
 <div class="flex items-center gap-3">
 <span class="material-symbols-outlined text-primary text-3xl">shield</span>
-<h2 class="font-headline-sm text-headline-sm">Security &amp; Access</h2>
+<h2 class="font-headline-sm text-headline-sm font-bold">Keamanan & Ubah Password</h2>
 </div>
 </div>
-<div class="divide-y divide-outline-variant">
-<!-- Password Row -->
-<div class="p-4 md:p-stack-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-<div>
-<h4 class="font-label-md text-on-surface">Account Password</h4>
-<p class="font-body-sm text-on-surface-variant">Updated about a month ago. Strong passwords keep your account safe.</p>
-</div>
-<button class="border border-outline-variant px-4 md:px-6 py-2 rounded-lg font-label-md text-label-md hover:bg-surface-variant transition-all whitespace-nowrap">Change Password</button>
-</div>
-<!-- 2FA Row -->
-<div class="p-4 md:p-stack-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-<div>
-<h4 class="font-label-md text-on-surface">Two-Factor Authentication (2FA)</h4>
-<p class="font-body-sm text-on-surface-variant">Add an extra layer of security to your account using an authenticator app.</p>
-</div>
-<div class="flex items-center gap-3">
-<span class="bg-primary-container text-on-primary-container px-3 py-1 rounded-full font-label-md text-[12px] flex items-center gap-1">
-<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span> Enabled
-                                </span>
-<button class="text-error font-label-md text-label-md hover:underline">Disable</button>
-</div>
-</div>
-<!-- Active Sessions -->
-<div class="p-4 md:p-stack-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-<div>
-<h4 class="font-label-md text-on-surface">Active Sessions</h4>
-<p class="font-body-sm text-on-surface-variant">You are currently logged in on 3 devices.</p>
-</div>
-<button class="text-primary font-label-md text-label-md hover:underline">Manage Sessions</button>
-</div>
-</div>
+<form action="{{ route('profile.update') }}" method="POST" class="p-4 md:p-stack-md space-y-4">
+    @csrf
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="flex flex-col gap-2">
+            <label class="font-label-md text-label-md text-on-surface font-bold">Password Saat Ini</label>
+            <input name="current_password" type="password" class="border border-outline-variant rounded-lg px-4 py-3 bg-surface-container-low font-body-md focus:border-on-surface" placeholder="Masukkan password lama"/>
+        </div>
+        <div class="flex flex-col gap-2">
+            <label class="font-label-md text-label-md text-on-surface font-bold">Password Baru</label>
+            <input name="new_password" type="password" class="border border-outline-variant rounded-lg px-4 py-3 bg-surface-container-low font-body-md focus:border-on-surface" placeholder="Minimal 6 karakter"/>
+        </div>
+    </div>
+    <button type="submit" class="bg-primary text-on-primary px-6 py-2 rounded-lg font-label-md hover:brightness-90 transition-all font-bold">Ubah Password</button>
+</form>
 </section>
 <!-- Danger Zone -->
 <section class="col-span-12 bg-error-container/10 border border-error/20 rounded-xl p-4 md:p-stack-md">
@@ -463,6 +414,16 @@
             input.parentElement.querySelector('label')?.classList.remove('text-primary');
         });
     });
+
+    function previewAvatar(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('avatar-preview').src = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
 
     console.log("Account Settings Page Initialized");
 </script>

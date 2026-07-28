@@ -222,7 +222,7 @@
 <span class="material-symbols-outlined text-on-primary-container">store</span>
 </div>
 <div>
-<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface leading-tight">Acme Corp</h3>
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface leading-tight">{{ Auth::user()->store->nama_toko ?? Auth::user()->name . ' Store' }}</h3>
 <p class="font-body-sm text-body-sm text-on-surface-variant">Verified Seller</p>
 </div>
 </div>
@@ -235,6 +235,9 @@
     </a>
 <a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('inventories') }}" onclick="closeSidebar()">
 <span class="material-symbols-outlined">inventory</span> Inventory
+    </a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md font-bold" href="{{ route('seller.store') }}" onclick="closeSidebar()">
+<span class="material-symbols-outlined">storefront</span> My Store
     </a>
 <a class="flex items-center gap-3 px-3 py-2.5 text-on-primary-container bg-primary-container rounded-lg font-bold transition-all font-label-md text-label-md" href="{{ route('sales_analytics') }}" onclick="closeSidebar()">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">analytics</span> Sales Analytic

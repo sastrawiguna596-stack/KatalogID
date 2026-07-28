@@ -225,11 +225,25 @@
 <nav class="hidden md:flex items-center gap-gutter">
 <a class="font-label-md text-label-md text-secondary hover:text-primary transition-colors duration-200" href="{{ route('home') }}">Home</a>
 <a class="font-label-md text-label-md text-primary border-b-2 border-primary pb-1" href="{{ route('shop') }}">Shop</a>
-<a class="font-label-md text-label-md text-secondary hover:text-primary transition-colors duration-200" href="{{ route('account') }}">Profile</a>
+<a class="font-label-md text-label-md text-secondary hover:text-primary transition-colors duration-200" href="{{ route('profile') }}">Profile</a>
 </nav>
 <div class="flex items-center gap-2">
-<button class="material-symbols-outlined text-primary p-2" onclick="openNavDrawer()" title="Menu" style="display:none" id="menu-btn-right">menu</button>
-<a href="{{ route('cart') }}"><button class="material-symbols-outlined text-primary p-2">shopping_cart</button></a>
+<a href="{{ route('cart') }}" title="Keranjang Belanja" class="relative">
+    <button class="material-symbols-outlined text-primary p-2">shopping_cart</button>
+    @if(count(session('cart', [])) > 0)
+    <span class="absolute top-0 right-0 bg-primary text-on-primary text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">{{ count(session('cart', [])) }}</span>
+    @endif
+</a>
+@auth
+<form action="{{ route('logout') }}" method="POST" class="inline">
+    @csrf
+    <button type="submit" class="text-error hover:text-red-700 transition-colors p-2 flex items-center justify-center" title="Keluar">
+        <span class="material-symbols-outlined">logout</span>
+    </button>
+</form>
+@else
+<a href="{{ route('login') }}" class="font-label-md text-sm text-primary font-bold px-3 py-1 border border-primary rounded-lg hover:bg-primary hover:text-on-primary transition-all">Masuk</a>
+@endauth
 </div>
 </header>
 <main class="max-w-container-max mx-auto px-4 md:px-margin-desktop py-stack-md">
@@ -263,22 +277,11 @@
 <div class="mb-stack-md">
 <h3 class="font-label-md text-label-md text-on-surface mb-3">Categories</h3>
 <div class="flex flex-col gap-2">
-<label class="flex items-center gap-3 cursor-pointer group">
-<input class="category-checkbox w-5 h-5 rounded border-outline text-primary focus:ring-primary-container" type="checkbox" value="Essentials"/>
-<span class="font-body-md text-body-md text-secondary group-hover:text-on-surface">Essentials</span>
-</label>
-<label class="flex items-center gap-3 cursor-pointer group">
-<input class="category-checkbox w-5 h-5 rounded border-outline text-primary focus:ring-primary-container" type="checkbox" value="Furniture"/>
-<span class="font-body-md text-body-md text-secondary group-hover:text-on-surface">Furniture</span>
-</label>
-<label class="flex items-center gap-3 cursor-pointer group">
-<input class="category-checkbox w-5 h-5 rounded border-outline text-primary focus:ring-primary-container" type="checkbox" value="Lighting"/>
-<span class="font-body-md text-body-md text-secondary group-hover:text-on-surface">Lighting</span>
-</label>
-<label class="flex items-center gap-3 cursor-pointer group">
-<input class="category-checkbox w-5 h-5 rounded border-outline text-primary focus:ring-primary-container" type="checkbox" value="Kitchenware"/>
-<span class="font-body-md text-body-md text-secondary group-hover:text-on-surface">Kitchenware</span>
-</label>
+@foreach($categories as $cat)
+<a href="{{ route('shop', ['category' => $cat->slug]) }}" class="flex items-center gap-3 cursor-pointer group py-1 border-b border-outline-variant/30">
+<span class="font-body-md text-body-md text-secondary group-hover:text-primary {{ request('category') == $cat->slug ? 'font-bold text-primary' : '' }}">{{ $cat->nama_kategori }}</span>
+</a>
+@endforeach
 </div>
 </div>
 <!-- Price Range -->
@@ -341,163 +344,47 @@
 </div>
 
 <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
-<!-- Product 1 -->
-<div class="product-card-item product-card-hover group bg-surface-container-lowest border border-[#EDEDED] rounded-lg p-4 flex flex-col cursor-pointer transition-all duration-300" data-id="1" data-title="Vas Terakota Modern" data-category="Essentials" data-price="45000" data-rating="4.8">
+@forelse($products as $product)
+<div onclick="window.location.href='{{ route('product.detail', $product->id) }}'" class="product-card-item product-card-hover group bg-surface-container-lowest border border-[#EDEDED] rounded-lg p-4 flex flex-col cursor-pointer transition-all duration-300" data-id="{{ $product->id }}" data-title="{{ $product->nama_produk }}" data-category="{{ $product->category->nama_kategori ?? 'Umum' }}" data-price="{{ $product->harga }}" data-rating="4.8">
 <div class="relative w-full aspect-square bg-[#F5F5F5] rounded overflow-hidden mb-4">
-<img class="w-full h-full object-cover" data-alt="Vas Terakota Modern" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBk0dD97rxSLPIq7kow6D-Xfn2Ir4JXplIQO4-0yqQqXx9-ymlS5uyw6I6LGsrTk1RkdrpQnmlcYwIwso05QH_pw5AhewbHxNuc0jIv1lkGdahlFU8AOT6Bw1wiRIyxgBz4U8CPq1paoMuMoSSRG2pHXnZPyulF2yvmK7VS_241XWZMKBRD9cHxXkgoHQeUGWRT_waBht0Fq1pD9UM8pcD_4pwp067sDthz1dIXokAmpwMAWBVZzQFk"/>
-<span class="absolute top-2 right-2 bg-primary-container text-on-primary-container font-label-md text-[10px] px-2 py-1 rounded-full">NEW</span>
+@php
+    $img = $product->galleries->first()?->foto_path ?? 'https://via.placeholder.com/400';
+    $imgUrl = str_starts_with($img, 'http') ? $img : asset($img);
+@endphp
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="{{ $product->nama_produk }}" src="{{ $imgUrl }}"/>
+@if($product->badge)
+<span class="absolute top-2 right-2 bg-primary-container text-on-primary-container font-label-md text-[10px] px-2 py-1 rounded-full uppercase">{{ $product->badge }}</span>
+@endif
 </div>
 <div class="flex items-center justify-between mb-1">
-<span class="text-body-sm text-secondary">Essentials</span>
+<span class="text-body-sm text-secondary">{{ $product->category->nama_kategori ?? 'Umum' }}</span>
 <div class="flex items-center gap-1 text-amber-500">
 <span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">star</span>
 <span class="font-semibold text-on-surface text-xs">4.8</span>
-<span class="text-[10px] text-secondary">(124)</span>
 </div>
 </div>
-<h4 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">Vas Terakota Modern</h4>
-<div class="mt-auto pt-4 flex items-center justify-between">
-<span class="font-headline-sm text-headline-sm text-primary">Rp 45.000</span>
-<button class="material-symbols-outlined p-2 text-secondary hover:text-primary transition-colors">add_shopping_cart</button>
-</div>
-</div>
-<!-- Product 2 -->
-<div class="product-card-item product-card-hover group bg-surface-container-lowest border border-[#EDEDED] rounded-lg p-4 flex flex-col cursor-pointer transition-all duration-300" data-id="2" data-title="Set Alat Makan Kuningan" data-category="Kitchenware" data-price="120000" data-rating="4.5">
-<div class="relative w-full aspect-square bg-[#F5F5F5] rounded overflow-hidden mb-4">
-<img class="w-full h-full object-cover" data-alt="Set Alat Makan Kuningan" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_pNgNPWyZyJOaCLtG8Tyk-pFG-aBhkG17RN9pS-uxmP3nWWWfBUSYe-NZYHpWqeE9qeuREA8vi7K-zABi0AF4EgQwLo0nscomLI-As-KjOGl67w9alqDIhkyfrzBwywd14485gEo7Rt9TAtf7Xbwp8H9oH8dVbXmvoaMZuvhe6KEzyru3moPcGeeguB9tc6l-m_9RqSyDNnxLn9szBVfWrr73GDvFZ56Z6qMsWJekflmsz07B0jD2"/>
-</div>
-<div class="flex items-center justify-between mb-1">
-<span class="text-body-sm text-secondary">Kitchenware</span>
-<div class="flex items-center gap-1 text-amber-500">
-<span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="font-semibold text-on-surface text-xs">4.5</span>
-<span class="text-[10px] text-secondary">(89)</span>
-</div>
-</div>
-<h4 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">Set Alat Makan Kuningan</h4>
-<div class="mt-auto pt-4 flex items-center justify-between">
-<span class="font-headline-sm text-headline-sm text-primary">Rp 120.000</span>
-<button class="material-symbols-outlined p-2 text-secondary hover:text-primary transition-colors">add_shopping_cart</button>
-</div>
-</div>
-<!-- Product 3 -->
-<div class="product-card-item product-card-hover group bg-surface-container-lowest border border-[#EDEDED] rounded-lg p-4 flex flex-col cursor-pointer transition-all duration-300" data-id="3" data-title="Lampu Belajar" data-category="Lighting" data-price="89000" data-rating="4.2">
-<div class="relative w-full aspect-square bg-[#F5F5F5] rounded overflow-hidden mb-4">
-<img class="w-full h-full object-cover" data-alt="Lampu Belajar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCns4DxWiA7iBGiTKiYiw6zQ77xA323MT5s21i1IA8Ia82zIbJ9ow5ZtoOr9GOqYqK4EueqeHDB1qHnvZl0rro_REcG4dVuz0Qw2jkz_dssL1oVYr0UWhoWgQzOrsKENdPfqHL3VtUQkZXDqrWJIv_eg5dz1P2LKiRSf-s-LrUe6IktFolCTXKhVfzLxMksNUA4oB8tFYSvvUAO8aQLxKcFsyOHkqRqdAmjc5Fo8x5dhtn_bvvWrxj"/>
-</div>
-<div class="flex items-center justify-between mb-1">
-<span class="text-body-sm text-secondary">Lighting</span>
-<div class="flex items-center gap-1 text-amber-500">
-<span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="font-semibold text-on-surface text-xs">4.2</span>
-<span class="text-[10px] text-secondary">(56)</span>
-</div>
-</div>
-<h4 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">Lampu Belajar</h4>
-<div class="mt-auto pt-4 flex items-center justify-between">
-<span class="font-headline-sm text-headline-sm text-primary">Rp 89.000</span>
-<button class="material-symbols-outlined p-2 text-secondary hover:text-primary transition-colors">add_shopping_cart</button>
-</div>
-</div>
-<!-- Product 4 -->
-<div class="product-card-item product-card-hover group bg-surface-container-lowest border border-[#EDEDED] rounded-lg p-4 flex flex-col cursor-pointer transition-all duration-300" data-id="4" data-title="Bantal Sofa Linen" data-category="Essentials" data-price="65000" data-rating="4.9">
-<div class="relative w-full aspect-square bg-[#F5F5F5] rounded overflow-hidden mb-4">
-<img class="w-full h-full object-cover" data-alt="Bantal Sofa Linen" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA47mbWGDqjAjJJ0zkSFfaPoVhwDBM6FpaIJzv2_yxceWmgkFcVTfdmcMdtavU5HFvMy60bOm-uzAc3Pn7Q29xiOSrmIVgDjkJSgdkrwKN7LVSC4EF5VzTKhKObOkwL6Y5tExi7fEWkcmgur26ogC-NHY-Eyzat_Rk0mh6jvqBH8rFioW0qAwy42Nj9MBQYwjOZJZpOwUXfE_Z3gnj64w4la0Wjj5zfsVpXeBqKivazCuIaCC11GFGi"/>
-<span class="absolute top-2 right-2 bg-error-container text-on-error-container font-label-md text-[10px] px-2 py-1 rounded-full">SALE</span>
-</div>
-<div class="flex items-center justify-between mb-1">
-<span class="text-body-sm text-secondary">Essentials</span>
-<div class="flex items-center gap-1 text-amber-500">
-<span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="font-semibold text-on-surface text-xs">4.9</span>
-<span class="text-[10px] text-secondary">(210)</span>
-</div>
-</div>
-<h4 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">Bantal Sofa Linen</h4>
+<h4 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors line-clamp-1">{{ $product->nama_produk }}</h4>
 <div class="mt-auto pt-4 flex items-center justify-between">
 <div class="flex flex-col">
-<span class="font-headline-sm text-headline-sm text-primary">Rp 65.000</span>
-<span class="text-body-sm text-on-secondary-container line-through">Rp 80.000</span>
+<span class="font-headline-sm text-headline-sm text-primary">Rp {{ number_format($product->harga, 0, ',', '.') }}</span>
+@if($product->harga_diskon)
+<span class="text-body-sm text-on-secondary-container line-through">Rp {{ number_format($product->harga_diskon, 0, ',', '.') }}</span>
+@endif
 </div>
 <button class="material-symbols-outlined p-2 text-secondary hover:text-primary transition-colors">add_shopping_cart</button>
 </div>
 </div>
-<!-- Product 5 -->
-<div class="product-card-item product-card-hover group bg-surface-container-lowest border border-[#EDEDED] rounded-lg p-4 flex flex-col cursor-pointer transition-all duration-300" data-id="5" data-title="Mesin Kopi Manual" data-category="Kitchenware" data-price="155000" data-rating="4.7">
-<div class="relative w-full aspect-square bg-[#F5F5F5] rounded overflow-hidden mb-4">
-<img class="w-full h-full object-cover" data-alt="Mesin Kopi Manual" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkFMHwCoHaBWEKjNQ0I2pu7feCrXQ5yBFK2_VydgH7kE6EmAuVv0cPzghMBKF6v13IZhxI7TyBwG7YZyqpZ8jZ7TM6UIIbGe1TIzp_2pE4JIw64ebplUx13fJExW0XcRtHO7LMMUT5mq07wdXyAJwPRN9lkwP3HnYo_1LTQd9-9BoChFmgiR4rHubdaOb4VnMxKKuBcXmCd_QkBf1ljtPoPMBqRgIBfr5tNGlLwk-orAZEBItaJoo8"/>
+@empty
+<div class="col-span-full text-center py-12 bg-surface-container-lowest border border-dashed border-outline-variant rounded-xl my-4">
+<span class="material-symbols-outlined text-4xl text-secondary mb-2">search_off</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Belum ada produk</h3>
+<p class="font-body-sm text-body-sm text-secondary mt-1">Produk akan muncul setelah ditambahkan ke katalog.</p>
 </div>
-<div class="flex items-center justify-between mb-1">
-<span class="text-body-sm text-secondary">Kitchenware</span>
-<div class="flex items-center gap-1 text-amber-500">
-<span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="font-semibold text-on-surface text-xs">4.7</span>
-<span class="text-[10px] text-secondary">(175)</span>
+@endforelse
 </div>
-</div>
-<h4 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">Mesin Kopi Manual</h4>
-<div class="mt-auto pt-4 flex items-center justify-between">
-<span class="font-headline-sm text-headline-sm text-primary">Rp 155.000</span>
-<button class="material-symbols-outlined p-2 text-secondary hover:text-primary transition-colors">add_shopping_cart</button>
-</div>
-</div>
-<!-- Product 6 -->
-<div class="product-card-item product-card-hover group bg-surface-container-lowest border border-[#EDEDED] rounded-lg p-4 flex flex-col cursor-pointer transition-all duration-300" data-id="6" data-title="Aroma Terapi Kayu Cedar" data-category="Essentials" data-price="32000" data-rating="4.3">
-<div class="relative w-full aspect-square bg-[#F5F5F5] rounded overflow-hidden mb-4">
-<img class="w-full h-full object-cover" data-alt="Aroma Terapi Kayu Cedar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxmkENGZuyLZGH_qWwezwycENs7upOPEfaEc3SMVtVVUMwHtodLG72piJEYFD06ROLx9OSpRpPmhEC-MD896J2Q1TYKImnp8YZcl5UynZ82SWgYkUC2RZuVIXE4CZXS3UcxGv2u6dNxZV5OLTeLku7DUZZp4uSaPGi-uO7HjswVVNGt_fjhU2maCSTs8q-WiiI3X8ifvYQjZI-L74hqK1SEMM2NS_PDDpT923vwTkRT7fOyQUL2a0D"/>
-</div>
-<div class="flex items-center justify-between mb-1">
-<span class="text-body-sm text-secondary">Essentials</span>
-<div class="flex items-center gap-1 text-amber-500">
-<span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="font-semibold text-on-surface text-xs">4.3</span>
-<span class="text-[10px] text-secondary">(42)</span>
-</div>
-</div>
-<h4 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">Aroma Terapi Kayu Cedar</h4>
-<div class="mt-auto pt-4 flex items-center justify-between">
-<span class="font-headline-sm text-headline-sm text-primary">Rp 32.000</span>
-<button class="material-symbols-outlined p-2 text-secondary hover:text-primary transition-colors">add_shopping_cart</button>
-</div>
-</div>
-<!-- Product 7 -->
-<div class="product-card-item product-card-hover group bg-surface-container-lowest border border-[#EDEDED] rounded-lg p-4 flex flex-col cursor-pointer transition-all duration-300" data-id="7" data-title="Kursi Kantor Studio" data-category="Furniture" data-price="290000" data-rating="4.6">
-<div class="relative w-full aspect-square bg-[#F5F5F5] rounded overflow-hidden mb-4">
-<img class="w-full h-full object-cover" data-alt="Kursi Kantor Studio" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDt2QH8mYoSO4gXlffQnIbQsvqVZq9QlCRoyTzMwSjNbKoVwg2qGY9omYAB3vK0CgOVJ8IqsuWUcbn8B_icIhz6FYNN5KmwtPgsnZBF-ADsqC2DALgqasHtoi1p5GzaimiCx4dxXRwzKKF5fUU-tvfnfCItmfu5nRv7I3xbf9xv3KvRSYpl7W_ZfFNCRDe4kNuBW_ysd9aT0cAHvCVREawQpBJH_JIC9bJtzXNpINUvKpCck6K5IYCV"/>
-</div>
-<div class="flex items-center justify-between mb-1">
-<span class="text-body-sm text-secondary">Furniture</span>
-<div class="flex items-center gap-1 text-amber-500">
-<span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="font-semibold text-on-surface text-xs">4.6</span>
-<span class="text-[10px] text-secondary">(98)</span>
-</div>
-</div>
-<h4 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">Kursi Kantor Studio</h4>
-<div class="mt-auto pt-4 flex items-center justify-between">
-<span class="font-headline-sm text-headline-sm text-primary">Rp 290.000</span>
-<button class="material-symbols-outlined p-2 text-secondary hover:text-primary transition-colors">add_shopping_cart</button>
-</div>
-</div>
-<!-- Product 8 -->
-<div class="product-card-item product-card-hover group bg-surface-container-lowest border border-[#EDEDED] rounded-lg p-4 flex flex-col cursor-pointer transition-all duration-300" data-id="8" data-title="Mangkok Keramik" data-category="Kitchenware" data-price="78000" data-rating="4.4">
-<div class="relative w-full aspect-square bg-[#F5F5F5] rounded overflow-hidden mb-4">
-<img class="w-full h-full object-cover" data-alt="Mangkok Keramik" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTJ3Ir1DfgyBiod5gs6mju6Qxt8HQcqZfWvZ4SlBCNtYkGEh9R_I2G4Jd3dVcyUibRy7DBwTRGsMzP-9a7RS4ZXQAbiG5HrjjCJlgT8BskcUoDuuBUFqWt4UFmjO7dtZSlDsnDx6d-2-PjsusLPFKKzjexr6Qi8M0k0e98oEygHoTZvVQgRnrR6QHBWEOrhgQmDjl1UorwMPL1kkhCJ2x3EGIYHijkzyW0XVhko6MO-6jl-njI3NoD"/>
-</div>
-<div class="flex items-center justify-between mb-1">
-<span class="text-body-sm text-secondary">Kitchenware</span>
-<div class="flex items-center gap-1 text-amber-500">
-<span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="font-semibold text-on-surface text-xs">4.4</span>
-<span class="text-[10px] text-secondary">(64)</span>
-</div>
-</div>
-<h4 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">Mangkok Keramik</h4>
-<div class="mt-auto pt-4 flex items-center justify-between">
-<span class="font-headline-sm text-headline-sm text-primary">Rp 78.000</span>
-<button class="material-symbols-outlined p-2 text-secondary hover:text-primary transition-colors">add_shopping_cart</button>
-</div>
-</div>
+
+<div class="mt-8 flex justify-center">
+{{ $products->links() }}
 </div>
 <!-- Pagination -->
 <div class="flex items-center justify-center gap-2 mt-stack-lg">
@@ -721,7 +608,7 @@
                 card.addEventListener('click', (e) => {
                     if (e.target.closest('button')) return;
                     const id = card.dataset.id || '1';
-                    window.location.href = '{{ route("product.detail") }}/' + id;
+                    window.location.href = '{{ url("/product") }}/' + id;
                 });
             });
 

@@ -96,63 +96,133 @@
     <div class="mb-stack-lg text-center">
         <div class="flex items-center justify-center gap-2 mb-base">
             <span class="material-symbols-outlined text-primary-container text-[32px]" style="font-variation-settings: 'FILL' 1;">local_mall</span>
-            <h1 class="font-headline-md text-headline-md text-on-surface">Katalog IDN</h1>
+            <a href="{{ route('home') }}" class="font-headline-md text-headline-md text-on-surface font-bold hover:text-primary transition-colors">Katalog IDN</a>
         </div>
-        <p class="font-body-sm text-body-sm text-on-surface-variant">Empowering your SME journey with premium tools.</p>
-    </div>
-    
-    <div class="mb-stack-md text-center">
-        <h2 class="font-headline-sm text-headline-sm text-on-surface mb-base">Sign In</h2>
-        <p class="font-body-sm text-body-sm text-on-surface-variant">Enter your credentials to access your dashboard.</p>
+        <p class="font-body-sm text-body-sm text-on-surface-variant">Solusi katalog & belanja terpercaya UMKM Indonesia.</p>
     </div>
 
-    <form class="space-y-stack-md">
+    <!-- Alert Notifications -->
+    @if(session('error'))
+    <div class="mb-4 p-3 bg-error-container text-on-error-container rounded-lg text-body-sm text-center font-bold">
+        {{ session('error') }}
+    </div>
+    @endif
+    @if(session('success'))
+    <div class="mb-4 p-3 bg-emerald-100 text-emerald-800 rounded-lg text-body-sm text-center font-bold">
+        {{ session('success') }}
+    </div>
+    @endif
+    @if(session('info'))
+    <div class="mb-4 p-3 bg-amber-100 text-amber-800 rounded-lg text-body-sm text-center font-bold">
+        {{ session('info') }}
+    </div>
+    @endif
+
+    <!-- Tab Buttons -->
+    <div class="flex border-b border-outline-variant mb-6">
+        <button id="tab-login-btn" onclick="switchAuthTab('login')" class="flex-1 py-3 font-label-md text-label-md border-b-2 border-primary text-primary font-bold">
+            Sign In (Masuk)
+        </button>
+        <button id="tab-register-btn" onclick="switchAuthTab('register')" class="flex-1 py-3 font-label-md text-label-md border-b-2 border-transparent text-secondary hover:text-on-surface">
+            Sign Up (Daftar)
+        </button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <form id="form-login" action="{{ route('login.post') }}" method="POST" class="space-y-stack-md">
+        @csrf
         <div>
-            <label class="block font-label-md text-label-md text-on-surface mb-base" for="email">Email Address</label>
-            <input class="w-full h-[48px] px-4 font-body-sm text-body-sm bg-surface border border-outline-variant rounded-lg text-on-surface placeholder:text-on-surface-variant focus:outline-none input-glow transition-all" id="email" name="email" placeholder="you@company.com" required="" type="email">
+            <label class="block font-label-md text-label-md text-on-surface mb-base" for="login-email">Email Address</label>
+            <input class="w-full h-[48px] px-4 font-body-sm text-body-sm bg-surface border border-outline-variant rounded-lg text-on-surface placeholder:text-on-surface-variant focus:outline-none input-glow transition-all" id="login-email" name="email" value="{{ old('email') }}" placeholder="you@company.com" required type="email">
         </div>
         <div>
-            <label class="block font-label-md text-label-md text-on-surface mb-base" for="password">Password</label>
+            <label class="block font-label-md text-label-md text-on-surface mb-base" for="login-password">Password</label>
             <div class="relative">
-                <input class="w-full h-[48px] px-4 font-body-sm text-body-sm bg-surface border border-outline-variant rounded-lg text-on-surface placeholder:text-on-surface-variant focus:outline-none input-glow transition-all pr-12" id="password" name="password" placeholder="••••••••" required="" type="password">
-                <button class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors" type="button">
-                    <span class="material-symbols-outlined text-[20px]">visibility_off</span>
-                </button>
+                <input class="w-full h-[48px] px-4 font-body-sm text-body-sm bg-surface border border-outline-variant rounded-lg text-on-surface placeholder:text-on-surface-variant focus:outline-none input-glow transition-all pr-12" id="login-password" name="password" placeholder="••••••••" required type="password">
             </div>
         </div>
         <div class="flex items-center justify-between py-base">
             <label class="flex items-center gap-2 cursor-pointer group">
-                <input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary-container focus:ring-2 focus:ring-offset-0 bg-surface" type="checkbox">
+                <input name="remember" class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary-container focus:ring-2 focus:ring-offset-0 bg-surface" type="checkbox">
                 <span class="font-body-sm text-body-sm text-on-surface group-hover:text-primary transition-colors">Remember Me</span>
             </label>
-            <a class="font-label-md text-label-md text-primary hover:text-on-primary-fixed-variant transition-colors" href="#">Forgot Password?</a>
         </div>
-        <button class="w-full h-[48px] bg-primary-container text-on-primary-fixed font-label-md text-label-md rounded-lg hover:bg-[#e6a600] active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.04)]" type="submit">
+        <button class="w-full h-[48px] bg-primary-container text-on-primary-fixed font-label-md text-label-md font-bold rounded-lg hover:bg-[#e6a600] active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-sm" type="submit">
             Sign In
             <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
         </button>
     </form>
 
-    <div class="mt-stack-lg">
-        <div class="relative flex items-center py-base mb-stack-sm">
-            <div class="flex-grow border-t border-surface-variant"></div>
-            <span class="flex-shrink-0 mx-4 font-body-sm text-body-sm text-on-surface-variant">or</span>
-            <div class="flex-grow border-t border-surface-variant"></div>
+    <!-- REGISTER FORM (Hidden by default) -->
+    <form id="form-register" action="{{ route('register.post') }}" method="POST" class="space-y-stack-md hidden">
+        @csrf
+        <div>
+            <label class="block font-label-md text-label-md text-on-surface mb-base" for="reg-name">Nama Lengkap</label>
+            <input class="w-full h-[48px] px-4 font-body-sm text-body-sm bg-surface border border-outline-variant rounded-lg text-on-surface placeholder:text-on-surface-variant focus:outline-none input-glow transition-all" id="reg-name" name="name" placeholder="John Doe" required type="text">
         </div>
-        <div class="flex flex-col gap-2">
-            <button class="w-full h-[44px] flex items-center justify-center gap-2 border border-surface-variant rounded-lg font-label-md text-label-md text-on-surface hover:bg-surface-container-high transition-all">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path></svg>
-                Continue with Google
-            </button>
+        <div>
+            <label class="block font-label-md text-label-md text-on-surface mb-base" for="reg-email">Email Address</label>
+            <input class="w-full h-[48px] px-4 font-body-sm text-body-sm bg-surface border border-outline-variant rounded-lg text-on-surface placeholder:text-on-surface-variant focus:outline-none input-glow transition-all" id="reg-email" name="email" placeholder="you@company.com" required type="email">
         </div>
-    </div>
+        <div>
+            <label class="block font-label-md text-label-md text-on-surface mb-base" for="reg-role">Daftar Sebagai</label>
+            <select id="reg-role" name="role" onchange="toggleStoreNameField()" class="w-full h-[48px] px-4 font-body-sm text-body-sm bg-surface border border-outline-variant rounded-lg text-on-surface focus:outline-none input-glow transition-all">
+                <option value="customer">Pembeli (Customer)</option>
+                <option value="seller">Penjual (Seller / Toko)</option>
+            </select>
+        </div>
+        <div id="store-name-field" class="hidden">
+            <label class="block font-label-md text-label-md text-on-surface mb-base" for="reg-store">Nama Toko</label>
+            <input class="w-full h-[48px] px-4 font-body-sm text-body-sm bg-surface border border-outline-variant rounded-lg text-on-surface placeholder:text-on-surface-variant focus:outline-none input-glow transition-all" id="reg-store" name="nama_toko" placeholder="Contoh: Toko Berkah" type="text">
+        </div>
+        <div>
+            <label class="block font-label-md text-label-md text-on-surface mb-base" for="reg-password">Password</label>
+            <input class="w-full h-[48px] px-4 font-body-sm text-body-sm bg-surface border border-outline-variant rounded-lg text-on-surface placeholder:text-on-surface-variant focus:outline-none input-glow transition-all" id="reg-password" name="password" placeholder="Minimal 6 karakter" required type="password">
+        </div>
+        <div>
+            <label class="block font-label-md text-label-md text-on-surface mb-base" for="reg-password-confirm">Konfirmasi Password</label>
+            <input class="w-full h-[48px] px-4 font-body-sm text-body-sm bg-surface border border-outline-variant rounded-lg text-on-surface placeholder:text-on-surface-variant focus:outline-none input-glow transition-all" id="reg-password-confirm" name="password_confirmation" placeholder="Ulangi password" required type="password">
+        </div>
+        <button class="w-full h-[48px] bg-primary text-on-primary font-label-md text-label-md font-bold rounded-lg hover:bg-[#684900] active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-sm" type="submit">
+            Buat Akun Sekarang
+            <span class="material-symbols-outlined text-[18px]">person_add</span>
+        </button>
+    </form>
 
-    <div class="mt-stack-md text-center">
-        <p class="font-body-sm text-body-sm text-on-surface-variant">
-            Don't have an account? 
-            <a class="font-label-md text-label-md text-primary hover:text-on-primary-fixed-variant transition-colors ml-1" href="#">Sign Up</a>
-        </p>
-    </div>
+    <script>
+        function switchAuthTab(tab) {
+            const loginForm = document.getElementById('form-login');
+            const regForm = document.getElementById('form-register');
+            const loginBtn = document.getElementById('tab-login-btn');
+            const regBtn = document.getElementById('tab-register-btn');
+
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                regForm.classList.add('hidden');
+                loginBtn.classList.add('border-primary', 'text-primary', 'font-bold');
+                loginBtn.classList.remove('border-transparent', 'text-secondary');
+                regBtn.classList.remove('border-primary', 'text-primary', 'font-bold');
+                regBtn.classList.add('border-transparent', 'text-secondary');
+            } else {
+                loginForm.classList.add('hidden');
+                regForm.classList.remove('hidden');
+                regBtn.classList.add('border-primary', 'text-primary', 'font-bold');
+                regBtn.classList.remove('border-transparent', 'text-secondary');
+                loginBtn.classList.remove('border-primary', 'text-primary', 'font-bold');
+                loginBtn.classList.add('border-transparent', 'text-secondary');
+            }
+        }
+
+        function toggleStoreNameField() {
+            const roleSelect = document.getElementById('reg-role');
+            const storeField = document.getElementById('store-name-field');
+            if (roleSelect.value === 'seller') {
+                storeField.classList.remove('hidden');
+            } else {
+                storeField.classList.add('hidden');
+            }
+        }
+    </script>
 </div>
 <!-- Bottom minimal copyright for contextual grounding -->
 <div class="absolute bottom-margin-mobile md:bottom-margin-desktop text-center w-full right-0 px-margin-mobile">

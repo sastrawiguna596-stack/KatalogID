@@ -22,7 +22,35 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'phone',
+        'address',
+        'avatar',
     ];
+
+    /**
+     * Relasi: User Penjual memiliki 1 Toko
+     */
+    public function store()
+    {
+        return $this->hasOne(Store::class);
+    }
+
+    /**
+     * Relasi: User memiliki banyak Order
+     */
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    /**
+     * Relasi: User memiliki banyak Review
+     */
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
 
     /**
      * The attributes that should be hidden for serialization.

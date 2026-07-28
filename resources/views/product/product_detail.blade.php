@@ -146,11 +146,26 @@
 <nav class="hidden md:flex gap-gutter items-center">
 <a class="font-label-md text-label-md text-secondary hover:text-primary transition-colors duration-200" href="{{ route('home') }}">Home</a>
 <a class="font-label-md text-label-md text-primary border-b-2 border-primary pb-1" href="{{ route('shop') }}">Shop</a>
-<a class="font-label-md text-label-md text-secondary hover:text-primary transition-colors duration-200" href="{{ route('account') }}">Profile</a>
+<a class="font-label-md text-label-md text-secondary hover:text-primary transition-colors duration-200" href="{{ route('profile') }}">Profile</a>
 </nav>
 <div class="flex items-center gap-4">
-<span class="material-symbols-outlined text-primary cursor-pointer">search</span>
-<span class="material-symbols-outlined text-primary cursor-pointer">shopping_cart</span>
+<a href="{{ route('shop') }}"><span class="material-symbols-outlined text-primary cursor-pointer">search</span></a>
+<a href="{{ route('cart') }}" class="relative">
+    <span class="material-symbols-outlined text-primary cursor-pointer">shopping_cart</span>
+    @if(count(session('cart', [])) > 0)
+    <span class="absolute -top-2 -right-2 bg-primary text-on-primary text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">{{ count(session('cart', [])) }}</span>
+    @endif
+</a>
+@auth
+<form action="{{ route('logout') }}" method="POST" class="inline">
+    @csrf
+    <button type="submit" class="text-error hover:text-red-700 transition-colors p-1 flex items-center justify-center" title="Keluar">
+        <span class="material-symbols-outlined">logout</span>
+    </button>
+</form>
+@else
+<a href="{{ route('login') }}" class="font-label-md text-sm text-primary font-bold px-3 py-1 border border-primary rounded-lg hover:bg-primary hover:text-on-primary transition-all">Masuk</a>
+@endauth
 </div>
 </header>
 <main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-stack-lg">
@@ -158,92 +173,134 @@
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-stack-lg items-start">
 <!-- Left: Gallery Side -->
 <div class="lg:col-span-7 flex flex-col md:flex-row gap-4">
-<!-- Thumbnails -->
-<div class="hidden md:flex md:flex-col gap-4 w-24">
-<button class="w-24 h-24 border border-outline rounded-lg overflow-hidden ring-2 ring-primary">
-<img class="w-full h-full object-cover" src="{{ $product['image'] }}" alt="{{ $product['title'] }}" />
-</button>
-<button class="w-24 h-24 border border-outline-variant rounded-lg overflow-hidden hover:border-outline transition-colors">
-<img class="w-full h-full object-cover opacity-80" src="{{ $product['image'] }}" alt="{{ $product['title'] }}" />
-</button>
-<button class="w-24 h-24 border border-outline-variant rounded-lg overflow-hidden hover:border-outline transition-colors">
-<img class="w-full h-full object-cover opacity-60" src="{{ $product['image'] }}" alt="{{ $product['title'] }}" />
-</button>
-</div>
-<!-- Main Featured Image -->
-<div class="flex-1 relative aspect-[4/5] bg-surface-container-lowest border border-[#EDEDED] rounded-xl overflow-hidden shadow-sm">
-<img class="w-full h-full object-cover" src="{{ $product['image'] }}" alt="{{ $product['title'] }}" />
-@if(!empty($product['badge']))
-<div class="absolute top-4 left-4 bg-primary-container text-on-primary-container px-3 py-1 rounded-full font-label-md text-label-md">
-    {{ $product['badge'] }}
-</div>
-@endif
-</div>
+    <!-- Thumbnails -->
+    <div class="hidden md:flex md:flex-col gap-4 w-24">
+        @if(is_object($product) && $product->galleries->count() > 0)
+            @foreach($product->galleries as $gallery)
+            <button class="w-24 h-24 border border-outline rounded-lg overflow-hidden ring-2 ring-primary">
+                <img class="w-full h-full object-cover" src="{{ str_starts_with($gallery->foto_path, 'http') ? $gallery->foto_path : asset($gallery->foto_path) }}" alt="{{ $product->nama_produk }}" />
+            </button>
+            @endforeach
+        @else
+            <button class="w-24 h-24 border border-outline rounded-lg overflow-hidden ring-2 ring-primary">
+                <img class="w-full h-full object-cover" src="{{ is_array($product) ? ($product['image'] ?? '') : ($product->galleries->first()?->foto_path ?? 'https://via.placeholder.com/600') }}" alt="Product Image" />
+            </button>
+        @endif
+    </div>
+    <!-- Main Featured Image -->
+    <div class="flex-1 relative aspect-[4/5] bg-surface-container-lowest border border-[#EDEDED] rounded-xl overflow-hidden shadow-sm">
+        @php
+            $mainImg = is_array($product) ? ($product['image'] ?? '') : ($product->galleries->first()?->foto_path ?? 'https://via.placeholder.com/600');
+            $mainImgUrl = str_starts_with($mainImg, 'http') ? $mainImg : asset($mainImg);
+            $badgeText = is_array($product) ? ($product['badge'] ?? '') : $product->badge;
+        @endphp
+        <img class="w-full h-full object-cover" src="{{ $mainImgUrl }}" alt="{{ is_array($product) ? ($product['title'] ?? '') : $product->nama_produk }}" />
+        @if(!empty($badgeText))
+        <div class="absolute top-4 left-4 bg-primary-container text-on-primary-container px-3 py-1 rounded-full font-label-md text-label-md">
+            {{ $badgeText }}
+        </div>
+        @endif
+    </div>
 </div>
 <!-- Right: Product Info Side -->
 <div class="lg:col-span-5 flex flex-col gap-stack-md sticky top-24">
-<div class="flex flex-col gap-2">
-<nav class="flex gap-2 text-on-secondary-container font-body-sm text-body-sm uppercase tracking-wider">
-<a class="hover:text-primary transition-colors" href="{{ route('shop') }}">Katalog</a>
-<span>/</span>
-<a class="hover:text-primary transition-colors" href="{{ route('shop') }}">{{ $product['category'] }}</a>
-</nav>
-<h2 class="font-headline-xl text-headline-xl text-on-surface">{{ $product['title'] }}</h2>
-<div class="flex items-center gap-4">
-<div class="flex text-amber-500">
-<span class="material-symbols-outlined filled-icon">star</span>
-<span class="material-symbols-outlined filled-icon">star</span>
-<span class="material-symbols-outlined filled-icon">star</span>
-<span class="material-symbols-outlined filled-icon">star</span>
-<span class="material-symbols-outlined">star_half</span>
-</div>
-<span class="font-body-sm text-body-sm text-on-secondary-container">{{ $product['rating'] }} ({{ $product['reviews_count'] }} ulasan)</span>
-</div>
-</div>
-<div class="flex items-baseline gap-4">
-<span class="font-headline-lg text-headline-lg text-primary">{{ $product['price'] }}</span>
-@if(!empty($product['original_price']))
-<span class="font-body-md text-body-md text-secondary line-through">{{ $product['original_price'] }}</span>
-@endif
-</div>
-<div class="h-px bg-outline-variant w-full"></div>
-<!-- Variant Selector: Options -->
-<div class="flex flex-col gap-stack-sm">
-<span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant">Pilihan Varian: <span class="font-bold text-on-surface" id="selected-color">Standard</span></span>
-<div class="flex gap-3">
-<button class="px-4 py-2 border-2 border-primary rounded-lg font-label-md text-label-md bg-primary-container/10 text-primary">Original</button>
-<button class="px-4 py-2 border-2 border-outline-variant rounded-lg font-label-md text-label-md hover:border-outline text-on-surface-variant">Limited Edition</button>
-</div>
-</div>
-<!-- CTA Actions -->
-<div class="flex flex-col gap-4 pt-4">
-<a href="{{ route('cart') }}" class="w-full bg-primary-container text-on-primary-container h-14 rounded-full font-headline-sm text-headline-sm flex justify-center items-center gap-2 hover:bg-[#ffaa00] active:scale-[0.98] transition-all">
-<span class="material-symbols-outlined">shopping_bag</span>
-                        Tambah ke Keranjang
-</a>
-<a href="{{ route('cart') }}" class="w-full bg-transparent border-2 border-on-surface text-on-surface h-14 rounded-full font-headline-sm text-headline-sm flex justify-center items-center gap-2 hover:bg-on-surface hover:text-surface transition-all">
-                        Beli Sekarang
-</a>
-</div>
-<!-- Product Benefits -->
-<div class="grid grid-cols-2 gap-4 mt-4">
-<div class="flex items-center gap-2 text-on-surface-variant">
-<span class="material-symbols-outlined text-primary">local_shipping</span>
-<span class="font-body-sm text-body-sm">Gratis Ongkir Seluruh Indonesia</span>
-</div>
-<div class="flex items-center gap-2 text-on-surface-variant">
-<span class="material-symbols-outlined text-primary">verified</span>
-<span class="font-body-sm text-body-sm">Garansi Produk Original</span>
-</div>
-<div class="flex items-center gap-2 text-on-surface-variant">
-<span class="material-symbols-outlined text-primary">eco</span>
-<span class="font-body-sm text-body-sm">Ramah Lingkungan</span>
-</div>
-<div class="flex items-center gap-2 text-on-surface-variant">
-<span class="material-symbols-outlined text-primary">history</span>
-<span class="font-body-sm text-body-sm">Pengembalian 30 Hari</span>
-</div>
-</div>
+    <div class="flex flex-col gap-2">
+        <nav class="flex gap-2 text-on-secondary-container font-body-sm text-body-sm uppercase tracking-wider">
+            <a class="hover:text-primary transition-colors" href="{{ route('shop') }}">Katalog</a>
+            <span>/</span>
+            <a class="hover:text-primary transition-colors" href="{{ route('shop') }}">{{ is_array($product) ? ($product['category'] ?? '') : ($product->category->nama_kategori ?? 'Umum') }}</a>
+        </nav>
+        <h2 class="font-headline-xl text-headline-xl text-on-surface">{{ is_array($product) ? ($product['title'] ?? '') : $product->nama_produk }}</h2>
+        <div class="flex items-center gap-4">
+            <div class="flex text-amber-500">
+                <span class="material-symbols-outlined filled-icon">star</span>
+                <span class="material-symbols-outlined filled-icon">star</span>
+                <span class="material-symbols-outlined filled-icon">star</span>
+                <span class="material-symbols-outlined filled-icon">star</span>
+                <span class="material-symbols-outlined">star_half</span>
+            </div>
+            <span class="font-body-sm text-body-sm text-on-secondary-container">4.8 (124 ulasan)</span>
+        </div>
+    </div>
+    <div class="flex items-baseline gap-4">
+        <span class="font-headline-lg text-headline-lg text-primary">
+            {{ is_array($product) ? ($product['price'] ?? '') : ('Rp ' . number_format($product->harga, 0, ',', '.')) }}
+        </span>
+        @if(is_object($product) && $product->harga_diskon)
+        <span class="font-body-md text-body-md text-secondary line-through">
+            Rp {{ number_format($product->harga_diskon, 0, ',', '.') }}
+        </span>
+        @elseif(is_array($product) && !empty($product['original_price']))
+        <span class="font-body-md text-body-md text-secondary line-through">{{ $product['original_price'] }}</span>
+        @endif
+    </div>
+    <p class="font-body-md text-on-surface-variant">
+        {{ is_array($product) ? ($product['description'] ?? '') : $product->deskripsi_lengkap }}
+    </p>
+    <div class="h-px bg-outline-variant w-full"></div>
+    <!-- Variant Selector: Options -->
+    <div class="flex flex-col gap-stack-sm">
+        <span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant">Pilihan Varian: <span class="font-bold text-on-surface" id="selected-color">Standard</span></span>
+        <div class="flex gap-3">
+            <button class="px-4 py-2 border-2 border-primary rounded-lg font-label-md text-label-md bg-primary-container/10 text-primary">Original</button>
+            <button class="px-4 py-2 border-2 border-outline-variant rounded-lg font-label-md text-label-md hover:border-outline text-on-surface-variant">Limited Edition</button>
+        </div>
+    </div>
+    <!-- Flash Success Alert -->
+    @if(session('success'))
+    <div class="p-4 bg-emerald-100 border border-emerald-300 text-emerald-800 rounded-xl font-bold flex items-center justify-between">
+        <span>{{ session('success') }}</span>
+        <a href="{{ route('cart') }}" class="underline text-sm hover:text-emerald-900">Lihat Keranjang &rarr;</a>
+    </div>
+    @endif
+
+    <!-- CTA Actions -->
+    <div class="flex flex-col gap-4 pt-4">
+        @auth
+        <form action="{{ route('cart.add', is_array($product) ? $product['id'] : $product->id) }}" method="POST">
+            @csrf
+            <button type="submit" class="w-full bg-primary-container text-on-primary-container h-14 rounded-full font-headline-sm text-headline-sm flex justify-center items-center gap-2 hover:bg-[#ffaa00] active:scale-[0.98] transition-all font-bold">
+                <span class="material-symbols-outlined">shopping_bag</span>
+                Tambah ke Keranjang
+            </button>
+        </form>
+
+        <form action="{{ route('cart.add', is_array($product) ? $product['id'] : $product->id) }}" method="POST">
+            @csrf
+            <input type="hidden" name="action" value="buy_now">
+            <button type="submit" class="w-full bg-transparent border-2 border-on-surface text-on-surface h-14 rounded-full font-headline-sm text-headline-sm flex justify-center items-center gap-2 hover:bg-on-surface hover:text-surface transition-all font-bold">
+                Beli Sekarang
+            </button>
+        </form>
+        @else
+        <a href="{{ route('login') }}" class="w-full bg-primary-container text-on-primary-container h-14 rounded-full font-headline-sm text-headline-sm flex justify-center items-center gap-2 hover:bg-[#ffaa00] active:scale-[0.98] transition-all font-bold">
+            <span class="material-symbols-outlined">shopping_bag</span>
+            Tambah ke Keranjang
+        </a>
+        <a href="{{ route('login') }}" class="w-full bg-transparent border-2 border-on-surface text-on-surface h-14 rounded-full font-headline-sm text-headline-sm flex justify-center items-center gap-2 hover:bg-on-surface hover:text-surface transition-all font-bold">
+            Beli Sekarang
+        </a>
+        @endauth
+    </div>
+    <!-- Product Benefits -->
+    <div class="grid grid-cols-2 gap-4 mt-4">
+        <div class="flex items-center gap-2 text-on-surface-variant">
+            <span class="material-symbols-outlined text-primary">local_shipping</span>
+            <span class="font-body-sm text-body-sm">Gratis Ongkir Seluruh Indonesia</span>
+        </div>
+        <div class="flex items-center gap-2 text-on-surface-variant">
+            <span class="material-symbols-outlined text-primary">verified</span>
+            <span class="font-body-sm text-body-sm">Garansi Produk Original</span>
+        </div>
+        <div class="flex items-center gap-2 text-on-surface-variant">
+            <span class="material-symbols-outlined text-primary">eco</span>
+            <span class="font-body-sm text-body-sm">Ramah Lingkungan</span>
+        </div>
+        <div class="flex items-center gap-2 text-on-surface-variant">
+            <span class="material-symbols-outlined text-primary">history</span>
+            <span class="font-body-sm text-body-sm">Pengembalian 30 Hari</span>
+        </div>
+    </div>
 </div>
 </div>
 <!-- Detail Tabs Section -->
@@ -384,24 +441,6 @@
 </div>
 </footer>
 <!-- Mobile Bottom NavBar (Visible on mobile only) -->
-<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 pb-safe md:hidden bg-surface dark:bg-surface-container border-t border-outline-variant dark:border-outline shadow-sm rounded-t-xl">
-<button class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed-dim font-bold">
-<span class="material-symbols-outlined">home</span>
-<span class="font-label-md text-label-md">Home</span>
-</button>
-<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim">
-<span class="material-symbols-outlined">storefront</span>
-<span class="font-label-md text-label-md">Shop</span>
-</button>
-<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim">
-<span class="material-symbols-outlined">shopping_bag</span>
-<span class="font-label-md text-label-md">Cart</span>
-</button>
-<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim">
-<span class="material-symbols-outlined">person</span>
-<span class="font-label-md text-label-md">Profile</span>
-</button>
-</nav>
 <script>
         // Simple Interaction logic
         document.querySelectorAll('button[aria-label]').forEach(btn => {

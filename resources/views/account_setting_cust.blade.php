@@ -239,54 +239,56 @@
 <div class="grid grid-cols-12 gap-4 md:gap-gutter">
 <!-- Profile Information Card -->
 <section class="col-span-12 lg:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-xl p-4 md:p-stack-md">
-<div class="flex flex-col sm:flex-row sm:items-center justify-between mb-stack-md border-b border-outline-variant pb-4 gap-3">
-<div class="flex items-center gap-3">
-<span class="material-symbols-outlined text-primary text-3xl">person</span>
-<h2 class="font-headline-sm text-headline-sm">Profile Information</h2>
-</div>
-<button class="bg-primary text-on-primary px-4 md:px-6 py-2 rounded-lg font-label-md text-label-md hover:brightness-90 active:scale-95 transition-all self-start sm:self-auto">Save Changes</button>
-</div>
-<div class="flex flex-col md:flex-row gap-stack-lg">
-<!-- Avatar Column -->
-<div class="flex flex-col items-center gap-4">
-<div class="relative group">
-<div class="w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-surface-container">
-<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJKGosgrQlVuugOrVrXww1UF85b0uzUkGgp6UqijZO44uuQaQYIN0E5htYzIKgorPiDcPFgavj3XVNN5PrpXsIBeT5_6sPpksa9ynRYOpUZXoWgGV1Lnqn5f_24s2fk58WCK8i6534QQQdOy-kEsp6h_YRfSP52DGhR_Rc4lFN5xJeanFxrdA8q0P3NY-ULf_Tk8yVaZjrCzQIyjT5bBqT0PP_eRLcR9EpGSV4BwRQ0BFFe58YxAh1" alt="Avatar"/>
-</div>
-<button class="absolute bottom-1 right-1 bg-surface border border-outline-variant w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center hover:bg-surface-variant transition-colors shadow-sm">
-<span class="material-symbols-outlined text-on-surface-variant">photo_camera</span>
-</button>
-</div>
-<p class="font-body-sm text-body-sm text-on-surface-variant text-center max-w-[120px]">JPG or PNG. Max size 2MB.</p>
-</div>
-<!-- Form Column -->
-<div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-stack-md">
-<div class="flex flex-col gap-2">
-<label class="font-label-md text-label-md text-on-surface">Full Name</label>
-<input class="border border-outline-variant rounded-lg px-4 py-3 bg-surface-container-low font-body-md focus:border-on-surface" type="text" value="Alexander Sterling"/>
-</div>
-<div class="flex flex-col gap-2">
-<label class="font-label-md text-label-md text-on-surface">Email Address</label>
-<input class="border border-outline-variant rounded-lg px-4 py-3 bg-surface-container-low font-body-md focus:border-on-surface" type="email" value="alexander@acmecorp.com"/>
-</div>
-<div class="flex flex-col gap-2">
-<label class="font-label-md text-label-md text-on-surface">Phone Number</label>
-<input class="border border-outline-variant rounded-lg px-4 py-3 bg-surface-container-low font-body-md focus:border-on-surface" type="tel" value="+1 (555) 000-0000"/>
-</div>
-<div class="flex flex-col gap-2">
-<label class="font-label-md text-label-md text-on-surface">Language</label>
-<select class="border border-outline-variant rounded-lg px-4 py-3 bg-surface-container-low font-body-md focus:border-on-surface">
-<option>English (US)</option>
-<option>Spanish</option>
-<option>French</option>
-</select>
-</div>
-<div class="col-span-1 md:col-span-2 flex flex-col gap-2">
-<label class="font-label-md text-label-md text-on-surface">Short Bio</label>
-<textarea class="border border-outline-variant rounded-lg px-4 py-3 bg-surface-container-low font-body-md focus:border-on-surface" rows="3">Founder and CEO at Acme Corp. Specialized in eco-friendly manufacturing solutions.</textarea>
-</div>
-</div>
-</div>
+    @if(session('success'))
+    <div class="mb-4 p-3 bg-emerald-100 text-emerald-800 rounded-lg text-body-sm font-bold">
+        {{ session('success') }}
+    </div>
+    @endif
+    <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-stack-md border-b border-outline-variant pb-4 gap-3">
+            <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-primary text-3xl">person</span>
+                <h2 class="font-headline-sm text-headline-sm">Profile Information</h2>
+            </div>
+            <button type="submit" class="bg-primary text-on-primary px-4 md:px-6 py-2 rounded-lg font-label-md text-label-md hover:brightness-90 active:scale-95 transition-all self-start sm:self-auto font-bold">Save Changes</button>
+        </div>
+        <div class="flex flex-col md:flex-row gap-stack-lg">
+            <!-- Avatar Column -->
+            <div class="flex flex-col items-center gap-4">
+                <div class="relative group">
+                    <div class="w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-surface-container">
+                        <img class="w-full h-full object-cover" src="{{ Auth::user()->avatar ? asset(Auth::user()->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) . '&background=7c5800&color=ffffff&size=128' }}" alt="{{ Auth::user()->name }}"/>
+                    </div>
+                </div>
+                <input type="file" name="avatar" class="block w-full text-xs text-secondary file:mr-2 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-primary-container file:text-on-primary-container hover:file:bg-[#ffaa00]"/>
+                <p class="font-body-sm text-body-sm text-on-surface-variant text-center max-w-[140px]">JPG or PNG. Max 2MB.</p>
+            </div>
+            <!-- Form Column -->
+            <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-stack-md">
+                <div class="flex flex-col gap-2">
+                    <label class="font-label-md text-label-md text-on-surface">Full Name *</label>
+                    <input name="name" required class="border border-outline-variant rounded-lg px-4 py-3 bg-surface-container-low font-body-md focus:border-on-surface" type="text" value="{{ Auth::user()->name }}"/>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="font-label-md text-label-md text-on-surface">Email Address *</label>
+                    <input name="email" required class="border border-outline-variant rounded-lg px-4 py-3 bg-surface-container-low font-body-md focus:border-on-surface" type="email" value="{{ Auth::user()->email }}"/>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="font-label-md text-label-md text-on-surface">Phone Number</label>
+                    <input name="phone" class="border border-outline-variant rounded-lg px-4 py-3 bg-surface-container-low font-body-md focus:border-on-surface" type="tel" value="{{ Auth::user()->phone }}"/>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="font-label-md text-label-md text-on-surface">Role</label>
+                    <input disabled class="border border-outline-variant rounded-lg px-4 py-3 bg-surface-container-high font-body-md text-secondary" type="text" value="{{ ucfirst(Auth::user()->role) }}"/>
+                </div>
+                <div class="col-span-1 md:col-span-2 flex flex-col gap-2">
+                    <label class="font-label-md text-label-md text-on-surface">Alamat Lengkap</label>
+                    <textarea name="address" class="border border-outline-variant rounded-lg px-4 py-3 bg-surface-container-low font-body-md focus:border-on-surface" rows="3">{{ Auth::user()->address }}</textarea>
+                </div>
+            </div>
+        </div>
+    </form>
 </section>
 <!-- Security Quick Actions -->
 <aside class="col-span-12 lg:col-span-4 flex flex-col gap-4 md:gap-gutter">

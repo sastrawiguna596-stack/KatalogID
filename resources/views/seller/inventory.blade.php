@@ -219,6 +219,9 @@
 <a class="flex items-center gap-3 px-3 py-2.5 text-on-primary-container bg-primary-container rounded-lg font-bold transition-all font-label-md text-label-md" href="{{ route('inventories') }}" onclick="closeSidebar()">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory</span> Inventory
     </a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md font-bold" href="{{ route('seller.store') }}" onclick="closeSidebar()">
+<span class="material-symbols-outlined">storefront</span> My Store
+    </a>
 <a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('sales_analytics') }}" onclick="closeSidebar()">
 <span class="material-symbols-outlined">analytics</span> Sell analytics
     </a>
@@ -320,160 +323,64 @@
 </tr>
 </thead>
 <tbody class="divide-y divide-[#EDEDED]">
-<!-- Item 1: Low Stock Example -->
+@forelse($products as $product)
 <tr class="hover:bg-surface-container-lowest transition-colors group">
 <td class="p-4">
 <div class="w-12 h-12 bg-surface-container-high rounded-lg overflow-hidden border border-outline-variant">
-<img class="w-full h-full object-cover" data-alt="A sleek, minimalist ceramic vase in a soft matte amber finish." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2n5xgeeQXtKveTBdYKg796I3IOHtPPIBAJ_ZMaCGMa2s61gGrRBAJVl-jd9GQy3RpnQEyayx7URLj_M-hZFR-k4-HMSS2iA_yu4wxpga6fTDM6X0-edBy-lX9dQFiUV_sw7LiB4FEe7Wuh0nhuQ_uQZZDizZL1kHPk1hDMXyJGd40oHS5-J7cqf3VoC8SyGI8YGHCOaUTXMGild7-upuFVGsmGTqRDBIVpDcAAWf_6j5atS9PFKkn"/>
+@php
+    $img = $product->galleries->first()?->foto_path ?? 'https://via.placeholder.com/100';
+    $imgUrl = str_starts_with($img, 'http') ? $img : asset($img);
+@endphp
+<img class="w-full h-full object-cover" src="{{ $imgUrl }}" alt="{{ $product->nama_produk }}"/>
 </div>
 </td>
 <td class="p-4">
-<a href="{{ route('inventory_detail', 1) }}" class="font-body-md font-bold text-on-surface hover:text-primary transition-colors">Minimalist Amber Vase</a>
-<div class="text-[12px] text-secondary">Added Oct 12, 2023</div>
+<a href="{{ route('product.detail', $product->id) }}" class="font-body-md font-bold text-on-surface hover:text-primary transition-colors">{{ $product->nama_produk }}</a>
+<div class="text-[12px] text-secondary">Ditambahkan {{ $product->created_at->format('d M Y') }}</div>
 </td>
-<td class="p-4 font-body-sm text-secondary">LUM-VS-001</td>
+<td class="p-4 font-body-sm text-secondary">PRD-00{{ $product->id }}</td>
 <td class="p-4">
-<span class="px-2 py-1 bg-primary-fixed text-on-primary-fixed-variant rounded text-[12px] font-bold">Home Decor</span>
+<span class="px-2 py-1 bg-primary-fixed text-on-primary-fixed-variant rounded text-[12px] font-bold">{{ $product->category->nama_kategori ?? 'Umum' }}</span>
 </td>
 <td class="p-4">
 <div class="flex flex-col gap-y-1">
 <div class="flex justify-between items-center text-[12px]">
+@if($product->stok < 10)
 <span class="text-error font-bold flex items-center gap-1">
-<span class="material-symbols-outlined text-sm" data-icon="warning">warning</span> Low Stock
-                                            </span>
-<span class="font-bold">8 / 50</span>
-</div>
-<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
-<div class="h-full bg-error transition-all duration-500" style="width: 16%"></div>
+<span class="material-symbols-outlined text-sm">warning</span> Low Stock
+</span>
+@else
+<span class="text-emerald-600 font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">check_circle</span> In Stock
+</span>
+@endif
+<span class="font-bold">{{ $product->stok }} pcs</span>
 </div>
 </div>
 </td>
-<td class="p-4 font-body-md font-bold">$45.00</td>
+<td class="p-4 font-body-md font-bold">Rp {{ number_format($product->harga, 0, ',', '.') }}</td>
 <td class="p-4 text-right">
 <div class="flex justify-end gap-x-2">
-<a href="{{ route('edit_product', 1) }}" class="p-2 text-secondary hover:text-primary hover:bg-primary-fixed rounded-lg transition-all active:scale-95 inline-flex items-center justify-center" title="Edit">
-<span class="material-symbols-outlined" data-icon="edit">edit</span>
+<a href="{{ route('edit_product', $product->id) }}" class="p-2 text-secondary hover:text-primary hover:bg-primary-fixed rounded-lg transition-all active:scale-95 inline-flex items-center justify-center" title="Edit">
+<span class="material-symbols-outlined">edit</span>
 </a>
-<button class="p-2 text-secondary hover:text-error hover:bg-error-container rounded-lg transition-all active:scale-95" title="Delete">
-<span class="material-symbols-outlined" data-icon="delete">delete</span>
+<form action="{{ route('products.destroy', $product->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk ini?');" class="inline">
+@csrf
+@method('DELETE')
+<button type="submit" class="p-2 text-secondary hover:text-error hover:bg-error-container rounded-lg transition-all active:scale-95" title="Delete">
+<span class="material-symbols-outlined">delete</span>
 </button>
+</form>
 </div>
 </td>
 </tr>
-<!-- Item 2: Healthy Stock -->
-<tr class="hover:bg-surface-container-lowest transition-colors group">
-<td class="p-4">
-<div class="w-12 h-12 bg-surface-container-high rounded-lg overflow-hidden border border-outline-variant">
-<img class="w-full h-full object-cover" data-alt="A pair of high-fidelity wireless headphones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRCo1aJArT3U2USbES-RWH_Gq-78RbOC7MbtsKwAv5Ik1qzDaSi3ZuPffmoEfYd7ZesmKuURRjkLwz1ZPsSMJqSr0uV285daFAtmOcAX3QbiM75x3rbl0ss1zuUT9Rp7cyzGHP3TQt09lS-m8J7zfCAtUoSWdm8HKvSCKKfdI6Uvx_V0mdw3ZUGFKVu0UzdYTsGUhJje_ZiGPq8jQfenDLJiKR_wDcr5jBQztAVFGV5O5pmDti2jP4"/>
-</div>
-</td>
-<td class="p-4">
-<a href="{{ route('inventory_detail', 2) }}" class="font-body-md font-bold text-on-surface hover:text-primary transition-colors">Luminous Pro Audio</a>
-<div class="text-[12px] text-secondary">Added Sep 24, 2023</div>
-</td>
-<td class="p-4 font-body-sm text-secondary">LUM-AUD-88</td>
-<td class="p-4">
-<span class="px-2 py-1 bg-surface-container-high text-on-secondary-container rounded text-[12px] font-bold">Electronics</span>
-</td>
-<td class="p-4">
-<div class="flex flex-col gap-y-1">
-<div class="flex justify-between items-center text-[12px]">
-<span class="text-on-surface-variant font-medium">Healthy Stock</span>
-<span class="font-bold">142 / 200</span>
-</div>
-<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
-<div class="h-full bg-primary-container transition-all duration-500" style="width: 71%"></div>
-</div>
-</div>
-</td>
-<td class="p-4 font-body-md font-bold">$189.99</td>
-<td class="p-4 text-right">
-<div class="flex justify-end gap-x-2">
-<a href="{{ route('edit_product', 2) }}" class="p-2 text-secondary hover:text-primary hover:bg-primary-fixed rounded-lg transition-all active:scale-95 inline-flex items-center justify-center" title="Edit">
-<span class="material-symbols-outlined" data-icon="edit">edit</span>
-</a>
-<button class="p-2 text-secondary hover:text-error hover:bg-error-container rounded-lg transition-all active:scale-95" title="Delete">
-<span class="material-symbols-outlined" data-icon="delete">delete</span>
-</button>
-</div>
+@empty
+<tr>
+<td colspan="7" class="p-8 text-center text-secondary">
+Belum ada produk di inventaris Anda. <a href="{{ route('add_product') }}" class="text-primary font-bold hover:underline">Tambah Produk Pertama</a>
 </td>
 </tr>
-<!-- Item 3: Wellness Product -->
-<tr class="hover:bg-surface-container-lowest transition-colors group">
-<td class="p-4">
-<div class="w-12 h-12 bg-surface-container-high rounded-lg overflow-hidden border border-outline-variant">
-<img class="w-full h-full object-cover" data-alt="Luxury essential oil diffuser bottle." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0w8Cr0j8iZf0ROoJllDLo4rRsK-_RlMZVVNERCi5n3wSSY3I2Uef6ZwvGTjXfwHLvcrRQ8qbpkTLDBJ386qAEQXDG4oTXbuYqYA5H5v9VqlM7nVePA3jyzHIpwWbbllN6UdnDRB0Mxw7ZRkd8ZihKanj2EIbovM4MujsKPEU7uWmzuIT4H-4yXooZCPupexHjcW-FuQYm-21MNY85dFJ3Vq9JwhTN0lbkTU-uYUDA-2NevQh4hNAj"/>
-</div>
-</td>
-<td class="p-4">
-<a href="{{ route('inventory_detail', 3) }}" class="font-body-md font-bold text-on-surface hover:text-primary transition-colors">Zen Mist Diffuser</a>
-<div class="text-[12px] text-secondary">Added Nov 02, 2023</div>
-</td>
-<td class="p-4 font-body-sm text-secondary">LUM-WLS-24</td>
-<td class="p-4">
-<span class="px-2 py-1 bg-surface-container-high text-on-secondary-container rounded text-[12px] font-bold">Wellness</span>
-</td>
-<td class="p-4">
-<div class="flex flex-col gap-y-1">
-<div class="flex justify-between items-center text-[12px]">
-<span class="text-on-surface-variant font-medium">Healthy Stock</span>
-<span class="font-bold">45 / 100</span>
-</div>
-<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
-<div class="h-full bg-primary-container transition-all duration-500" style="width: 45%"></div>
-</div>
-</div>
-</td>
-<td class="p-4 font-body-md font-bold">$34.50</td>
-<td class="p-4 text-right">
-<div class="flex justify-end gap-x-2">
-<a href="{{ route('edit_product', 3) }}" class="p-2 text-secondary hover:text-primary hover:bg-primary-fixed rounded-lg transition-all active:scale-95 inline-flex items-center justify-center" title="Edit">
-<span class="material-symbols-outlined" data-icon="edit">edit</span>
-</a>
-<button class="p-2 text-secondary hover:text-error hover:bg-error-container rounded-lg transition-all active:scale-95" title="Delete">
-<span class="material-symbols-outlined" data-icon="delete">delete</span>
-</button>
-</div>
-</td>
-</tr>
-<!-- Item 4: Out of Stock -->
-<tr class="hover:bg-surface-container-lowest transition-colors group bg-error-container/5">
-<td class="p-4">
-<div class="w-12 h-12 bg-surface-container-high rounded-lg overflow-hidden border border-outline-variant grayscale">
-<img class="w-full h-full object-cover" data-alt="A minimalist cotton t-shirt." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiQ1RjLwYnyQqSF3dXjWOduHWithi8f00rzP4Fftd6MOe9yulwLT2nDUlBN5EqqiU8twbKkMopkbiEKFpThpD3yzvbQeNhZ7oO_BFXxbmBE-4RfEuAiOApJrBPI2IJMafgmNo8P1Y5Rk4GIxUh3srkDP1P3HyuMMxkPm0-Y6iYd9YZp9M-MJ49mFc9XoJyG8PnBdW458Qd1sS9YwOnhtfncR_dloNkn_gyuHEPXR15Epyeff6AFe2f"/>
-</div>
-</td>
-<td class="p-4">
-<a href="{{ route('inventory_detail', 4) }}" class="font-body-md font-bold text-on-surface hover:text-primary transition-colors">Organic Cotton Tee</a>
-<div class="text-[12px] text-secondary">Added Aug 15, 2023</div>
-</td>
-<td class="p-4 font-body-sm text-secondary">LUM-FSH-09</td>
-<td class="p-4">
-<span class="px-2 py-1 bg-surface-container-high text-on-secondary-container rounded text-[12px] font-bold">Fashion</span>
-</td>
-<td class="p-4">
-<div class="flex flex-col gap-y-1">
-<div class="flex justify-between items-center text-[12px]">
-<span class="text-error font-bold">Out of Stock</span>
-<span class="font-bold">0 / 150</span>
-</div>
-<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
-<div class="h-full bg-error transition-all duration-500" style="width: 0%"></div>
-</div>
-</div>
-</td>
-<td class="p-4 font-body-md font-bold">$28.00</td>
-<td class="p-4 text-right">
-<div class="flex justify-end gap-x-2">
-<a href="{{ route('edit_product', 4) }}" class="p-2 text-secondary hover:text-primary hover:bg-primary-fixed rounded-lg transition-all active:scale-95 inline-flex items-center justify-center" title="Edit">
-<span class="material-symbols-outlined" data-icon="edit">edit</span>
-</a>
-<button class="p-2 text-secondary hover:text-error hover:bg-error-container rounded-lg transition-all active:scale-95" title="Delete">
-<span class="material-symbols-outlined" data-icon="delete">delete</span>
-</button>
-</div>
-</td>
-</tr>
+@endforelse
 </tbody>
 </table>
 </div>

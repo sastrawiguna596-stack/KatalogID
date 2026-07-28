@@ -212,71 +212,66 @@
                 <!-- Section: Cart Items -->
                 <section class="bg-surface-container-lowest border border-[#EDEDED] rounded-xl p-6">
                     <div class="flex items-center justify-between mb-6">
-                        <h2 class="font-headline-sm text-headline-sm">Shopping Cart (2 Items)</h2>
+                        <h2 class="font-headline-sm text-headline-sm">Shopping Cart ({{ count($cart) }} Items)</h2>
                     </div>
+
+                    @if(session('success'))
+                    <div class="mb-4 p-3 bg-emerald-100 text-emerald-800 rounded-lg text-body-sm font-bold">
+                        {{ session('success') }}
+                    </div>
+                    @endif
+
+                    @if(count($cart) > 0)
                     <div class="space-y-6">
-                        <!-- Item 1 -->
+                        @foreach($cart as $id => $item)
                         <div class="flex gap-6 pb-6 border-b border-[#EDEDED]">
                             <div class="w-24 h-24 bg-surface-container rounded-lg overflow-hidden flex-shrink-0">
                                 <img class="w-full h-full object-cover"
-                                    data-alt="A high-quality studio photograph of a handcrafted ceramic minimalist vase in off-white. The vase features a subtle textured surface and sits on a warm wood tabletop against a soft, bright neutral background. Professional studio lighting emphasizes the elegant silhouette and organic feel of the artisanal piece, reflecting a modern SME lifestyle aesthetic."
-                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLtBySK6Z4qQBbkTxdhx_cnUwSTXry1luxUPHybyyjhSZeslRj9TJESuWajw3zQFkwh4q4n22_XDDIPHo3xBA749zWmglPK7Thoxql66wlxOU4NFodtXc8h5sFUmxGI8D0WFb57q3RXBXrvxGbbuz3CKhvfg2xGJQ9OwNsyb92SZafdwB_iuok7om26LH73aLANmIDuo-7QnqTYkDkYkill69u5pyTv_EOU3TFAWlmiqHFR2IuGgbz" />
+                                    src="{{ str_starts_with($item['foto_path'], 'http') ? $item['foto_path'] : asset($item['foto_path'] ?: 'https://via.placeholder.com/150') }}" alt="{{ $item['nama_produk'] }}" />
                             </div>
                             <div class="flex-grow flex flex-col justify-between py-1">
                                 <div>
                                     <div class="flex justify-between items-start">
-                                        <h3 class="font-headline-sm text-[18px]">Artisan Ceramic Vase</h3>
-                                        <p class="font-bold text-primary">Rp. 45.000</p>
+                                        <h3 class="font-headline-sm text-[18px] font-bold">{{ $item['nama_produk'] }}</h3>
+                                        <p class="font-bold text-primary">Rp {{ number_format($item['harga'] * $item['jumlah'], 0, ',', '.') }}</p>
                                     </div>
-                                    <p class="text-body-sm text-secondary mt-1">Color: Sand White | Size: Medium</p>
+                                    <p class="text-body-sm text-secondary mt-1">Toko: {{ $item['store_name'] }} | Satuan: Rp {{ number_format($item['harga'], 0, ',', '.') }}</p>
                                 </div>
                                 <div class="flex justify-between items-center mt-4">
                                     <div class="flex items-center border border-[#EDEDED] rounded-lg">
-                                        <button
-                                            class="px-3 py-1 hover:bg-surface-container transition-colors">-</button>
-                                        <span class="px-4 font-semibold">1</span>
-                                        <button
-                                            class="px-3 py-1 hover:bg-surface-container transition-colors">+</button>
+                                        <form action="{{ route('cart.update', $id) }}" method="POST" class="inline">
+                                            @csrf
+                                            <input type="hidden" name="type" value="decrease">
+                                            <button type="submit" class="px-3 py-1 hover:bg-surface-container transition-colors">-</button>
+                                        </form>
+                                        <span class="px-4 font-semibold">{{ $item['jumlah'] }}</span>
+                                        <form action="{{ route('cart.update', $id) }}" method="POST" class="inline">
+                                            @csrf
+                                            <input type="hidden" name="type" value="increase">
+                                            <button type="submit" class="px-3 py-1 hover:bg-surface-container transition-colors">+</button>
+                                        </form>
                                     </div>
-                                    <button class="text-error flex items-center gap-1 hover:underline text-body-sm">
-                                        <span class="material-symbols-outlined text-sm">delete</span>
-                                        Remove
-                                    </button>
+                                    <form action="{{ route('cart.remove', $id) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-error flex items-center gap-1 hover:underline text-body-sm font-bold">
+                                            <span class="material-symbols-outlined text-sm">delete</span>
+                                            Hapus
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
-                        <!-- Item 2 -->
-                        <div class="flex gap-6">
-                            <div class="w-24 h-24 bg-surface-container rounded-lg overflow-hidden flex-shrink-0">
-                                <img class="w-full h-full object-cover"
-                                    data-alt="A premium close-up of a sustainably sourced linen throw blanket in a soft amber-gold hue. The fabric is neatly folded, showcasing its breathable weave and natural frayed edges. The lighting is warm and inviting, highlighting the soft texture and high-quality craftsmanship characteristic of a boutique home goods brand. The overall mood is cozy, sophisticated, and earthy."
-                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCp2Lozkvm4jJ7-3tO9-OxJAhUjVn4Qh2_UAHF1kM8PsvRlaCI3r1-8oCyaisR8R1Gl8Ttc1C_FkETS73yTc9ERPUiJ5JNL7jetXFRfgIbznHvumPKjSPwTyXjY4Gsly6R4j0Wf7je3XWlgWfKhQ4XipFlYVICEnitoOAgSh4UjZzO4N7XrImo2S8Sh_Y27JM1sgczAyFewN1uwJb7Il0H8kwpZhwNxJLg-E6CwquCtgoeL51S5JOkY" />
-                            </div>
-                            <div class="flex-grow flex flex-col justify-between py-1">
-                                <div>
-                                    <div class="flex justify-between items-start">
-                                        <h3 class="font-headline-sm text-[18px]">Woven Linen Throw</h3>
-                                        <p class="font-bold text-primary">Rp. 200.000</p>
-                                    </div>
-                                    <p class="text-body-sm text-secondary mt-1">Color: Harvest Gold | Size: 150x200cm
-                                    </p>
-                                </div>
-                                <div class="flex justify-between items-center mt-4">
-                                    <div class="flex items-center border border-[#EDEDED] rounded-lg">
-                                        <button
-                                            class="px-3 py-1 hover:bg-surface-container transition-colors">-</button>
-                                        <span class="px-4 font-semibold">1</span>
-                                        <button
-                                            class="px-3 py-1 hover:bg-surface-container transition-colors">+</button>
-                                    </div>
-                                    <button class="text-error flex items-center gap-1 hover:underline text-body-sm">
-                                        <span class="material-symbols-outlined text-sm">delete</span>
-                                        Remove
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                        @endforeach
                     </div>
+                    @else
+                    <div class="py-12 text-center">
+                        <span class="material-symbols-outlined text-6xl text-secondary mb-3">shopping_cart</span>
+                        <p class="text-headline-sm text-on-surface mb-2 font-bold">Keranjang Belanja Anda Kosong</p>
+                        <p class="text-secondary font-body-sm mb-6">Belum ada barang yang Anda tambahkan ke keranjang.</p>
+                        <a href="{{ route('shop') }}" class="px-6 py-3 bg-primary text-on-primary font-bold rounded-lg hover:bg-[#684900] transition-colors inline-block">Mulai Belanja Sekarang</a>
+                    </div>
+                    @endif
                 </section>
                 <!-- Section: Shipping & Delivery -->
                 <section class="bg-surface-container-lowest border border-[#EDEDED] rounded-xl p-6">
@@ -286,57 +281,15 @@
                             <label class="block text-label-md text-secondary">Contact Information</label>
                             <input
                                 class="w-full h-12 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface"
-                                placeholder="Email Address" type="email" />
+                                value="{{ Auth::user()->email ?? '' }}" placeholder="Email Address" type="email" />
                             <input
                                 class="w-full h-12 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface"
-                                placeholder="Phone Number" type="tel" />
+                                value="{{ Auth::user()->phone ?? '' }}" placeholder="Phone Number" type="tel" />
                         </div>
                         <div class="space-y-4">
                             <label class="block text-label-md text-secondary">Shipping Address</label>
                             <input
                                 class="w-full h-12 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface"
-                                placeholder="Full Name" type="text" />
-                            <input
-                                class="w-full h-12 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface"
-                                placeholder="Street Address" type="text" />
-                        </div>
-                    </div>
-                    <div class="space-y-4">
-                        <label class="block text-label-md text-secondary">Delivery Method</label>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <!-- Option 1 -->
-                            <label
-                                class="relative flex items-center p-4 border border-primary rounded-xl bg-primary/5 cursor-pointer">
-                                <input checked="" class="hidden" name="delivery" type="radio" />
-                                <div class="flex-grow">
-                                    <div class="flex justify-between items-center">
-                                        <span class="font-semibold text-on-surface">Standard Shipping</span>
-                                        <span class="text-primary font-bold">Free</span>
-                                    </div>
-                                    <p class="text-body-sm text-secondary">Estimated 3-5 business days</p>
-                                </div>
-                                <div
-                                    class="w-5 h-5 ml-4 rounded-full border-2 border-primary flex items-center justify-center">
-                                    <div class="w-2.5 h-2.5 rounded-full bg-primary"></div>
-                                </div>
-                            </label>
-                            <!-- Option 2 -->
-                            <label
-                                class="relative flex items-center p-4 border border-[#EDEDED] rounded-xl hover:bg-surface-container-low transition-colors cursor-pointer">
-                                <input class="hidden" name="delivery" type="radio" />
-                                <div class="flex-grow">
-                                    <div class="flex justify-between items-center">
-                                        <span class="font-semibold text-on-surface">Express Delivery</span>
-                                        <span class="text-primary font-bold">Rp. 12.000</span>
-                                    </div>
-                                    <p class="text-body-sm text-secondary">Next business day arrival</p>
-                                </div>
-                                <div class="w-5 h-5 ml-4 rounded-full border-2 border-outline-variant"></div>
-                            </label>
-                        </div>
-                    </div>
-                </section>
-                <!-- Section: Payment Method -->
                 <section class="bg-surface-container-lowest border border-[#EDEDED] rounded-xl p-6">
                     <h2 class="font-headline-sm text-headline-sm mb-6">Payment Method</h2>
                     <div class="space-y-4">

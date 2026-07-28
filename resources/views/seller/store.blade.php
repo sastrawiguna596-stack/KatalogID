@@ -148,137 +148,78 @@
 </div>
 </div>
 </header>
-<main><section class="bg-white border-b border-surface-container-highest">
+<main>
+<section class="bg-white border-b border-surface-container-highest">
 <div class="max-w-container-max mx-auto px-margin-desktop py-6 flex flex-col md:flex-row items-center justify-between gap-6">
 <div class="flex items-center gap-4">
-<div class="w-16 h-16 rounded-full bg-primary-fixed/20 flex items-center justify-center text-primary overflow-hidden border border-surface-container-highest">
+<div class="w-16 h-16 rounded-full bg-primary-container/20 flex items-center justify-center text-primary overflow-hidden border border-surface-container-highest">
 <span class="material-symbols-outlined text-4xl">storefront</span>
 </div>
 <div>
-<h1 class="font-headline-md text-on-surface">Luminous Official Store</h1>
+<h1 class="font-headline-md text-on-surface font-bold">{{ $store->nama_toko }}</h1>
 <div class="flex items-center gap-3 mt-1">
 <div class="flex items-center gap-1 text-body-sm text-secondary">
 <span class="material-symbols-outlined text-[16px] text-primary" style="font-variation-settings: 'FILL' 1">star</span>
-<span>4.9 (12.5k Rating)</span>
+<span>4.9 (Official Seller)</span>
 </div>
 <div class="w-[1px] h-3 bg-surface-container-highest"></div>
-<div class="text-body-sm text-secondary">Jakarta Selatan</div>
+<div class="text-body-sm font-bold text-primary">{{ $products->count() }} Produk Aktif</div>
 </div>
+<p class="text-body-sm text-secondary mt-1 max-w-xl">{{ $store->deskripsi ?? 'Toko Resmi di Katalog IDN' }}</p>
 </div>
 </div>
 <div class="flex items-center gap-3">
-<button class="flex items-center gap-2 border border-primary text-primary px-6 py-2 rounded-lg font-label-md hover:bg-primary/5 transition-all">
-<span class="material-symbols-outlined text-[20px]">chat</span>
-                Hubungi Penjual
-            </button>
-<button class="flex items-center gap-2 bg-primary text-white px-8 py-2 rounded-lg font-label-md hover:brightness-110 transition-all">
+@auth
+@if(Auth::id() === $store->user_id)
+<a href="{{ route('add_product') }}" class="flex items-center gap-2 bg-primary text-white px-6 py-2 rounded-lg font-label-md hover:brightness-110 transition-all font-bold">
 <span class="material-symbols-outlined text-[20px]">add</span>
-                Follow
-            </button>
+    Tambah Produk Baru
+</a>
+@endif
+@endauth
 </div>
 </div>
 </section>
-<!-- Simple Hero Banner -->
-<!-- Spesial Diskon (Flash Sale) Section -->
+
+<!-- Produk Toko Section -->
 <section class="max-w-container-max mx-auto px-margin-desktop py-8">
-<div class="flex justify-between items-center mb-4">
+<div class="flex justify-between items-center mb-6">
 <div class="flex items-center gap-3">
-<h2 class="font-headline-md text-on-surface">Spesial Diskon</h2>
-<div class="hidden sm:flex items-center gap-1.5 bg-error text-white px-2 py-0.5 rounded text-xs font-bold">
-<span class="material-symbols-outlined text-[14px]">schedule</span>
-                    Ends in 02:45:12
-                </div>
-</div>
-<a class="text-primary font-label-md hover:underline" href="#">Lihat Semua</a>
-</div>
-<div class="flex gap-4 overflow-x-auto hide-scrollbar pb-4 -mx-1 px-1">
-<!-- Product Cards inspired by reference -->
-<div class="flex-shrink-0 w-[180px] product-card border border-surface-container-highest rounded-xl bg-white overflow-hidden cursor-pointer">
-<div class="aspect-square bg-surface-container-low">
-<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBD8oIbLdEJ27VrY6N4RIYehPehrCajSLKuL4nOrFR5Re1te7TCYcSqeL5nM2IHnO0uwHhTU3RpG-5wYab9q4o6q4dBuEXkmO0I9SMxkym3R9AHXLeYFq9-dfAMwrCMk4whExXZ7aYxHVFcS164rrJ50VzULt3aeSpVKqWRGbPS4G_-hPjw04d1OH5EuQ3nmummxik7vYIzUmmCyRdlyvDMMYmKui4aB2uYaEXvgh06kKaJlKd3AUAC"/>
-</div>
-<div class="p-3 space-y-1">
-<h3 class="text-body-sm line-clamp-2 min-h-[36px]">Handcrafted Soy Candle</h3>
-<div class="text-body-md font-bold text-on-surface">Rp85.000</div>
-<div class="flex items-center gap-1">
-<span class="bg-error-container text-error text-[10px] px-1 font-bold rounded">15%</span>
-<span class="text-[11px] text-secondary line-through">Rp100.000</span>
-</div>
-<div class="flex items-center gap-1 text-[11px] text-secondary">
-<span class="material-symbols-outlined text-primary text-[12px]" style="font-variation-settings: 'FILL' 1">star</span>
-<span>4.9 | 2k+ terjual</span>
+<h2 class="font-headline-md text-on-surface font-bold">Katalog Produk Toko</h2>
+<span class="bg-primary-container text-on-primary-container text-xs px-2.5 py-1 rounded-full font-bold">{{ $products->count() }} Items</span>
 </div>
 </div>
-</div>
-<div class="flex-shrink-0 w-[180px] product-card border border-surface-container-highest rounded-xl bg-white overflow-hidden cursor-pointer">
-<div class="aspect-square bg-surface-container-low">
-<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzs4LoaaViAat6vXRgB8ql1FD2-wU4dTj_KWdBAB2znRCHywAGJT6V78Uj8utS88mtg9EFs7CqZ553hUFXUz9mT0u30sMFR6GqPBA2mEoVKgOLUgByYKLPoj2mkvrIEE-z5-wKF7IcX9dLD3g-1LbPywaJS0nbWuhm2vv3Yv8Wx6QXgsX5cq3PiWo7fn5Pj0vEt9pM56LHbc8Sa7Qm16pou3Mf4xusrnAUwKM4rMpdsS4jsD1iCk8k"/>
-</div>
-<div class="p-3 space-y-1">
-<h3 class="text-body-sm line-clamp-2 min-h-[36px]">Wooden Kitchen Utensil Set</h3>
-<div class="text-body-md font-bold text-on-surface">Rp120.000</div>
-<div class="flex items-center gap-1">
-<span class="bg-error-container text-error text-[10px] px-1 font-bold rounded">20%</span>
-<span class="text-[11px] text-secondary line-through">Rp150.000</span>
-</div>
-<div class="flex items-center gap-1 text-[11px] text-secondary">
-<span class="material-symbols-outlined text-primary text-[12px]" style="font-variation-settings: 'FILL' 1">star</span>
-<span>4.8 | 500+ terjual</span>
-</div>
-</div>
-</div>
-<div class="flex-shrink-0 w-[180px] product-card border border-surface-container-highest rounded-xl bg-white overflow-hidden cursor-pointer">
-<div class="aspect-square bg-surface-container-low">
-<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCps2VzngqRRv77XdCeicXCGQFux2NJWbOHVl2j7M-Y8L3CQKCA2g-DNJYX8Vk2Sf2ena-_o_lUWqUXz5MvO8tBvfH9SRz7TvNBcrEBz6v7ZItftIknCSxDFDH9zzbCzFbt7Gh_DOlz_eSagaTe4WurY2c0DuUm8c3PqUqvdwoKeEM_i1nKzj2jd_IQq803rYKCepciPz3hPem96_-8HvBgzwNd_2PVvrjRlXhz1YMwMQOEHKFH0mvd"/>
-</div>
-<div class="p-3 space-y-1">
-<h3 class="text-body-sm line-clamp-2 min-h-[36px]">Minimalist Felt Desk Mat</h3>
-<div class="text-body-md font-bold text-on-surface">Rp175.000</div>
-<div class="flex items-center gap-1 text-[11px] text-secondary">
-<span class="material-symbols-outlined text-primary text-[12px]" style="font-variation-settings: 'FILL' 1">star</span>
-<span>5.0 | 1k+ terjual</span>
-</div>
-</div>
-</div>
-<div class="flex-shrink-0 w-[180px] product-card border border-surface-container-highest rounded-xl bg-white overflow-hidden cursor-pointer">
-<div class="aspect-square bg-surface-container-low">
-<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBD8oIbLdEJ27VrY6N4RIYehPehrCajSLKuL4nOrFR5Re1te7TCYcSqeL5nM2IHnO0uwHhTU3RpG-5wYab9q4o6q4dBuEXkmO0I9SMxkym3R9AHXLeYFq9-dfAMwrCMk4whExXZ7aYxHVFcS164rrJ50VzULt3aeSpVKqWRGbPS4G_-hPjw04d1OH5EuQ3nmummxik7vYIzUmmCyRdlyvDMMYmKui4aB2uYaEXvgh06kKaJlKd3AUAC"/>
-</div>
-<div class="p-3 space-y-1">
-<h3 class="text-body-sm line-clamp-2 min-h-[36px]">Ceramic Texture Vase</h3>
-<div class="text-body-md font-bold text-on-surface">Rp210.000</div>
-<div class="flex items-center gap-1 text-[11px] text-secondary">
-<span class="material-symbols-outlined text-primary text-[12px]" style="font-variation-settings: 'FILL' 1">star</span>
-<span>4.7 | 100+ terjual</span>
-</div>
-</div>
-</div>
-<div class="flex-shrink-0 w-[180px] product-card border border-surface-container-highest rounded-xl bg-white overflow-hidden cursor-pointer">
-<div class="aspect-square bg-surface-container-low">
-<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzs4LoaaViAat6vXRgB8ql1FD2-wU4dTj_KWdBAB2znRCHywAGJT6V78Uj8utS88mtg9EFs7CqZ553hUFXUz9mT0u30sMFR6GqPBA2mEoVKgOLUgByYKLPoj2mkvrIEE-z5-wKF7IcX9dLD3g-1LbPywaJS0nbWuhm2vv3Yv8Wx6QXgsX5cq3PiWo7fn5Pj0vEt9pM56LHbc8Sa7Qm16pou3Mf4xusrnAUwKM4rMpdsS4jsD1iCk8k"/>
-</div>
-<div class="p-3 space-y-1">
-<h3 class="text-body-sm line-clamp-2 min-h-[36px]">Sleek Task Lamp</h3>
-<div class="text-body-md font-bold text-on-surface">Rp450.000</div>
-<div class="flex items-center gap-1 text-[11px] text-secondary">
-<span class="material-symbols-outlined text-primary text-[12px]" style="font-variation-settings: 'FILL' 1">star</span>
-<span>4.9 | 800+ terjual</span>
-</div>
-</div>
-</div>
-<div class="flex-shrink-0 w-[180px] product-card border border-surface-container-highest rounded-xl bg-white overflow-hidden cursor-pointer">
-<div class="aspect-square bg-surface-container-low">
-<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCps2VzngqRRv77XdCeicXCGQFux2NJWbOHVl2j7M-Y8L3CQKCA2g-DNJYX8Vk2Sf2ena-_o_lUWqUXz5MvO8tBvfH9SRz7TvNBcrEBz6v7ZItftIknCSxDFDH9zzbCzFbt7Gh_DOlz_eSagaTe4WurY2c0DuUm8c3PqUqvdwoKeEM_i1nKzj2jd_IQq803rYKCepciPz3hPem96_-8HvBgzwNd_2PVvrjRlXhz1YMwMQOEHKFH0mvd"/>
-</div>
-<div class="p-3 space-y-1">
-<h3 class="text-body-sm line-clamp-2 min-h-[36px]">Artisanal Leather Journal</h3>
-<div class="text-body-md font-bold text-on-surface">Rp325.000</div>
-<div class="flex items-center gap-1 text-[11px] text-secondary">
-<span class="material-symbols-outlined text-primary text-[12px]" style="font-variation-settings: 'FILL' 1">star</span>
-<span>4.9 | 1.2k+ terjual</span>
-</div>
-</div>
-</div>
+
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+    @forelse($products as $product)
+    <div onclick="window.location.href='{{ url('/product') }}/{{ $product->id }}'" class="product-card border border-surface-container-highest rounded-xl bg-white overflow-hidden cursor-pointer flex flex-col justify-between hover:shadow-md transition-all">
+        <div class="aspect-square bg-surface-container-low overflow-hidden relative">
+            <img class="w-full h-full object-cover" src="{{ str_starts_with($product->galleries->first()?->foto_path ?? '', 'http') ? $product->galleries->first()?->foto_path : asset($product->galleries->first()?->foto_path ?: 'https://via.placeholder.com/200') }}" alt="{{ $product->nama_produk }}"/>
+            @if($product->badge)
+            <span class="absolute top-2 left-2 bg-primary text-on-primary text-[10px] font-bold px-2 py-0.5 rounded">{{ $product->badge }}</span>
+            @endif
+        </div>
+        <div class="p-3 space-y-1">
+            <h3 class="text-body-sm font-bold line-clamp-2 min-h-[36px]">{{ $product->nama_produk }}</h3>
+            <div class="text-body-md font-bold text-primary">Rp {{ number_format($product->harga, 0, ',', '.') }}</div>
+            <div class="flex items-center gap-1 text-[11px] text-secondary">
+                <span class="material-symbols-outlined text-primary text-[12px]" style="font-variation-settings: 'FILL' 1">star</span>
+                <span>4.9 | Stok {{ $product->stok }}</span>
+            </div>
+        </div>
+    </div>
+    @empty
+    <div class="col-span-full py-12 text-center text-secondary bg-surface-container-low rounded-xl">
+        <span class="material-symbols-outlined text-5xl mb-2 text-primary">inventory_2</span>
+        <p class="font-bold text-lg text-on-surface">Toko Ini Belum Memiliki Produk</p>
+        <p class="text-sm mt-1 mb-4">Tambahkan produk baru melalui Dashboard Seller.</p>
+        @auth
+        @if(Auth::id() === $store->user_id)
+        <a href="{{ route('add_product') }}" class="px-6 py-2.5 bg-primary text-on-primary font-bold rounded-lg hover:brightness-110 transition-colors inline-block">+ Tambah Produk</a>
+        @endif
+        @endauth
+    </div>
+    @endforelse
 </div>
 </section>
 <!-- Curated Collections - Simplified Cards -->

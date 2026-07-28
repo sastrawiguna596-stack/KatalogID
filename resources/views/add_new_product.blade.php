@@ -204,7 +204,8 @@
             <span class="text-on-surface">Add Product</span>
         </nav>
 
-        <form action="{{ route('inventories') }}" method="GET" class="space-y-gutter">
+        <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data" class="space-y-gutter">
+            @csrf
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-gutter mb-stack-lg">
                 <div>
                     <h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">Create New Product</h2>
@@ -214,11 +215,17 @@
                     <a href="{{ route('inventories') }}" class="px-gutter py-3 border border-outline-variant text-on-surface font-label-md rounded-lg hover:bg-surface-container-high transition-colors">
                         Cancel
                     </a>
-                    <button type="submit" class="px-gutter py-3 bg-primary text-on-secondary font-label-md rounded-lg hover:bg-[#704f00] transition-colors shadow-sm">
+                    <button type="submit" class="px-gutter py-3 bg-primary text-on-secondary font-label-md rounded-lg hover:bg-[#704f00] transition-colors shadow-sm font-bold">
                         Save Product
                     </button>
                 </div>
             </div>
+
+            @if(session('error'))
+            <div class="p-4 bg-error-container text-on-error-container rounded-lg font-body-md">
+                {{ session('error') }}
+            </div>
+            @endif
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
                 <div class="lg:col-span-2 space-y-gutter">
@@ -226,56 +233,60 @@
                         <h3 class="font-headline-sm text-headline-sm mb-stack-md text-on-surface">Basic Information</h3>
                         <div class="space-y-6">
                             <div>
-                                <label class="block font-label-md text-label-md text-secondary mb-2">Product Title *</label>
-                                <input required class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-on-background transition-all outline-none" type="text" placeholder="e.g. Vas Terakota Handcrafted"/>
+                                <label class="block font-label-md text-label-md text-secondary mb-2">Nama Produk *</label>
+                                <input name="nama_produk" required class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-on-background transition-all outline-none" type="text" placeholder="e.g. Vas Terakota Handcrafted"/>
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label class="block font-label-md text-label-md text-secondary mb-2">Category *</label>
-                                    <select class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-on-background transition-all outline-none appearance-none cursor-pointer">
-                                        <option>Essentials</option>
-                                        <option>Kitchenware</option>
-                                        <option>Lighting</option>
-                                        <option>Furniture</option>
+                                    <label class="block font-label-md text-label-md text-secondary mb-2">Kategori *</label>
+                                    <select name="category_id" required class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-on-background transition-all outline-none appearance-none cursor-pointer">
+                                        @foreach($categories as $cat)
+                                        <option value="{{ $cat->id }}">{{ $cat->nama_kategori }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block font-label-md text-label-md text-secondary mb-2">SKU Code</label>
-                                    <input class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-on-background transition-all outline-none" type="text" placeholder="e.g. LUM-VS-009"/>
+                                    <label class="block font-label-md text-label-md text-secondary mb-2">Berat (Gram) *</label>
+                                    <input name="berat_gram" value="500" required class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-on-background transition-all outline-none" type="number" placeholder="500"/>
                                 </div>
                             </div>
                             <div>
-                                <label class="block font-label-md text-label-md text-secondary mb-2">Description</label>
-                                <textarea class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-on-background transition-all outline-none" rows="5" placeholder="Detailed product description..."></textarea>
+                                <label class="block font-label-md text-label-md text-secondary mb-2">Deskripsi Lengkap *</label>
+                                <textarea name="deskripsi_lengkap" required class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-on-background transition-all outline-none" rows="5" placeholder="Deskripsi lengkap tentang produk..."></textarea>
                             </div>
                         </div>
                     </section>
 
                     <section class="bg-surface-container-lowest p-gutter rounded-xl border border-[#EDEDED]">
-                        <h3 class="font-headline-sm text-headline-sm mb-stack-md text-on-surface">Media Upload</h3>
+                        <h3 class="font-headline-sm text-headline-sm mb-stack-md text-on-surface">Upload Foto Produk</h3>
                         <div class="border-2 border-dashed border-outline-variant rounded-xl p-8 text-center flex flex-col items-center justify-center gap-3">
                             <span class="material-symbols-outlined text-4xl text-primary">cloud_upload</span>
-                            <p class="font-label-md text-on-surface">Drag and drop product images here, or <span class="text-primary underline cursor-pointer">browse</span></p>
-                            <p class="text-body-sm text-secondary">PNG, JPG, WEBP up to 5MB</p>
+                            <p class="font-label-md text-on-surface">Pilih file gambar untuk produk ini</p>
+                            <input type="file" name="gambar[]" multiple class="block w-full text-sm text-secondary file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-container file:text-on-primary-container hover:file:bg-[#ffaa00]"/>
+                            <p class="text-body-sm text-secondary">PNG, JPG, WEBP hingga 2MB per file</p>
                         </div>
                     </section>
                 </div>
 
                 <div class="space-y-gutter">
                     <section class="bg-surface-container-lowest p-gutter rounded-xl border border-[#EDEDED]">
-                        <h3 class="font-headline-sm text-headline-sm mb-stack-md text-on-surface">Pricing & Stock</h3>
+                        <h3 class="font-headline-sm text-headline-sm mb-stack-md text-on-surface">Harga & Stok</h3>
                         <div class="space-y-4">
                             <div>
-                                <label class="block font-label-md text-secondary mb-2">Regular Price (Rp) *</label>
-                                <input required class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 outline-none" type="number" placeholder="50000"/>
+                                <label class="block font-label-md text-secondary mb-2">Harga (Rp) *</label>
+                                <input name="harga" required class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 outline-none" type="number" placeholder="50000"/>
                             </div>
                             <div>
-                                <label class="block font-label-md text-secondary mb-2">Discount Price (Rp)</label>
-                                <input class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 outline-none" type="number" placeholder="45000"/>
+                                <label class="block font-label-md text-secondary mb-2">Harga Sebelum Diskon (Rp)</label>
+                                <input name="harga_diskon" class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 outline-none" type="number" placeholder="60000"/>
                             </div>
                             <div>
-                                <label class="block font-label-md text-secondary mb-2">Stock Quantity *</label>
-                                <input required class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 outline-none" type="number" placeholder="100"/>
+                                <label class="block font-label-md text-secondary mb-2">Jumlah Stok *</label>
+                                <input name="stok" value="25" required class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 outline-none" type="number" placeholder="25"/>
+                            </div>
+                            <div>
+                                <label class="block font-label-md text-secondary mb-2">Badge (Opsional)</label>
+                                <input name="badge" class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 outline-none" type="text" placeholder="NEW / SALE / BEST SELLER"/>
                             </div>
                         </div>
                     </section>

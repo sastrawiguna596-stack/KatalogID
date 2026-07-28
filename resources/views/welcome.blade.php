@@ -362,19 +362,33 @@
                 href="{{ route('home') }}#about">About</a>
         </nav>
         <div class="flex items-center gap-stack-md">
-            <a href="{{ route('shop') }}" class="material-symbols-outlined text-secondary hover:text-primary transition-colors">
+            <a href="{{ route('shop') }}" class="material-symbols-outlined text-secondary hover:text-primary transition-colors" title="Cari Produk">
                 search
             </a>
             <div class="relative group">
-                <a href="{{ route('cart') }}" class="material-symbols-outlined text-secondary group-hover:text-primary transition-colors">
+                <a href="{{ route('cart') }}" class="material-symbols-outlined text-secondary group-hover:text-primary transition-colors" title="Keranjang Belanja">
                     shopping_cart
                 </a>
-                <span
-                    class="absolute -top-2 -right-2 bg-primary text-on-primary text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">2</span>
+                @if(count(session('cart', [])) > 0)
+                <span class="absolute -top-2 -right-2 bg-primary text-on-primary text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">{{ count(session('cart', [])) }}</span>
+                @endif
             </div>
-            <a href="{{ route('account') }}" class="material-symbols-outlined text-secondary hover:text-primary transition-colors">
-                person
+            @auth
+            <a href="{{ route('profile') }}" class="flex items-center gap-1 text-primary font-bold font-label-md hover:underline" title="Profil Saya">
+                <span class="material-symbols-outlined">account_circle</span>
+                <span class="hidden md:inline">{{ Auth::user()->name }}</span>
             </a>
+            <form action="{{ route('logout') }}" method="POST" class="inline">
+                @csrf
+                <button type="submit" class="text-error hover:text-red-700 transition-colors p-1 flex items-center justify-center" title="Keluar / Logout">
+                    <span class="material-symbols-outlined">logout</span>
+                </button>
+            </form>
+            @else
+            <a href="{{ route('login') }}" class="flex items-center gap-1 font-label-md text-primary font-bold px-3 py-1.5 border border-primary rounded-lg hover:bg-primary hover:text-on-primary transition-all">
+                <span class="material-symbols-outlined text-sm">login</span> Masuk
+            </a>
+            @endauth
         </div>
     </header>
     <!-- Hero Section – full viewport width, outside the constrained <main> -->
@@ -423,67 +437,14 @@
                     All</a>
             </div>
             <div class="flex gap-gutter overflow-x-auto pb-4 no-scrollbar stagger-children">
-                <!-- Categories -->
-                <div class="flex-shrink-0 group cursor-pointer">
-                    <div
-                        class="w-48 h-48 rounded-full overflow-hidden mb-base border border-outline-variant group-hover:border-primary transition-colors">
-                        <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                            data-alt="Close-up shot of hand-woven organic cotton textile with intricate minimalist patterns in soft charcoal and beige tones. The lighting is soft and diffused, highlighting the tactile quality of the fabric. The image fits a premium e-commerce aesthetic with high-key lighting and clean backgrounds."
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSLLZg_RtVXsKMga-umfuLiCpG3SyKjeRJshF7x3XXIcPfwBGUZUCnWxIu4-lZYidF0VeEdpd-Kysmrdb06q6H_y1c0XeiIkfCNa9wBPef6iycn-qnNwxQwRNdejwKXmP5C_DVVG04OwwI5xrbbVO-V6HRiLJsm_EyyYvDdMflD2vuOByUQrwtijWmzXxDo3aF_3vqW1niod_wHxgm_XY7ptxx24mbCRWtZLcHV4lzQ4dVRZ_VOBPE" />
+                @foreach($categories as $cat)
+                <a href="{{ route('shop', ['category' => $cat->slug]) }}" class="flex-shrink-0 group cursor-pointer text-center">
+                    <div class="w-36 h-36 md:w-44 md:h-44 rounded-full overflow-hidden mb-base border border-outline-variant group-hover:border-primary transition-colors flex items-center justify-center bg-surface-container-low mx-auto">
+                        <span class="iconify text-primary text-4xl group-hover:scale-110 transition-transform duration-500" data-icon="{{ $cat->icon_path ?? 'ph:sparkle-bold' }}"></span>
                     </div>
-                    <p class="text-center font-label-md text-label-md text-on-surface group-hover:text-primary">Textiles
-                    </p>
-                </div>
-                <div class="flex-shrink-0 group cursor-pointer">
-                    <div
-                        class="w-48 h-48 rounded-full overflow-hidden mb-base border border-outline-variant group-hover:border-primary transition-colors">
-                        <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                            data-alt="A collection of matte-finished ceramic mugs and plates in earthy terracotta and sand colors, arranged on a white marble surface. Bright, natural light creates soft shadows, emphasizing the organic shapes and artisanal quality of the pottery. Modern minimalist style."
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCqUX4KYW4mFREtiKKfoUusSodQR-pLCAzZO0nxpJXDhBh72Orl_3XD2Uz3eUNVuyGUGVlHIF_hqS85-o3huVisa2Vf15MBPuDl2lGyvPTUY3upsQB3u1aS4_6_GtOr0kjKDUEujCqAMBV-L8yiSLY-sryMV13vNe5mD2vPCkBouVUGc7ymHixOTFkmYm07v9TcU8hpDjTFBJl6QUAyjXY4LjAr1nmaaewO1XC2UWe46SSg1cxiLmfO" />
-                    </div>
-                    <p class="text-center font-label-md text-label-md text-on-surface group-hover:text-primary">Ceramics
-                    </p>
-                </div>
-                <div class="flex-shrink-0 group cursor-pointer">
-                    <div
-                        class="w-48 h-48 rounded-full overflow-hidden mb-base border border-outline-variant group-hover:border-primary transition-colors">
-                        <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                            data-alt="High-quality handcrafted leather accessories including a wallet and a small pouch in rich cognac brown. The items are placed on a light oak wooden background with sharp, clean lighting that highlights the stitching detail and premium texture of the leather."
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZ65aXtoX_BRp9vPT5Q_jsKgMgRFCzmpvKA9sIG4-PDxqGa7ZRwJNCyK4AzKiYCj1fThw4dW48xdlvi5ger2DUUjdd_7wpmaZOLpdYXnN845BkjFy7dquGPMuA_AxwltJ9QGZ86RaFxOpaQ0ld3wuLuGzLKCloDRIqc1g3MupjRyg4tF9lEoU1dS1rvHbKq-bVdCCERboV9E3xUuLXOvaJSeICn8VjBOGpyprqnjYPcZ6P3JmbRYap" />
-                    </div>
-                    <p class="text-center font-label-md text-label-md text-on-surface group-hover:text-primary">Leather
-                        Goods</p>
-                </div>
-                <div class="flex-shrink-0 group cursor-pointer">
-                    <div
-                        class="w-48 h-48 rounded-full overflow-hidden mb-base border border-outline-variant group-hover:border-primary transition-colors">
-                        <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                            data-alt="A minimalist solid oak wood stool with elegant, tapered legs and a smooth natural finish. The stool is presented against a clean off-white background with a single sprig of dried eucalyptus in a glass vase nearby, creating a warm, Nordic-inspired atmosphere."
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6fPuM5P2DGAuNQYpZU4GCxcOrdNkFZAzkSfx4BaFrra9e34Q2CuR2FxY2NZXJTMUijUmMqrHiSJWnJvQs2ERyiPNm_yRUpHkW1ZEbeaE7zCs_c8sMPsblhpY8sfTQYmMtqXwBmaJnonZiPURdLAG4DGTzvZIZT8HhvoSWCeDD7eGc9LhkVOfXQn2k56WnlDdDSO1OWRhlvSus7dNDQJD1J5zW2HKmv7a5aS64xiN8YcgBvRDVOd6U" />
-                    </div>
-                    <p class="text-center font-label-md text-label-md text-on-surface group-hover:text-primary">
-                        Furniture</p>
-                </div>
-                <div class="flex-shrink-0 group cursor-pointer">
-                    <div
-                        class="w-48 h-48 rounded-full overflow-hidden mb-base border border-outline-variant group-hover:border-primary transition-colors">
-                        <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                            data-alt="Sleek, modern lighting fixture made of brushed brass and frosted glass. The lamp is positioned in a contemporary living room setting with neutral tones and soft ambient lighting that highlights its elegant silhouette and metallic glow."
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzOKriWuIWn-vhYLAZ4asrPQn2OixTk-p2FForn60MIN3YCo3Iy0_td9pMrcO98MNnQBXDQVpINfy4WkBeW3N0f0SZvcz8acL_AsaUOurML6q0900fws8WlTB6oCqXmOJeevVdVmrBicIBBkn03rq_93jEYXT71rbwtY-sdk-RQ56G5oXt5p2HNUcUL302xybH2HOgeaGud_4RKlPxOJCTg0je0TBAxP6E9z5tZqSZOct0GCbp_9v0" />
-                    </div>
-                    <p class="text-center font-label-md text-label-md text-on-surface group-hover:text-primary">Lighting
-                    </p>
-                </div>
-                <div class="flex-shrink-0 group cursor-pointer">
-                    <div
-                        class="w-48 h-48 rounded-full overflow-hidden mb-base border border-outline-variant group-hover:border-primary transition-colors">
-                        <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                            data-alt="Artisanal home fragrance set featuring a minimalist amber glass candle and a reed diffuser on a clean white shelf. The styling is airy and fresh, with a small succulent plant nearby. The image evokes a sense of relaxation and refined home living."
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvZ8ivuXL-vy8M8ru6XtmcZOqiDSFHbIF_SO5w15O3RbmGeloxTLekJ-F-sVM22yjwPp6EZKoNfXUThopsh_XU5JUpxSxrfj4U2tMly_gRsdlvwKF8p_reySA3aaX2fKz1G82vJsD2SUCGqtY-qiQoPinlQBRsNGhgEk9P0l8uzV3WAKOnmijbHUz-zP5CR1M1h4EMDBya7gGBKUWZ9DZSTH2EyvrB9uZNbOT3S3nLZZCv5aqN3Xaq" />
-                    </div>
-                    <p class="text-center font-label-md text-label-md text-on-surface group-hover:text-primary">
-                        Aromatherapy</p>
-                </div>
+                    <p class="text-center font-label-md text-label-md text-on-surface group-hover:text-primary">{{ $cat->nama_kategori }}</p>
+                </a>
+                @endforeach
             </div>
         </section>
     </main>
@@ -496,92 +457,30 @@
                 <p class="font-body-md text-body-md text-on-surface-variant max-w-xl">Produk yang dibuat untuk kegiatan sehari-hari dirumah maupun dliuar rumah.</p>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter stagger-children">
-                <!-- Product 1 -->
+                @foreach($products as $product)
                 <div class="bg-surface rounded-xl border border-[#EDEDED] p-4 product-card-hover group relative">
-                    <div class="absolute top-6 right-6 z-10">
-                        <button
-                            class="w-10 h-10 rounded-full bg-surface/80 backdrop-blur shadow-sm flex items-center justify-center text-secondary hover:text-error transition-colors">
-                            <span class="material-symbols-outlined"
-                                style="font-variation-settings: 'FILL' 0">favorite</span>
-                        </button>
-                    </div>
-                    <div class="aspect-square rounded-lg overflow-hidden bg-surface-container-low mb-4">
-                        <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            data-alt="Handmade crochet character keychain by school students"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSLLZg_RtVXsKMga-umfuLiCpG3SyKjeRJshF7x3XXIcPfwBGUZUCnWxIu4-lZYidF0VeEdpd-Kysmrdb06q6H_y1c0XeiIkfCNa9wBPef6iycn-qnNwxQwRNdejwKXmP5C_DVVG04OwwI5xrbbVO-V6HRiLJsm_EyyYvDdMflD2vuOByUQrwtijWmzXxDo3aF_3vqW1niod_wHxgm_XY7ptxx24mbCRWtZLcHV4lzQ4dVRZ_VOBPE" />
-                    </div>
-                    <span
-                        class="font-label-md text-[10px] text-primary uppercase tracking-widest mb-1 block">Karya Siswa</span>
-                    <a href="{{ route('product.detail', 1) }}"
-                        class="font-headline-sm text-headline-sm text-on-surface mb-1 hover:text-primary transition-colors block">Lap dapur</a>
-                    <div class="flex justify-between items-center">
-                        <p class="font-body-md text-body-md font-bold text-on-surface">Rp. 15.000</p>
-                        <button
-                            class="w-8 h-8 rounded-full border border-primary text-primary flex items-center justify-center hover:bg-primary hover:text-on-primary transition-all">
-                            <span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
-                        </button>
-                    </div>
-                </div>
-                <!-- Product 2 -->
-                <div class="bg-surface rounded-xl border border-[#EDEDED] p-4 product-card-hover group relative">
+                    @if($product->badge)
                     <div class="absolute top-6 left-6 z-10">
-                        <span class="px-2 py-1 bg-primary text-on-primary text-[10px] font-bold rounded">TERLARIS</span>
+                        <span class="px-2 py-1 bg-primary text-on-primary text-[10px] font-bold rounded">{{ $product->badge }}</span>
                     </div>
+                    @endif
                     <div class="aspect-square rounded-lg overflow-hidden bg-surface-container-low mb-4">
                         <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            data-alt="Locally made bamboo badminton racket"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6fPuM5P2DGAuNQYpZU4GCxcOrdNkFZAzkSfx4BaFrra9e34Q2CuR2FxY2NZXJTMUijUmMqrHiSJWnJvQs2ERyiPNm_yRUpHkW1ZEbeaE7zCs_c8sMPsblhpY8sfTQYmMtqXwBmaJnonZiPURdLAG4DGTzvZIZT8HhvoSWCeDD7eGc9LhkVOfXQn2k56WnlDdDSO1OWRhlvSus7dNDQJD1J5zW2HKmv7a5aS64xiN8YcgBvRDVOd6U" />
+                            src="{{ $product->galleries->first()?->foto_path ?? 'https://via.placeholder.com/400' }}"
+                            alt="{{ $product->nama_produk }}" />
                     </div>
-                    <span
-                        class="font-label-md text-[10px] text-primary uppercase tracking-widest mb-1 block">Kerajinan tangan</span>
-                    <a href="{{ route('product.detail', 2) }}"
-                        class="font-headline-sm text-headline-sm text-on-surface mb-1 hover:text-primary transition-colors block">Kursi kayu</a>
+                    <span class="font-label-md text-[10px] text-primary uppercase tracking-widest mb-1 block">{{ $product->category->nama_kategori ?? 'Kategori' }}</span>
+                    <a href="{{ route('product.detail', $product->id) }}"
+                        class="font-headline-sm text-headline-sm text-on-surface mb-1 hover:text-primary transition-colors block line-clamp-1">{{ $product->nama_produk }}</a>
                     <div class="flex justify-between items-center">
-                        <p class="font-body-md text-body-md font-bold text-on-surface">Rp. 35.000</p>
-                        <button
+                        <p class="font-body-md text-body-md font-bold text-on-surface">Rp {{ number_format($product->harga, 0, ',', '.') }}</p>
+                        <a href="{{ route('product.detail', $product->id) }}"
                             class="w-8 h-8 rounded-full border border-primary text-primary flex items-center justify-center hover:bg-primary hover:text-on-primary transition-all">
-                            <span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
-                        </button>
+                            <span class="material-symbols-outlined text-[18px]">add</span>
+                        </a>
                     </div>
                 </div>
-                <!-- Product 3 -->
-                <div class="bg-surface rounded-xl border border-[#EDEDED] p-4 product-card-hover group relative">
-                    <div class="aspect-square rounded-lg overflow-hidden bg-surface-container-low mb-4">
-                        <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            data-alt="Handcrafted painted notebook by students"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZ65aXtoX_BRp9vPT5Q_jsKgMgRFCzmpvKA9sIG4-PDxqGa7ZRwJNCyK4AzKiYCj1fThw4dW48xdlvi5ger2DUUjdd_7wpmaZOLpdYXnN845BkjFy7dquGPMuA_AxwltJ9QGZ86RaFxOpaQ0ld3wuLuGzLKCloDRIqc1g3MupjRyg4tF9lEoU1dS1rvHbKq-bVdCCERboV9E3xUuLXOvaJSeICn8VjBOGpyprqnjYPcZ6P3JmbRYap" />
-                    </div>
-                    <span
-                        class="font-label-md text-[10px] text-primary uppercase tracking-widest mb-1 block">Barang sehari-hari</span>
-                    <a href="{{ route('product.detail', 3) }}"
-                        class="font-headline-sm text-headline-sm text-on-surface mb-1 hover:text-primary transition-colors block">Dompet kulit</a>
-                    <div class="flex justify-between items-center">
-                        <p class="font-body-md text-body-md font-bold text-on-surface">Rp. 15.000</p>
-                        <button
-                            class="w-8 h-8 rounded-full border border-primary text-primary flex items-center justify-center hover:bg-primary hover:text-on-primary transition-all">
-                            <span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
-                        </button>
-                    </div>
-                </div>
-                <!-- Product 4 -->
-                <div class="bg-surface rounded-xl border border-[#EDEDED] p-4 product-card-hover group relative">
-                    <div class="aspect-square rounded-lg overflow-hidden bg-surface-container-low mb-4">
-                        <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            data-alt="Eco-friendly coconut husk yoga mat"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCqUX4KYW4mFREtiKKfoUusSodQR-pLCAzZO0nxpJXDhBh72Orl_3XD2Uz3eUNVuyGUGVlHIF_hqS85-o3huVisa2Vf15MBPuDl2lGyvPTUY3upsQB3u1aS4_6_GtOr0kjKDUEujCqAMBV-L8yiSLY-sryMV13vNe5mD2vPCkBouVUGc7ymHixOTFkmYm07v9TcU8hpDjTFBJl6QUAyjXY4LjAr1nmaaewO1XC2UWe46SSg1cxiLmfO" />
-                    </div>
-                    <span
-                        class="font-label-md text-[10px] text-primary uppercase tracking-widest mb-1 block">Kerajinan Tangan</span>
-                    <a href="{{ route('product.detail', 4) }}"
-                        class="font-headline-sm text-headline-sm text-on-surface mb-1 hover:text-primary transition-colors block">Gelas keramik</a>
-                    <div class="flex justify-between items-center">
-                        <p class="font-body-md text-body-md font-bold text-on-surface">Rp. 8.000</p>
-                        <button
-                            class="w-8 h-8 rounded-full border border-primary text-primary flex items-center justify-center hover:bg-primary hover:text-on-primary transition-all">
-                            <span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
-                        </button>
-                    </div>
-                </div>
+                @endforeach
             </div>
         </section>
 

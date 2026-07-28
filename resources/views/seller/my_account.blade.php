@@ -191,7 +191,7 @@
 <span class="material-symbols-outlined text-on-primary-container">store</span>
 </div>
 <div>
-<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface leading-tight">Acme Corp</h3>
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface leading-tight">{{ Auth::user()->store->nama_toko ?? Auth::user()->name . ' Store' }}</h3>
 <p class="font-body-sm text-body-sm text-on-surface-variant">Verified Seller</p>
 </div>
 </div>
@@ -205,6 +205,9 @@
 <a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('inventories') }}" onclick="closeSidebar()">
 <span class="material-symbols-outlined">inventory</span> Inventory
     </a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md font-bold" href="{{ route('seller.store') }}" onclick="closeSidebar()">
+<span class="material-symbols-outlined">storefront</span> My Store
+    </a>
 <a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('sales_analytics') }}" onclick="closeSidebar()">
 <span class="material-symbols-outlined">analytics</span> Sell analytics
     </a>
@@ -216,9 +219,12 @@
 <a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('support') }}" onclick="closeSidebar()">
 <span class="material-symbols-outlined">help_outline</span> Support
     </a>
-<a class="flex items-center gap-3 px-3 py-2.5 text-error hover:bg-error-container rounded-lg transition-all font-label-md text-label-md" href="#">
-<span class="material-symbols-outlined">logout</span> Sign Out
-    </a>
+<form action="{{ route('logout') }}" method="POST" class="w-full">
+    @csrf
+    <button type="submit" class="w-full flex items-center gap-3 px-3 py-2.5 text-error hover:bg-error-container rounded-lg transition-all font-label-md text-label-md font-bold">
+        <span class="material-symbols-outlined">logout</span> Sign Out
+    </button>
+</form>
 </div>
 </aside>
 
@@ -232,22 +238,25 @@
 </div>
 <div class="relative z-10 px-2 flex flex-col md:flex-row items-start md:items-end gap-4 md:gap-gutter">
 <div class="w-24 h-24 md:w-32 md:h-32 rounded-2xl border-4 border-surface-container-lowest overflow-hidden shadow-sm bg-white flex-shrink-0">
-<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8E5JtIZ0iQIMQ35bIChkUsOfCp39tj1NAnOky58NcxLRkPGmFK5lJ3ls24qSTqgpG2_ge6B_HWKbspgQijuXhtKnQZPjcFtPcLMSB-GxosoJlw4pDNYEa9Yk8dpxx9wrsIajbwstMLZpDqEiH7JeVaN5PIdKuIqmJAzDrChk0ABB6nMhJxYhzcPWwwd17O80DQT4NGYOR3L8yuwMhYKZrK5Gn4u6aGU1EZdCI0cKeK7ohIWrRJbzM" alt="Profile"/>
+<img class="w-full h-full object-cover" src="{{ Auth::user()->avatar ? asset(Auth::user()->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) . '&background=7c5800&color=ffffff&size=128' }}" alt="{{ Auth::user()->name }}"/>
 </div>
 <div class="flex-1 pb-2 md:pb-4">
 <div class="flex flex-wrap items-center gap-2 md:gap-3">
-<h2 class="font-headline-xl text-2xl md:text-headline-xl text-on-surface">Alexander Sterling</h2>
-<span class="px-3 py-1 bg-primary-container text-on-primary-container font-label-md text-label-md rounded-full">Premium Plus</span>
+<h2 class="font-headline-xl text-2xl md:text-headline-xl text-on-surface">{{ Auth::user()->name }}</h2>
+<span class="px-3 py-1 bg-primary-container text-on-primary-container font-label-md text-label-md rounded-full font-bold">Seller (Toko: {{ Auth::user()->store->nama_toko ?? Auth::user()->name . ' Store' }})</span>
 </div>
-<p class="text-sm md:text-body-md text-on-surface-variant max-w-2xl mt-1 md:mt-2">
-                        Global strategist and entrepreneur focused on sustainable scale. Curating high-performance tools and luxury essentials for the modern SME ecosystem since 2021.
-                    </p>
+<div class="text-sm md:text-body-md text-on-surface-variant max-w-2xl mt-1 md:mt-2 space-y-1">
+    <p><strong>Email:</strong> {{ Auth::user()->email }}</p>
+    <p><strong>Nama Toko:</strong> {{ Auth::user()->store->nama_toko ?? Auth::user()->name . ' Store' }}</p>
+    <p><strong>Telepon:</strong> {{ Auth::user()->phone ?? 'Belum diisi' }}</p>
+    <p><strong>Alamat Toko:</strong> {{ Auth::user()->address ?? 'Belum diisi' }}</p>
+</div>
 </div>
 <div class="pb-2 md:pb-4 flex gap-3">
-<button class="px-4 md:px-6 py-2.5 md:py-3 bg-primary text-on-primary font-label-md text-label-md rounded-lg shadow-sm hover:brightness-95 transition-all transform active:scale-95">Edit Profile</button>
-<button class="p-2.5 border-2 border-secondary text-on-surface font-label-md text-label-md rounded-lg hover:bg-surface-variant transition-all">
-<span class="material-symbols-outlined">share</span>
-</button>
+<a href="{{ route('account_setting') }}" class="px-4 md:px-6 py-2.5 md:py-3 bg-primary text-on-primary font-label-md text-label-md rounded-lg shadow-sm hover:brightness-95 transition-all inline-block font-bold">Edit Profile</a>
+<a href="{{ route('seller.store') }}" class="p-2.5 border-2 border-primary text-primary font-label-md text-label-md rounded-lg hover:bg-primary-container/20 transition-all font-bold flex items-center gap-1">
+<span class="material-symbols-outlined">storefront</span> Lihat Toko
+</a>
 </div>
 </div>
 </section>

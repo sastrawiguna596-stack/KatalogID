@@ -1,0 +1,165 @@
+<!DOCTYPE html><html lang="en" class="light"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Plus+Jakarta+Sans:wght@400;600;700&amp;display=swap" rel="stylesheet"><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "surface-variant": "#e4e2e2",
+                        "on-secondary-fixed": "#1c1b1b",
+                        "primary": "#7c5800",
+                        "on-primary-fixed": "#271900",
+                        "surface-tint": "#7c5800",
+                        "surface": "#fbf9f8",
+                        "surface-dim": "#dbdad9",
+                        "secondary-container": "#e5e2e1",
+                        "surface-container-high": "#e9e8e7",
+                        "inverse-on-surface": "#f2f0f0",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#e2e3e1",
+                        "secondary": "#5f5e5e",
+                        "on-secondary-container": "#656464",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#454746",
+                        "on-tertiary-fixed": "#1a1c1b",
+                        "surface-container-highest": "#e4e2e2",
+                        "surface-container": "#efeded",
+                        "secondary-fixed": "#e5e2e1",
+                        "tertiary-fixed-dim": "#c6c7c5",
+                        "on-background": "#1b1c1c",
+                        "on-error": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "tertiary-container": "#c4c5c3",
+                        "inverse-primary": "#ffba20",
+                        "on-tertiary-container": "#505250",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed-variant": "#474646",
+                        "background": "#fbf9f8",
+                        "surface-bright": "#fbf9f8",
+                        "on-primary-fixed-variant": "#5e4200",
+                        "on-primary": "#ffffff",
+                        "on-surface-variant": "#514532",
+                        "primary-container": "#ffb800",
+                        "inverse-surface": "#303031",
+                        "outline-variant": "#d5c4ab",
+                        "on-primary-container": "#6b4c00",
+                        "surface-container-low": "#f5f3f3",
+                        "on-surface": "#1b1c1c",
+                        "primary-fixed-dim": "#ffba20",
+                        "primary-fixed": "#ffdea8",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "tertiary": "#5d5f5d",
+                        "outline": "#837560"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "container-max": "1280px",
+                        "stack-sm": "12px",
+                        "gutter": "24px",
+                        "stack-lg": "48px",
+                        "base": "8px",
+                        "stack-md": "24px",
+                        "margin-desktop": "40px"
+                    }
+                },
+            },
+        }
+    }catch(_e){}</script>
+<style>
+    @keyframes pageFadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    body {
+        animation: pageFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) ease-out forwards;
+    }
+</style>
+<meta charset="utf-8"></head><body class="bg-background min-h-screen flex text-on-background font-body-md">
+<!-- Suppressed TopNavBar due to Login intent (Linear/Transactional) -->
+<main class="flex w-full min-h-screen">
+<!-- Split Screen Layout -->
+<!-- Left Side: Image (Visible on Desktop/Tablet) -->
+
+<!-- Right Side: Login Form -->
+<div class="w-full flex items-center justify-center p-margin-mobile md:p-margin-desktop bg-surface-bright relative py-stack-lg">
+<!-- Mobile Brand Logo (hidden on md+) -->
+
+<!-- Login Card (Level 1 Surface) -->
+<div class="w-full max-w-md bg-surface-container-lowest border border-surface-variant rounded-xl p-gutter shadow-[0px_4px_20px_rgba(0,0,0,0.04)]">
+    <div class="mb-stack-lg text-center">
+        <div class="flex items-center justify-center gap-2 mb-base">
+            <span class="material-symbols-outlined text-primary-container text-[32px]" style="font-variation-settings: 'FILL' 1;">local_mall</span>
+            <h1 class="font-headline-md text-headline-md text-on-surface">Katalog IDN</h1>
+        </div>
+        <p class="font-body-sm text-body-sm text-on-surface-variant">Empowering your SME journey with premium tools.</p>
+    </div>
+    
+    <div class="mb-stack-md text-center">
+        <h2 class="font-headline-sm text-headline-sm text-on-surface mb-base">Sign In</h2>
+        <p class="font-body-sm text-body-sm text-on-surface-variant">Enter your credentials to access your dashboard.</p>
+    </div>
+
+    <form class="space-y-stack-md">
+        <div>
+            <label class="block font-label-md text-label-md text-on-surface mb-base" for="email">Email Address</label>
+            <input class="w-full h-[48px] px-4 font-body-sm text-body-sm bg-surface border border-outline-variant rounded-lg text-on-surface placeholder:text-on-surface-variant focus:outline-none input-glow transition-all" id="email" name="email" placeholder="you@company.com" required="" type="email">
+        </div>
+        <div>
+            <label class="block font-label-md text-label-md text-on-surface mb-base" for="password">Password</label>
+            <div class="relative">
+                <input class="w-full h-[48px] px-4 font-body-sm text-body-sm bg-surface border border-outline-variant rounded-lg text-on-surface placeholder:text-on-surface-variant focus:outline-none input-glow transition-all pr-12" id="password" name="password" placeholder="••••••••" required="" type="password">
+                <button class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors" type="button">
+                    <span class="material-symbols-outlined text-[20px]">visibility_off</span>
+                </button>
+            </div>
+        </div>
+        <div class="flex items-center justify-between py-base">
+            <label class="flex items-center gap-2 cursor-pointer group">
+                <input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary-container focus:ring-2 focus:ring-offset-0 bg-surface" type="checkbox">
+                <span class="font-body-sm text-body-sm text-on-surface group-hover:text-primary transition-colors">Remember Me</span>
+            </label>
+            <a class="font-label-md text-label-md text-primary hover:text-on-primary-fixed-variant transition-colors" href="#">Forgot Password?</a>
+        </div>
+        <button class="w-full h-[48px] bg-primary-container text-on-primary-fixed font-label-md text-label-md rounded-lg hover:bg-[#e6a600] active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.04)]" type="submit">
+            Sign In
+            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+        </button>
+    </form>
+
+    <div class="mt-stack-lg">
+        <div class="relative flex items-center py-base mb-stack-sm">
+            <div class="flex-grow border-t border-surface-variant"></div>
+            <span class="flex-shrink-0 mx-4 font-body-sm text-body-sm text-on-surface-variant">or</span>
+            <div class="flex-grow border-t border-surface-variant"></div>
+        </div>
+        <div class="flex flex-col gap-2">
+            <button class="w-full h-[44px] flex items-center justify-center gap-2 border border-surface-variant rounded-lg font-label-md text-label-md text-on-surface hover:bg-surface-container-high transition-all">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path></svg>
+                Continue with Google
+            </button>
+        </div>
+    </div>
+
+    <div class="mt-stack-md text-center">
+        <p class="font-body-sm text-body-sm text-on-surface-variant">
+            Don't have an account? 
+            <a class="font-label-md text-label-md text-primary hover:text-on-primary-fixed-variant transition-colors ml-1" href="#">Sign Up</a>
+        </p>
+    </div>
+</div>
+<!-- Bottom minimal copyright for contextual grounding -->
+<div class="absolute bottom-margin-mobile md:bottom-margin-desktop text-center w-full right-0 px-margin-mobile">
+<p class="font-body-sm text-body-sm text-secondary-fixed-dim">© 2026 Katalog IDN. Harga Terjangkau, Kualitas Terjamin.</p>
+</div>
+</div>
+</main>
+<!-- Suppressed Footer due to Login intent -->
+
+</body></html>

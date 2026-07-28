@@ -1,0 +1,203 @@
+/* ================================================
+   welcome.css — Styles for the Welcome/Landing Page
+   ================================================ */
+
+/* ── Scrollbar Utilities ── */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* ── Hero Section ── */
+.hero-bg {
+    background-size: cover;
+    background-position: center;
+}
+
+/* ── Category Card ── */
+.category-card {
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.category-card .category-img-wrapper {
+    width: 12rem;        /* w-48 */
+    height: 12rem;       /* h-48 */
+    border-radius: 9999px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+    border: 1px solid var(--color-outline-variant, #d5c4ab);
+    transition: border-color 0.2s;
+}
+
+.category-card:hover .category-img-wrapper {
+    border-color: var(--color-primary, #7c5800);
+}
+
+.category-card .category-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+}
+
+.category-card:hover .category-img {
+    transform: scale(1.10);
+}
+
+.category-card .category-label {
+    text-align: center;
+    transition: color 0.2s;
+}
+
+.category-card:hover .category-label {
+    color: var(--color-primary, #7c5800);
+}
+
+/* ── Product Card ── */
+.product-card {
+    background: var(--color-surface, #fbf9f8);
+    border-radius: 0.75rem;
+    border: 1px solid #EDEDED;
+    padding: 1rem;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.product-card .product-img-wrapper {
+    aspect-ratio: 1 / 1;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background: var(--color-surface-container-low, #f5f3f3);
+    margin-bottom: 1rem;
+}
+
+.product-card .product-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+}
+
+.product-card:hover .product-img {
+    transform: scale(1.05);
+}
+
+.product-card .product-badge {
+    position: absolute;
+    top: 1.5rem;
+    left: 1.5rem;
+    z-index: 10;
+    padding: 0.25rem 0.5rem;
+    background: var(--color-primary, #7c5800);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 0.25rem;
+}
+
+.product-card .wishlist-btn {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 10;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 9999px;
+    background: rgba(251, 249, 248, 0.80);
+    backdrop-filter: blur(4px);
+    box-shadow: 0 1px 3px rgba(0,0,0,.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    color: #5f5e5e;
+    transition: color 0.2s;
+}
+
+.product-card .wishlist-btn:hover {
+    color: #ba1a1a;
+}
+
+.product-card .add-btn {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 9999px;
+    border: 1px solid var(--color-primary, #7c5800);
+    color: var(--color-primary, #7c5800);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.product-card .add-btn:hover {
+    background: var(--color-primary, #7c5800);
+    color: #fff;
+}
+
+/* ── Testimonial Dots ── */
+.testimonial-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: background-color 0.2s;
+}
+
+.testimonial-dot.active {
+    background: var(--color-primary, #7c5800);
+}
+
+.testimonial-dot.inactive {
+    background: var(--color-outline-variant, #d5c4ab);
+}
+
+.testimonial-dot.inactive:hover {
+    background: var(--color-primary, #7c5800);
+}
+
+/* ── Newsletter Input ── */
+.newsletter-input {
+    flex-grow: 1;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-outline, #837560);
+    background: var(--color-surface-container-lowest, #fff);
+    outline: none;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.newsletter-input:focus {
+    border-color: var(--color-on-surface, #1b1c1c);
+    box-shadow: 0 0 0 2px rgba(124, 88, 0, 0.20);
+}
+
+/* ── Footer Links ── */
+.footer-link {
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--color-on-tertiary-fixed-variant, #454746);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.footer-link:hover {
+    color: var(--color-primary, #7c5800);
+}

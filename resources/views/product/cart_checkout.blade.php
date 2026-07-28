@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Shopping Cart &amp; Checkout | Katalog IDN</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Tailwind Configuration -->
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-container": "#656464",
+                        "surface": "#fbf9f8",
+                        "surface-bright": "#fbf9f8",
+                        "on-secondary": "#ffffff",
+                        "on-surface": "#1b1c1c",
+                        "error": "#ba1a1a",
+                        "inverse-on-surface": "#f2f0f0",
+                        "on-secondary-fixed": "#1c1b1b",
+                        "on-primary-container": "#6b4c00",
+                        "surface-tint": "#7c5800",
+                        "tertiary-fixed": "#e2e3e1",
+                        "on-error-container": "#93000a",
+                        "tertiary-container": "#c4c5c3",
+                        "tertiary-fixed-dim": "#c6c7c5",
+                        "surface-container-low": "#f5f3f3",
+                        "on-primary-fixed": "#271900",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#ffdea8",
+                        "outline-variant": "#d5c4ab",
+                        "outline": "#837560",
+                        "secondary": "#5f5e5e",
+                        "on-surface-variant": "#514532",
+                        "secondary-fixed": "#e5e2e1",
+                        "on-secondary-fixed-variant": "#474646",
+                        "on-primary": "#ffffff",
+                        "inverse-primary": "#ffba20",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "tertiary": "#5d5f5d",
+                        "surface-dim": "#dbdad9",
+                        "inverse-surface": "#303031",
+                        "primary": "#7c5800",
+                        "secondary-container": "#e5e2e1",
+                        "background": "#fbf9f8",
+                        "surface-container-highest": "#e4e2e2",
+                        "on-tertiary-fixed-variant": "#454746",
+                        "on-tertiary-fixed": "#1a1c1b",
+                        "on-error": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#efeded",
+                        "on-background": "#1b1c1c",
+                        "primary-container": "#ffb800",
+                        "on-primary-fixed-variant": "#5e4200",
+                        "primary-fixed-dim": "#ffba20",
+                        "surface-variant": "#e4e2e2",
+                        "on-tertiary-container": "#505250",
+                        "surface-container-high": "#e9e8e7"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-md": "24px",
+                        "base": "8px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "40px",
+                        "stack-sm": "12px",
+                        "stack-lg": "48px",
+                        "gutter": "24px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Plus Jakarta Sans"],
+                        "headline-sm": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "label-md": ["Hanken Grotesk"],
+                        "headline-xl-mobile": ["Hanken Grotesk"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "headline-xl": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-xl-mobile": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-xl": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        @keyframes pageFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        body {
+            animation: pageFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) ease-out forwards;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .active-nav-line { position: relative; }
+        .active-nav-line::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #7c5800;
+        }
+        input:focus {
+            outline: none;
+            border-color: #1b1c1c !important;
+            box-shadow: 0 0 0 4px rgba(255, 184, 0, 0.2) !important;
+        }
+        /* Mobile Nav Drawer */
+        #nav-overlay { display: none; }
+        #nav-overlay.active { display: block; }
+        #mobile-nav-drawer {
+            transform: translateX(-100%);
+            transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+        }
+        #mobile-nav-drawer.open { transform: translateX(0); }
+    </style>
+</head>
+
+<body class="bg-surface text-on-surface font-body-md min-h-screen">
+
+<!-- Mobile Nav Overlay -->
+<div id="nav-overlay" class="fixed inset-0 bg-black/40 z-40 md:hidden" onclick="closeNavDrawer()"></div>
+<!-- Mobile Nav Drawer -->
+<div id="mobile-nav-drawer" class="fixed left-0 top-0 h-full w-72 z-50 bg-surface border-r border-outline-variant flex flex-col p-6 md:hidden">
+    <div class="flex items-center justify-between mb-8">
+        <span class="font-headline-md text-headline-md font-bold text-on-surface">Katalog IDN</span>
+        <button onclick="closeNavDrawer()" class="p-1 rounded-lg text-on-surface-variant hover:bg-surface-variant">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+    </div>
+    <nav class="flex flex-col gap-1">
+        <a href="{{ route('home') }}" class="flex items-center gap-3 px-3 py-3 text-on-surface-variant hover:bg-surface-variant rounded-lg font-label-md text-label-md transition-all" onclick="closeNavDrawer()">
+            <span class="material-symbols-outlined">home</span> Home
+        </a>
+        <a href="{{ route('shop') }}" class="flex items-center gap-3 px-3 py-3 text-on-surface-variant hover:bg-surface-variant rounded-lg font-label-md text-label-md transition-all" onclick="closeNavDrawer()">
+            <span class="material-symbols-outlined">storefront</span> Shop
+        </a>
+        <a href="{{ route('cart') }}" class="flex items-center gap-3 px-3 py-3 text-on-primary-container bg-primary-container rounded-lg font-bold font-label-md text-label-md transition-all" onclick="closeNavDrawer()">
+            <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">shopping_cart</span> Cart
+        </a>
+        <a href="{{ route('account') }}" class="flex items-center gap-3 px-3 py-3 text-on-surface-variant hover:bg-surface-variant rounded-lg font-label-md text-label-md transition-all" onclick="closeNavDrawer()">
+            <span class="material-symbols-outlined">person</span> Profile
+        </a>
+    </nav>
+    <div class="mt-auto border-t border-outline-variant pt-4">
+        <a href="{{ route('login') }}" class="flex items-center gap-3 px-3 py-3 text-error hover:bg-error-container rounded-lg font-label-md text-label-md transition-all">
+            <span class="material-symbols-outlined">logout</span> Sign Out
+        </a>
+    </div>
+</div>
+
+    <!-- TopAppBar -->
+   <header class="flex justify-between items-center px-4 md:px-margin-desktop w-full h-16 sticky top-0 z-30 bg-surface/80 backdrop-blur-md border-b border-outline-variant">
+<div class="flex items-center gap-3">
+    <!-- Hamburger (mobile only) -->
+    <button class="md:hidden p-1 rounded-lg text-on-surface-variant hover:bg-surface-variant transition-colors" onclick="openNavDrawer()">
+        <span class="material-symbols-outlined">menu</span>
+    </button>
+    <span class="font-headline-md text-headline-md font-bold text-on-surface">Katalog IDN</span>
+</div>
+<nav class="hidden md:flex items-center gap-gutter">
+<a class="font-label-md text-label-md text-secondary hover:text-primary transition-colors duration-200" href="{{ route('home') }}">Home</a>
+<a class="font-label-md text-label-md text-secondary hover:text-primary transition-colors duration-200" href="{{ route('shop') }}">Shop</a>
+<a class="font-label-md text-label-md text-secondary hover:text-primary transition-colors duration-200" href="{{ route('account') }}">Profile</a>
+</nav>
+<div class="flex items-center gap-2">
+<a href="{{ route('cart') }}"><button class="material-symbols-outlined text-primary p-2">shopping_cart</button></a>
+</div>
+</header>
+    <main class="w-full px-4 md:px-margin-desktop py-6 md:py-8 overflow-hidden">
+        <h1 class="font-headline-xl text-xl md:text-headline-xl mb-stack-md">Your Checkout</h1>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+            <!-- Left Column: Cart & Details -->
+            <div class="lg:col-span-8 space-y-stack-md">
+                <!-- Section: Cart Items -->
+                <section class="bg-surface-container-lowest border border-[#EDEDED] rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="font-headline-sm text-headline-sm">Shopping Cart (2 Items)</h2>
+                    </div>
+                    <div class="space-y-6">
+                        <!-- Item 1 -->
+                        <div class="flex gap-6 pb-6 border-b border-[#EDEDED]">
+                            <div class="w-24 h-24 bg-surface-container rounded-lg overflow-hidden flex-shrink-0">
+                                <img class="w-full h-full object-cover"
+                                    data-alt="A high-quality studio photograph of a handcrafted ceramic minimalist vase in off-white. The vase features a subtle textured surface and sits on a warm wood tabletop against a soft, bright neutral background. Professional studio lighting emphasizes the elegant silhouette and organic feel of the artisanal piece, reflecting a modern SME lifestyle aesthetic."
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLtBySK6Z4qQBbkTxdhx_cnUwSTXry1luxUPHybyyjhSZeslRj9TJESuWajw3zQFkwh4q4n22_XDDIPHo3xBA749zWmglPK7Thoxql66wlxOU4NFodtXc8h5sFUmxGI8D0WFb57q3RXBXrvxGbbuz3CKhvfg2xGJQ9OwNsyb92SZafdwB_iuok7om26LH73aLANmIDuo-7QnqTYkDkYkill69u5pyTv_EOU3TFAWlmiqHFR2IuGgbz" />
+                            </div>
+                            <div class="flex-grow flex flex-col justify-between py-1">
+                                <div>
+                                    <div class="flex justify-between items-start">
+                                        <h3 class="font-headline-sm text-[18px]">Artisan Ceramic Vase</h3>
+                                        <p class="font-bold text-primary">Rp. 45.000</p>
+                                    </div>
+                                    <p class="text-body-sm text-secondary mt-1">Color: Sand White | Size: Medium</p>
+                                </div>
+                                <div class="flex justify-between items-center mt-4">
+                                    <div class="flex items-center border border-[#EDEDED] rounded-lg">
+                                        <button
+                                            class="px-3 py-1 hover:bg-surface-container transition-colors">-</button>
+                                        <span class="px-4 font-semibold">1</span>
+                                        <button
+                                            class="px-3 py-1 hover:bg-surface-container transition-colors">+</button>
+                                    </div>
+                                    <button class="text-error flex items-center gap-1 hover:underline text-body-sm">
+                                        <span class="material-symbols-outlined text-sm">delete</span>
+                                        Remove
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Item 2 -->
+                        <div class="flex gap-6">
+                            <div class="w-24 h-24 bg-surface-container rounded-lg overflow-hidden flex-shrink-0">
+                                <img class="w-full h-full object-cover"
+                                    data-alt="A premium close-up of a sustainably sourced linen throw blanket in a soft amber-gold hue. The fabric is neatly folded, showcasing its breathable weave and natural frayed edges. The lighting is warm and inviting, highlighting the soft texture and high-quality craftsmanship characteristic of a boutique home goods brand. The overall mood is cozy, sophisticated, and earthy."
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCp2Lozkvm4jJ7-3tO9-OxJAhUjVn4Qh2_UAHF1kM8PsvRlaCI3r1-8oCyaisR8R1Gl8Ttc1C_FkETS73yTc9ERPUiJ5JNL7jetXFRfgIbznHvumPKjSPwTyXjY4Gsly6R4j0Wf7je3XWlgWfKhQ4XipFlYVICEnitoOAgSh4UjZzO4N7XrImo2S8Sh_Y27JM1sgczAyFewN1uwJb7Il0H8kwpZhwNxJLg-E6CwquCtgoeL51S5JOkY" />
+                            </div>
+                            <div class="flex-grow flex flex-col justify-between py-1">
+                                <div>
+                                    <div class="flex justify-between items-start">
+                                        <h3 class="font-headline-sm text-[18px]">Woven Linen Throw</h3>
+                                        <p class="font-bold text-primary">Rp. 200.000</p>
+                                    </div>
+                                    <p class="text-body-sm text-secondary mt-1">Color: Harvest Gold | Size: 150x200cm
+                                    </p>
+                                </div>
+                                <div class="flex justify-between items-center mt-4">
+                                    <div class="flex items-center border border-[#EDEDED] rounded-lg">
+                                        <button
+                                            class="px-3 py-1 hover:bg-surface-container transition-colors">-</button>
+                                        <span class="px-4 font-semibold">1</span>
+                                        <button
+                                            class="px-3 py-1 hover:bg-surface-container transition-colors">+</button>
+                                    </div>
+                                    <button class="text-error flex items-center gap-1 hover:underline text-body-sm">
+                                        <span class="material-symbols-outlined text-sm">delete</span>
+                                        Remove
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <!-- Section: Shipping & Delivery -->
+                <section class="bg-surface-container-lowest border border-[#EDEDED] rounded-xl p-6">
+                    <h2 class="font-headline-sm text-headline-sm mb-6">Shipping &amp; Delivery</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter mb-8">
+                        <div class="space-y-4">
+                            <label class="block text-label-md text-secondary">Contact Information</label>
+                            <input
+                                class="w-full h-12 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface"
+                                placeholder="Email Address" type="email" />
+                            <input
+                                class="w-full h-12 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface"
+                                placeholder="Phone Number" type="tel" />
+                        </div>
+                        <div class="space-y-4">
+                            <label class="block text-label-md text-secondary">Shipping Address</label>
+                            <input
+                                class="w-full h-12 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface"
+                                placeholder="Full Name" type="text" />
+                            <input
+                                class="w-full h-12 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface"
+                                placeholder="Street Address" type="text" />
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <label class="block text-label-md text-secondary">Delivery Method</label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Option 1 -->
+                            <label
+                                class="relative flex items-center p-4 border border-primary rounded-xl bg-primary/5 cursor-pointer">
+                                <input checked="" class="hidden" name="delivery" type="radio" />
+                                <div class="flex-grow">
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-semibold text-on-surface">Standard Shipping</span>
+                                        <span class="text-primary font-bold">Free</span>
+                                    </div>
+                                    <p class="text-body-sm text-secondary">Estimated 3-5 business days</p>
+                                </div>
+                                <div
+                                    class="w-5 h-5 ml-4 rounded-full border-2 border-primary flex items-center justify-center">
+                                    <div class="w-2.5 h-2.5 rounded-full bg-primary"></div>
+                                </div>
+                            </label>
+                            <!-- Option 2 -->
+                            <label
+                                class="relative flex items-center p-4 border border-[#EDEDED] rounded-xl hover:bg-surface-container-low transition-colors cursor-pointer">
+                                <input class="hidden" name="delivery" type="radio" />
+                                <div class="flex-grow">
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-semibold text-on-surface">Express Delivery</span>
+                                        <span class="text-primary font-bold">Rp. 12.000</span>
+                                    </div>
+                                    <p class="text-body-sm text-secondary">Next business day arrival</p>
+                                </div>
+                                <div class="w-5 h-5 ml-4 rounded-full border-2 border-outline-variant"></div>
+                            </label>
+                        </div>
+                    </div>
+                </section>
+                <!-- Section: Payment Method -->
+                <section class="bg-surface-container-lowest border border-[#EDEDED] rounded-xl p-6">
+                    <h2 class="font-headline-sm text-headline-sm mb-6">Payment Method</h2>
+                    <div class="space-y-4">
+                        <div class="flex flex-wrap gap-4">
+                            <button type="button"
+                                class="payment-option-btn flex-1 min-w-[120px] flex flex-col items-center justify-center py-4 border-2 border-primary bg-primary/5 rounded-xl gap-2 transition-all cursor-pointer">
+                                <span class="material-symbols-outlined text-primary">account_balance_wallet</span>
+                                <span class="text-label-md font-semibold text-primary">Transfer Bank</span>
+                            </button>
+                            <button type="button"
+                                class="payment-option-btn flex-1 min-w-[120px] flex flex-col items-center justify-center py-4 border border-[#EDEDED] hover:bg-surface-container-low rounded-xl gap-2 transition-all cursor-pointer">
+                                <span class="material-symbols-outlined text-secondary">qr_code_2</span>
+                                <span class="text-label-md text-on-surface">QRIS</span>
+                            </button>
+                            <button type="button"
+                                class="payment-option-btn flex-1 min-w-[120px] flex flex-col items-center justify-center py-4 border border-[#EDEDED] hover:bg-surface-container-low rounded-xl gap-2 transition-all cursor-pointer">
+                                <span class="material-symbols-outlined text-secondary">handshake</span>
+                                <span class="text-label-md text-on-surface">COD</span>
+                            </button>
+                        </div>
+                        <div class="mt-6 space-y-4">
+                            <input
+                                class="w-full h-12 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface"
+                                placeholder="Card Number" type="text" />
+                            <div class="grid grid-cols-2 gap-4">
+                                <input
+                                    class="h-12 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface"
+                                    placeholder="MM/YY" type="text" />
+                                <input
+                                    class="h-12 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface"
+                                    placeholder="CVV" type="text" />
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <!-- Right Column: Sticky Summary -->
+            <aside class="lg:col-span-4 sticky top-24">
+                <div
+                    class="bg-surface-container-lowest border border-[#EDEDED] rounded-xl p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.04)]">
+                    <h2 class="font-headline-sm text-headline-sm mb-6">Order Summary</h2>
+                    <div class="space-y-4 mb-6">
+                        <div class="flex justify-between text-body-md text-secondary">
+                            <span>Subtotal</span>
+                            <span>Rp. 245.000</span>
+                        </div>
+                        <div class="flex justify-between text-body-md text-secondary">
+                            <span>Estimated Shipping</span>
+                            <span>Rp. 20.000</span>
+                        </div>
+                        <div class="flex justify-between text-body-md text-secondary pb-4 border-b border-[#EDEDED]">
+                            <span>Tax</span>
+                            <span>Rp. 7.600</span>
+                        </div>
+                        <div class="flex justify-between text-headline-sm font-bold pt-2">
+                            <span>Total</span>
+                            <span class="text-primary">Rp. 272.600</span>
+                        </div>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-label-md text-secondary mb-2">Promo Code</label>
+                        <div class="flex gap-2">
+                            <input
+                                class="flex-grow h-10 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest"
+                                placeholder="Enter code" type="text" />
+                            <button
+                                class="px-4 py-2 bg-secondary text-white text-label-md rounded-lg hover:bg-on-surface transition-colors">Apply</button>
+                        </div>
+                    </div>
+                    <button
+                        class="w-full py-4 bg-primary text-on-secondary font-bold rounded-xl text-headline-sm shadow-lg hover:brightness-90 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+                        Place Order
+                        <span class="material-symbols-outlined">arrow_forward</span>
+                    </button>
+                    <div class="mt-6 flex items-center justify-center gap-4 opacity-50 grayscale">
+                        <span class="material-symbols-outlined">verified_user</span>
+                        <p class="text-[10px] text-center uppercase tracking-widest font-bold">Secure SSL Checkout</p>
+                    </div>
+                </div>
+                <div class="mt-stack-md p-6 bg-surface-container rounded-xl">
+                    <div class="flex items-start gap-4">
+                        <span class="material-symbols-outlined text-primary">local_shipping</span>
+                        <div>
+                            <p class="font-semibold text-body-sm">Ethical Fulfillment</p>
+                            <p class="text-body-sm text-secondary">This order supports small independent makers and
+                                local delivery partners.</p>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+    <!-- Footer -->
+    <footer
+        class="w-full py-stack-lg px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-4 gap-gutter bg-surface-container border-t border-outline-variant">
+        <div class="md:col-span-2">
+            <span class="font-headline-sm text-headline-sm text-on-surface block mb-4">Katalog IDN</span>
+            <p class="text-body-sm text-on-tertiary-fixed-variant max-w-sm mb-6">Empowering small businesses through a
+                premium, accessible digital marketplace. Quality craft meets modern reliability.</p>
+            <p class="text-body-sm text-on-tertiary-fixed-variant">© 2026 Katalog IDN. Harga Terjangkau, Kualitas Terjamin.</p>
+        </div>
+        <div>
+            <h4 class="font-label-md text-label-md mb-4 text-on-surface uppercase tracking-wider">Shopping</h4>
+            <ul class="space-y-2">
+                <li><a class="text-body-sm text-on-tertiary-fixed-variant hover:text-primary transition-all"
+                        href="#">New Arrivals</a></li>
+                <li><a class="text-body-sm text-on-tertiary-fixed-variant hover:text-primary transition-all"
+                        href="#">Best Sellers</a></li>
+                <li><a class="text-body-sm text-on-tertiary-fixed-variant hover:text-primary transition-all"
+                        href="#">Categories</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4 class="font-label-md text-label-md mb-4 text-on-surface uppercase tracking-wider">Resources</h4>
+            <ul class="space-y-2">
+                <li><a class="text-body-sm text-on-tertiary-fixed-variant hover:text-primary transition-all"
+                        href="#">About Us</a></li>
+                <li><a class="text-body-sm text-on-tertiary-fixed-variant hover:text-primary transition-all"
+                        href="#">Contact</a></li>
+                <li><a class="text-body-sm text-on-tertiary-fixed-variant hover:text-primary transition-all"
+                        href="#">Shipping Policy</a></li>
+                <li><a class="text-body-sm text-on-tertiary-fixed-variant hover:text-primary transition-all"
+                        href="#">Privacy</a></li>
+            </ul>
+        </div>
+    </footer>
+    <script>
+        // Mobile nav drawer
+        function openNavDrawer() {
+            document.getElementById('mobile-nav-drawer').classList.add('open');
+            document.getElementById('nav-overlay').classList.add('active');
+        }
+        function closeNavDrawer() {
+            document.getElementById('mobile-nav-drawer').classList.remove('open');
+            document.getElementById('nav-overlay').classList.remove('active');
+        }
+
+        // Micro-interaction for quantity buttons
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', () => {
+                btn.classList.add('scale-95');
+            });
+            btn.addEventListener('mouseup', () => {
+                btn.classList.remove('scale-95');
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.classList.remove('scale-95');
+            });
+        });
+
+        // Toggle radio button visual state for shipping/delivery
+        const deliveryRadios = document.querySelectorAll('input[name="delivery"]');
+        deliveryRadios.forEach(radio => {
+            radio.parentElement.addEventListener('click', () => {
+                deliveryRadios.forEach(r => {
+                    r.parentElement.classList.remove('border-primary', 'bg-primary/5', 'border-2');
+                    r.parentElement.classList.add('border-[#EDEDED]', 'border');
+                    r.parentElement.querySelector('.w-5').classList.remove('border-primary');
+                    r.parentElement.querySelector('.w-5').innerHTML = '';
+                });
+                radio.checked = true;
+                radio.parentElement.classList.add('border-primary', 'bg-primary/5', 'border-2');
+                radio.parentElement.classList.remove('border-[#EDEDED]', 'border');
+                radio.parentElement.querySelector('.w-5').classList.add('border-primary');
+                radio.parentElement.querySelector('.w-5').innerHTML = '<div class="w-2.5 h-2.5 rounded-full bg-primary"></div>';
+            });
+        });
+
+        // Toggle payment option visual border state
+        const paymentBtns = document.querySelectorAll('.payment-option-btn');
+        paymentBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                paymentBtns.forEach(b => {
+                    b.classList.remove('border-primary', 'bg-primary/5', 'border-2');
+                    b.classList.add('border-[#EDEDED]', 'border');
+                    const icon = b.querySelector('.material-symbols-outlined');
+                    const text = b.querySelector('.text-label-md');
+                    if (icon) {
+                        icon.classList.remove('text-primary');
+                        icon.classList.add('text-secondary');
+                    }
+                    if (text) {
+                        text.classList.remove('font-semibold', 'text-primary');
+                        text.classList.add('text-on-surface');
+                    }
+                });
+                btn.classList.add('border-primary', 'bg-primary/5', 'border-2');
+                btn.classList.remove('border-[#EDEDED]', 'border');
+                const icon = btn.querySelector('.material-symbols-outlined');
+                const text = btn.querySelector('.text-label-md');
+                if (icon) {
+                    icon.classList.add('text-primary');
+                    icon.classList.remove('text-secondary');
+                }
+                if (text) {
+                    text.classList.add('font-semibold', 'text-primary');
+                    text.classList.remove('text-on-surface');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

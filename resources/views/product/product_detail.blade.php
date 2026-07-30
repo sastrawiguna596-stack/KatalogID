@@ -342,7 +342,7 @@
 </button>
 </div>
 <!-- Bento-style Suggestion Grid -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
 <!-- Product Card 1 -->
 <div class="flex flex-col gap-3 group cursor-pointer">
 <div class="aspect-[4/5] bg-surface-container-high rounded-xl overflow-hidden border border-[#EDEDED] relative">

@@ -456,27 +456,29 @@
                 <h2 class="font-headline-lg text-headline-lg text-on-surface mb-base">Barang Unggulan</h2>
                 <p class="font-body-md text-body-md text-on-surface-variant max-w-xl">Produk yang dibuat untuk kegiatan sehari-hari dirumah maupun dliuar rumah.</p>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter stagger-children">
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 stagger-children">
                 @foreach($products as $product)
-                <div class="bg-surface rounded-xl border border-[#EDEDED] p-4 product-card-hover group relative">
+                <div class="bg-surface rounded-xl border border-[#EDEDED] p-2.5 sm:p-4 product-card-hover group relative flex flex-col justify-between">
                     @if($product->badge)
-                    <div class="absolute top-6 left-6 z-10">
-                        <span class="px-2 py-1 bg-primary text-on-primary text-[10px] font-bold rounded">{{ $product->badge }}</span>
+                    <div class="absolute top-4 left-4 z-10">
+                        <span class="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-primary text-on-primary text-[9px] sm:text-[10px] font-bold rounded">{{ $product->badge }}</span>
                     </div>
                     @endif
-                    <div class="aspect-square rounded-lg overflow-hidden bg-surface-container-low mb-4">
-                        <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            src="{{ $product->galleries->first()?->foto_path ?? 'https://via.placeholder.com/400' }}"
-                            alt="{{ $product->nama_produk }}" />
-                    </div>
-                    <span class="font-label-md text-[10px] text-primary uppercase tracking-widest mb-1 block">{{ $product->category->nama_kategori ?? 'Kategori' }}</span>
-                    <a href="{{ route('product.detail', $product->id) }}"
-                        class="font-headline-sm text-headline-sm text-on-surface mb-1 hover:text-primary transition-colors block line-clamp-1">{{ $product->nama_produk }}</a>
-                    <div class="flex justify-between items-center">
-                        <p class="font-body-md text-body-md font-bold text-on-surface">Rp {{ number_format($product->harga, 0, ',', '.') }}</p>
+                    <div>
+                        <div class="aspect-square rounded-lg overflow-hidden bg-surface-container-low mb-2.5 sm:mb-4">
+                            <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                src="{{ $product->galleries->first()?->foto_path ?? 'https://via.placeholder.com/400' }}"
+                                alt="{{ $product->nama_produk }}" />
+                        </div>
+                        <span class="font-label-md text-[9px] sm:text-[10px] text-primary uppercase tracking-widest mb-1 block">{{ $product->category->nama_kategori ?? 'Kategori' }}</span>
                         <a href="{{ route('product.detail', $product->id) }}"
-                            class="w-8 h-8 rounded-full border border-primary text-primary flex items-center justify-center hover:bg-primary hover:text-on-primary transition-all">
-                            <span class="material-symbols-outlined text-[18px]">add</span>
+                            class="text-xs sm:text-sm font-bold text-on-surface mb-1 hover:text-primary transition-colors block line-clamp-2 min-h-[32px] sm:min-h-[40px] leading-snug">{{ $product->nama_produk }}</a>
+                    </div>
+                    <div class="flex justify-between items-center pt-2 border-t border-surface-container-low mt-2">
+                        <p class="text-xs sm:text-base font-bold text-on-surface">Rp {{ number_format($product->harga, 0, ',', '.') }}</p>
+                        <a href="{{ route('product.detail', $product->id) }}"
+                            class="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-primary text-primary flex items-center justify-center hover:bg-primary hover:text-on-primary transition-all flex-shrink-0">
+                            <span class="material-symbols-outlined text-[16px] sm:text-[18px]">add</span>
                         </a>
                     </div>
                 </div>

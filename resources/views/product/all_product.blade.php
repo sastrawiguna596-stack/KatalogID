@@ -254,16 +254,27 @@
 <span class="material-symbols-outlined text-[16px] mx-2">chevron_right</span>
 <span class="text-primary font-semibold">New Arrivals</span>
 </nav>
-<div class="flex items-center gap-3">
-    <div class="flex-1 sticky-search flex items-center bg-surface-container-lowest border border-outline-variant rounded-full px-4 py-2 w-full md:w-96 focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
-        <span class="material-symbols-outlined text-on-surface-variant mr-2">search</span>
-        <input id="searchInput" class="bg-transparent border-none focus:ring-0 w-full text-body-md font-body-md text-on-surface" placeholder="Search products..." type="text"/>
+<form action="{{ route('shop') }}" method="GET" class="flex items-center gap-2 w-full md:w-auto">
+    @if(request('category'))
+        <input type="hidden" name="category" value="{{ request('category') }}"/>
+    @endif
+    <div class="flex-1 sticky-search flex items-center bg-surface-container-lowest border border-outline-variant rounded-full px-3 py-1.5 w-full md:w-[460px] focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all shadow-xs">
+        <!-- Search Type Selector (Produk vs Toko) -->
+        <select id="searchTypeSelect" name="search_type" class="bg-surface-container-low text-xs font-bold text-on-surface border-none rounded-full px-2.5 py-1.5 mr-2 focus:ring-0 cursor-pointer hover:bg-surface-container-high transition-colors">
+            <option value="product" {{ request('search_type', 'product') == 'product' ? 'selected' : '' }}>📦 Cari Produk</option>
+            <option value="store" {{ request('search_type') == 'store' ? 'selected' : '' }}>🏪 Cari Toko</option>
+        </select>
+        <span class="material-symbols-outlined text-on-surface-variant mr-1.5 text-lg">search</span>
+        <input id="searchInput" name="search" value="{{ request('search') }}" class="bg-transparent border-none focus:ring-0 w-full text-body-sm font-body-sm text-on-surface placeholder:text-secondary" placeholder="{{ request('search_type') == 'store' ? 'Cari nama toko...' : 'Cari produk atau toko...' }}" type="text"/>
+        <button type="submit" class="bg-primary text-white text-xs font-bold px-3.5 py-1.5 rounded-full hover:brightness-110 transition-all ml-1 flex-shrink-0">
+            Cari
+        </button>
     </div>
     <!-- Mobile filter button -->
-    <button onclick="openFilterDrawer()" class="md:hidden flex items-center gap-1 px-3 py-2 border border-outline-variant rounded-full text-on-surface-variant text-body-sm font-label-md whitespace-nowrap hover:bg-surface-variant">
+    <button type="button" onclick="openFilterDrawer()" class="md:hidden flex items-center gap-1 px-3 py-2 border border-outline-variant rounded-full text-on-surface-variant text-body-sm font-label-md whitespace-nowrap hover:bg-surface-variant">
         <span class="material-symbols-outlined text-base">tune</span> Filter
     </button>
-</div>
+</form>
 </div>
 <div class="flex flex-col md:flex-row gap-gutter">
 <!-- Sidebar Filters (hidden on mobile, visible on md+) -->
@@ -324,8 +335,33 @@
 </aside>
 <!-- Product Grid -->
 <section class="flex-1">
+@if(isset($matchedStores) && $matchedStores->count() > 0)
+<div class="mb-6 p-5 rounded-2xl bg-amber-500/10 border border-primary/20">
+    <div class="flex items-center justify-between mb-3">
+        <h3 class="font-bold text-on-surface text-base flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">storefront</span>
+            <span>Toko Ditemukan ({{ $matchedStores->count() }})</span>
+        </h3>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        @foreach($matchedStores as $st)
+            <a href="{{ route('store_product', $st->id) }}" class="flex items-center gap-3 p-3.5 bg-white rounded-xl border border-surface-container-highest hover:shadow-md hover:border-primary/40 transition-all group">
+                <div class="w-12 h-12 rounded-xl bg-primary text-white flex items-center justify-center font-bold flex-shrink-0 group-hover:scale-105 transition-transform">
+                    <span class="material-symbols-outlined">store</span>
+                </div>
+                <div class="min-w-0 flex-1">
+                    <h4 class="font-bold text-on-surface text-sm truncate group-hover:text-primary transition-colors">{{ $st->nama_toko }}</h4>
+                    <p class="text-xs text-secondary line-clamp-1">{{ $st->deskripsi ?? 'Toko Resmi Katalog IDN' }}</p>
+                </div>
+                <span class="material-symbols-outlined text-primary text-lg group-hover:translate-x-1 transition-transform">chevron_right</span>
+            </a>
+        @endforeach
+    </div>
+</div>
+@endif
+
 <div class="flex items-center justify-between mb-gutter">
-<h1 class="font-headline-lg text-headline-lg text-on-surface">Latest Collection</h1>
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Katalog Produk</h1>
 <div class="flex items-center gap-2">
 <span class="text-body-sm text-secondary">Sort by:</span>
 <select id="sortSelect" class="bg-transparent border-none focus:ring-0 font-label-md text-label-md text-on-surface cursor-pointer">
@@ -343,35 +379,41 @@
 <p class="font-body-sm text-body-sm text-secondary mt-1">Coba sesuaikan filter atau kata kunci pencarian Anda.</p>
 </div>
 
-<div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
 @forelse($products as $product)
-<div onclick="window.location.href='{{ route('product.detail', $product->id) }}'" class="product-card-item product-card-hover group bg-surface-container-lowest border border-[#EDEDED] rounded-lg p-4 flex flex-col cursor-pointer transition-all duration-300" data-id="{{ $product->id }}" data-title="{{ $product->nama_produk }}" data-category="{{ $product->category->nama_kategori ?? 'Umum' }}" data-price="{{ $product->harga }}" data-rating="4.8">
-<div class="relative w-full aspect-square bg-[#F5F5F5] rounded overflow-hidden mb-4">
-@php
-    $img = $product->galleries->first()?->foto_path ?? 'https://via.placeholder.com/400';
-    $imgUrl = str_starts_with($img, 'http') ? $img : asset($img);
-@endphp
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="{{ $product->nama_produk }}" src="{{ $imgUrl }}"/>
-@if($product->badge)
-<span class="absolute top-2 right-2 bg-primary-container text-on-primary-container font-label-md text-[10px] px-2 py-1 rounded-full uppercase">{{ $product->badge }}</span>
-@endif
+<div onclick="window.location.href='{{ route('product.detail', $product->id) }}'" class="product-card-item product-card-hover group bg-surface-container-lowest border border-[#EDEDED] rounded-xl p-2.5 sm:p-4 flex flex-col justify-between cursor-pointer transition-all duration-300" data-id="{{ $product->id }}" data-title="{{ $product->nama_produk }}" data-category="{{ $product->category->nama_kategori ?? 'Umum' }}" data-store="{{ strtolower($product->store->nama_toko ?? '') }}" data-price="{{ $product->harga }}" data-rating="4.8">
+<div>
+    <div class="relative w-full aspect-square bg-[#F5F5F5] rounded-lg overflow-hidden mb-2.5 sm:mb-4">
+    @php
+        $img = $product->galleries->first()?->foto_path ?? 'https://via.placeholder.com/400';
+        $imgUrl = str_starts_with($img, 'http') ? $img : asset($img);
+    @endphp
+    <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="{{ $product->nama_produk }}" src="{{ $imgUrl }}"/>
+    @if($product->badge)
+    <span class="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 bg-primary-container text-on-primary-container font-label-md text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full uppercase">{{ $product->badge }}</span>
+    @endif
+    </div>
+    <div class="flex items-center justify-between mb-1 text-[10px] sm:text-xs">
+    <span class="text-secondary truncate max-w-[90px] sm:max-w-none">{{ $product->category->nama_kategori ?? 'Umum' }}</span>
+    <div class="flex items-center gap-0.5 text-amber-500 flex-shrink-0">
+    <span class="material-symbols-outlined text-[13px] sm:text-[15px]" style="font-variation-settings: 'FILL' 1;">star</span>
+    <span class="font-semibold text-on-surface text-[10px] sm:text-xs">4.8</span>
+    </div>
+    </div>
+    <h4 class="text-xs sm:text-sm font-bold text-on-surface group-hover:text-primary transition-colors line-clamp-2 min-h-[32px] sm:min-h-[40px] leading-snug mb-1">{{ $product->nama_produk }}</h4>
+    <div class="text-[10px] sm:text-[11px] text-primary font-bold flex items-center gap-1 mb-2">
+        <span class="material-symbols-outlined text-xs">store</span>
+        <span class="truncate">{{ $product->store->nama_toko ?? 'Toko' }}</span>
+    </div>
 </div>
-<div class="flex items-center justify-between mb-1">
-<span class="text-body-sm text-secondary">{{ $product->category->nama_kategori ?? 'Umum' }}</span>
-<div class="flex items-center gap-1 text-amber-500">
-<span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="font-semibold text-on-surface text-xs">4.8</span>
-</div>
-</div>
-<h4 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors line-clamp-1">{{ $product->nama_produk }}</h4>
-<div class="mt-auto pt-4 flex items-center justify-between">
+<div class="pt-2 border-t border-surface-container-low flex items-center justify-between">
 <div class="flex flex-col">
-<span class="font-headline-sm text-headline-sm text-primary">Rp {{ number_format($product->harga, 0, ',', '.') }}</span>
+<span class="text-xs sm:text-base font-bold text-primary">Rp {{ number_format($product->harga, 0, ',', '.') }}</span>
 @if($product->harga_diskon)
-<span class="text-body-sm text-on-secondary-container line-through">Rp {{ number_format($product->harga_diskon, 0, ',', '.') }}</span>
+<span class="text-[10px] sm:text-xs text-on-secondary-container line-through">Rp {{ number_format($product->harga_diskon, 0, ',', '.') }}</span>
 @endif
 </div>
-<button class="material-symbols-outlined p-2 text-secondary hover:text-primary transition-colors">add_shopping_cart</button>
+<button class="material-symbols-outlined p-1 sm:p-2 text-secondary hover:text-primary transition-colors text-lg sm:text-2xl">add_shopping_cart</button>
 </div>
 </div>
 @empty
@@ -485,6 +527,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             const sortSelect = document.getElementById('sortSelect');
             const searchInput = document.getElementById('searchInput');
+            const searchTypeSelect = document.getElementById('searchTypeSelect');
             const priceRange = document.getElementById('priceRange');
             const maxPriceDisplay = document.getElementById('maxPriceDisplay');
             const clearFiltersBtn = document.getElementById('clearFiltersBtn');
@@ -504,6 +547,7 @@
 
             function applyFiltersAndSort() {
                 const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+                const searchType = searchTypeSelect ? searchTypeSelect.value : 'product';
                 const maxPrice = priceRange ? parseFloat(priceRange.value) : 500000;
                 
                 // Update price range text
@@ -521,10 +565,19 @@
                 productCards.forEach(card => {
                     const title = (card.dataset.title || '').toLowerCase();
                     const category = card.dataset.category || '';
+                    const store = (card.dataset.store || '').toLowerCase();
                     const price = parseFloat(card.dataset.price || '0');
                     const rating = parseFloat(card.dataset.rating || '0');
 
-                    const matchesSearch = !query || title.includes(query) || category.toLowerCase().includes(query);
+                    let matchesSearch = true;
+                    if (query) {
+                        if (searchType === 'store') {
+                            matchesSearch = store.includes(query);
+                        } else {
+                            matchesSearch = title.includes(query) || category.toLowerCase().includes(query) || store.includes(query);
+                        }
+                    }
+
                     const matchesCategory = checkedCategories.length === 0 || checkedCategories.includes(category);
                     const matchesPrice = price <= maxPrice;
                     const matchesRating = rating >= selectedMinRating;
@@ -572,6 +625,7 @@
             // Event Listeners
             if (sortSelect) sortSelect.addEventListener('change', applyFiltersAndSort);
             if (searchInput) searchInput.addEventListener('input', applyFiltersAndSort);
+            if (searchTypeSelect) searchTypeSelect.addEventListener('change', applyFiltersAndSort);
             if (priceRange) priceRange.addEventListener('input', applyFiltersAndSort);
             
             categoryCheckboxes.forEach(cb => cb.addEventListener('change', applyFiltersAndSort));

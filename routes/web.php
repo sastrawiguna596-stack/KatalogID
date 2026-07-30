@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
@@ -39,6 +40,12 @@ Route::middleware(['auth'])->group(function () {
     })->name('profile');
 
     Route::post('/profile/update', [AuthController::class, 'updateProfile'])->name('profile.update');
+
+    // Address Management
+    Route::post('/addresses', [AddressController::class, 'store'])->name('addresses.store');
+    Route::put('/addresses/{id}', [AddressController::class, 'update'])->name('addresses.update');
+    Route::delete('/addresses/{id}', [AddressController::class, 'destroy'])->name('addresses.destroy');
+    Route::post('/addresses/{id}/set-default', [AddressController::class, 'setDefault'])->name('addresses.set_default');
 
     // Cart & Checkout
     Route::get('/cart', [CartController::class, 'index'])->name('cart');

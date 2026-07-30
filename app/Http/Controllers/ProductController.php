@@ -34,19 +34,39 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $categories = Category::all();
+        $searchType = $request->input('search_type', 'product');
+        $searchTerm = trim($request->input('search', ''));
 
-        $query = Product::with(['category', 'galleries'])->where('status', 'active');
+        $query = Product::with(['category', 'galleries', 'store'])->where('status', 'active');
+
+        $matchedStores = collect();
+        if ($searchTerm !== '') {
+            $matchedStores = Store::where(function ($q) use ($searchTerm) {
+                $q->where('nama_toko', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('deskripsi', 'like', '%' . $searchTerm . '%');
+            })->get();
+
+            if ($searchType === 'store') {
+                $query->whereHas('store', function ($q) use ($searchTerm) {
+                    $q->where('nama_toko', 'like', '%' . $searchTerm . '%')
+                      ->orWhere('deskripsi', 'like', '%' . $searchTerm . '%');
+                });
+            } else {
+                $query->where(function ($q) use ($searchTerm) {
+                    $q->where('nama_produk', 'like', '%' . $searchTerm . '%')
+                      ->orWhereHas('store', function ($sq) use ($searchTerm) {
+                          $sq->where('nama_toko', 'like', '%' . $searchTerm . '%')
+                            ->orWhere('deskripsi', 'like', '%' . $searchTerm . '%');
+                      });
+                });
+            }
+        }
 
         // Filter berdasarkan Kategori
-        if ($request->has('category') && $request->category != '') {
+        if ($request->filled('category')) {
             $query->whereHas('category', function ($q) use ($request) {
                 $q->where('slug', $request->category);
             });
-        }
-
-        // Pencarian Nama Produk
-        if ($request->has('search') && $request->search != '') {
-            $query->where('nama_produk', 'like', '%' . $request->search . '%');
         }
 
         // Urutan (Sorting)
@@ -60,7 +80,7 @@ class ProductController extends Controller
 
         $products = $query->paginate(12)->withQueryString();
 
-        return view('product.all_product', compact('categories', 'products'));
+        return view('product.all_product', compact('categories', 'products', 'matchedStores'));
     }
 
     /**
@@ -87,7 +107,7 @@ class ProductController extends Controller
     {
         // Untuk simulasi testing, ambil toko pertama jika belum login
         $store = Auth::check() && Auth::user()->store ? Auth::user()->store : Store::first();
-        
+
         $products = Product::with(['category', 'galleries'])
             ->where('store_id', $store ? $store->id : 1)
             ->latest()
@@ -232,8 +252,10 @@ class ProductController extends Controller
     /**
      * Halaman Toko Penjual (My Store & Public Storefront)
      */
-    public function showStore($id = null)
+    public function showStore($id = null, Request $request = null)
     {
+        $request = $request ?? request();
+
         if ($id) {
             $store = Store::with('user')->find($id) ?? Store::first();
         } else {
@@ -254,11 +276,36 @@ class ProductController extends Controller
             }
         }
 
-        $products = Product::with(['category', 'galleries'])
-            ->where('store_id', $store->id)
-            ->latest()
-            ->get();
+        $categories = Category::all();
 
+        $query = Product::with(['category', 'galleries'])
+            ->where('store_id', $store->id);
+
+        if ($request->filled('category')) {
+            $query->whereHas('category', function ($q) use ($request) {
+                $q->where('slug', $request->category);
+            });
+        }
+
+        if ($request->filled('search')) {
+            $query->where('nama_produk', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->sort == 'price_low') {
+            $query->orderBy('harga', 'asc');
+        } elseif ($request->sort == 'price_high') {
+            $query->orderBy('harga', 'desc');
+        } else {
+            $query->latest();
+        }
+
+        // Jika opsi 'Semua Produk' toko dibuka (view=all)
+        if ($request->query('view') === 'all') {
+            $products = $query->paginate(12)->withQueryString();
+            return view('store_product', compact('store', 'products', 'categories'));
+        }
+
+        $products = $query->get();
         return view('seller.store', compact('store', 'products'));
     }
 }

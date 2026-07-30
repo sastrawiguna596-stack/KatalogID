@@ -10,6 +10,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
 <!-- Material Symbols -->
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Leaflet CSS & JS (OpenStreetMap) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script id="tailwind-config">
         tailwind.config = {
           darkMode: "class",
@@ -338,6 +341,80 @@
 </div>
 </aside>
 
+<!-- Store Address Book Section -->
+<section class="col-span-12 bg-surface-container-lowest border border-outline-variant rounded-xl p-4 md:p-stack-md">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-stack-md gap-3">
+        <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-primary text-3xl">storefront</span>
+            <div>
+                <h2 class="font-headline-sm text-headline-sm font-bold">Alamat Toko (Store Address Book)</h2>
+                <p class="text-xs text-on-surface-variant">Kelola daftar alamat pengambilan & pengiriman untuk toko Anda</p>
+            </div>
+        </div>
+        <button type="button" onclick="openAddModal()" class="border-2 border-on-surface text-on-surface px-4 md:px-6 py-2 rounded-lg font-label-md text-label-md hover:bg-on-surface hover:text-white transition-all flex items-center gap-2 self-start sm:self-auto font-bold">
+            <span class="material-symbols-outlined">add_location_alt</span> Tambah Alamat Toko Baru
+        </button>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-gutter">
+        @forelse(Auth::user()->addresses as $addr)
+            <div class="{{ $addr->is_default ? 'border-2 border-primary bg-primary-fixed/10' : 'border border-outline-variant hover:border-outline' }} rounded-xl p-stack-sm relative transition-colors flex flex-col justify-between min-h-[180px]">
+                <div>
+                    <div class="absolute top-4 right-4 flex gap-2">
+                        <button type="button" onclick="openEditModal({{ json_encode($addr) }})" class="text-on-surface-variant hover:text-primary transition-colors" title="Edit Alamat Toko">
+                            <span class="material-symbols-outlined">edit</span>
+                        </button>
+                        <form action="{{ route('addresses.destroy', $addr->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus alamat toko ini?');" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="text-on-surface-variant hover:text-error transition-colors" title="Hapus Alamat Toko">
+                                <span class="material-symbols-outlined">delete</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    @if($addr->is_default)
+                        <div class="bg-primary text-on-primary inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider mb-3">Alamat Utama Toko</div>
+                    @else
+                        <div class="invisible h-6 mb-3">Placeholder</div>
+                    @endif
+
+                    <h4 class="font-label-md text-on-surface mb-1 font-bold">{{ $addr->label }}</h4>
+                    <p class="font-body-sm text-on-surface-variant leading-relaxed">
+                        <strong class="text-on-surface">{{ $addr->receiver_name }}</strong> ({{ $addr->phone }})<br/>
+                        {{ $addr->address }}<br/>
+                        @if($addr->city || $addr->postal_code)
+                            {{ $addr->city }}{{ $addr->city && $addr->postal_code ? ', ' : '' }}{{ $addr->postal_code }}
+                        @endif
+                    </p>
+                </div>
+
+                <div>
+                    @if(!$addr->is_default)
+                        <form action="{{ route('addresses.set_default', $addr->id) }}" method="POST" class="mt-4">
+                            @csrf
+                            <button type="submit" class="text-primary font-label-md text-label-md hover:underline font-bold">Set sebagai Alamat Utama Toko</button>
+                        </form>
+                    @endif
+                </div>
+            </div>
+        @empty
+            <div onclick="openAddModal()" class="col-span-full border-2 border-dashed border-outline-variant rounded-xl p-8 flex flex-col items-center justify-center text-on-surface-variant min-h-[180px] cursor-pointer hover:bg-surface-container-low transition-colors">
+                <span class="material-symbols-outlined text-5xl opacity-40 mb-2 text-primary">add_location</span>
+                <p class="font-label-md text-label-md font-bold">Belum Ada Alamat Toko Tersimpan</p>
+                <p class="text-xs text-secondary mb-3 text-center">Tambahkan alamat lokasi fisik atau gudang toko Anda untuk keperluan pengiriman barang.</p>
+                <span class="px-4 py-2 bg-primary text-on-primary font-bold rounded-lg text-xs hover:brightness-90 transition-all">+ Tambah Alamat Toko Baru</span>
+            </div>
+        @endforelse
+
+        @if(Auth::user()->addresses->count() > 0)
+            <div onclick="openAddModal()" class="border border-dashed border-outline-variant rounded-xl p-stack-sm flex flex-col items-center justify-center text-on-surface-variant min-h-[180px] cursor-pointer hover:bg-surface-container-low transition-colors">
+                <span class="material-symbols-outlined text-4xl opacity-30 mb-2 text-primary">add_location</span>
+                <p class="font-label-md text-label-md opacity-60">Tambah Alamat Toko Lainnya</p>
+            </div>
+        @endif
+    </div>
+</section>
+
 <!-- Security Settings Section -->
 <section class="col-span-12 bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden">
 <div class="p-4 md:p-stack-md border-b border-outline-variant">
@@ -390,7 +467,158 @@
 </div>
 </footer>
 
+<!-- Modal Add Address Toko -->
+<div id="add-address-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl w-full max-w-xl shadow-2xl overflow-hidden transform transition-all my-8">
+        <div class="flex justify-between items-center px-6 py-4 border-b border-outline-variant bg-surface-container-low">
+            <h3 class="font-headline-sm text-headline-sm font-bold text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">add_location_alt</span>
+                Tambah Alamat Toko Baru
+            </h3>
+            <button type="button" onclick="closeAddModal()" class="text-on-surface-variant hover:text-on-surface">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form action="{{ route('addresses.store') }}" method="POST" class="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+            @csrf
+            <input type="hidden" id="add_latitude" name="latitude"/>
+            <input type="hidden" id="add_longitude" name="longitude"/>
+
+            <div>
+                <label class="block font-label-md text-label-md text-on-surface mb-1 font-bold">Pilih Lokasi Toko di Peta (OpenStreetMap)</label>
+                <div class="relative">
+                    <div id="add-map" class="w-full h-56 rounded-lg border border-outline-variant z-10"></div>
+                    <div id="add-map-loader" class="absolute inset-0 bg-white/70 backdrop-blur-xs flex items-center justify-center z-20 hidden">
+                        <span class="font-label-md text-primary font-bold flex items-center gap-2">
+                            <span class="material-symbols-outlined animate-spin">sync</span> Mengambil alamat dari peta...
+                        </span>
+                    </div>
+                </div>
+                <p class="text-[12px] text-on-surface-variant mt-1.5 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-sm text-primary">location_on</span>
+                    Klik pada peta atau geser pin marker untuk mengisi alamat toko, kota, & kode pos secara otomatis.
+                </p>
+            </div>
+
+            <div>
+                <label class="block font-label-md text-label-md text-on-surface mb-1 font-bold">Label Alamat Toko *</label>
+                <input type="text" name="label" required placeholder="Contoh: Gudang Utama, Toko Cabang Bandung, Rumah Seller" class="w-full border border-outline-variant rounded-lg px-4 py-2.5 bg-surface-container-low font-body-md focus:border-on-surface"/>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block font-label-md text-label-md text-on-surface mb-1 font-bold">Nama Pengirim / Penanggung Jawab *</label>
+                    <input type="text" name="receiver_name" required value="{{ old('receiver_name', Auth::user()->store->nama_toko ?? Auth::user()->name) }}" class="w-full border border-outline-variant rounded-lg px-4 py-2.5 bg-surface-container-low font-body-md focus:border-on-surface"/>
+                </div>
+                <div>
+                    <label class="block font-label-md text-label-md text-on-surface mb-1 font-bold">No. HP / Telepon Toko *</label>
+                    <input type="tel" name="phone" required value="{{ old('phone', Auth::user()->phone) }}" class="w-full border border-outline-variant rounded-lg px-4 py-2.5 bg-surface-container-low font-body-md focus:border-on-surface"/>
+                </div>
+            </div>
+            <div>
+                <label class="block font-label-md text-label-md text-on-surface mb-1 font-bold">Alamat Lengkap Toko *</label>
+                <textarea id="add_address" name="address" required rows="3" placeholder="Nama jalan, RT/RW, kelurahan, kecamatan" class="w-full border border-outline-variant rounded-lg px-4 py-2.5 bg-surface-container-low font-body-md focus:border-on-surface"></textarea>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block font-label-md text-label-md text-on-surface mb-1 font-bold">Kota / Kabupaten</label>
+                    <input type="text" id="add_city" name="city" placeholder="Contoh: Bandung" class="w-full border border-outline-variant rounded-lg px-4 py-2.5 bg-surface-container-low font-body-md focus:border-on-surface"/>
+                </div>
+                <div>
+                    <label class="block font-label-md text-label-md text-on-surface mb-1 font-bold">Kode Pos</label>
+                    <input type="text" id="add_postal_code" name="postal_code" placeholder="Contoh: 40123" class="w-full border border-outline-variant rounded-lg px-4 py-2.5 bg-surface-container-low font-body-md focus:border-on-surface"/>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 pt-2">
+                <input type="checkbox" name="is_default" id="add_is_default" value="1" class="rounded border-outline-variant text-primary focus:ring-primary h-4 w-4"/>
+                <label for="add_is_default" class="text-body-sm text-on-surface font-semibold cursor-pointer">Jadikan sebagai alamat utama toko (Default Shipping Origin)</label>
+            </div>
+            <div class="flex justify-end gap-3 pt-4 border-t border-outline-variant">
+                <button type="button" onclick="closeAddModal()" class="px-5 py-2.5 border border-outline-variant rounded-lg font-label-md text-label-md hover:bg-surface-variant font-semibold">Batal</button>
+                <button type="submit" class="px-5 py-2.5 bg-primary text-on-primary font-bold rounded-lg font-label-md text-label-md hover:brightness-90">Simpan Alamat Toko</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Edit Address Toko -->
+<div id="edit-address-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl w-full max-w-xl shadow-2xl overflow-hidden transform transition-all my-8">
+        <div class="flex justify-between items-center px-6 py-4 border-b border-outline-variant bg-surface-container-low">
+            <h3 class="font-headline-sm text-headline-sm font-bold text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">edit_location</span>
+                Edit Alamat Toko
+            </h3>
+            <button type="button" onclick="closeEditModal()" class="text-on-surface-variant hover:text-on-surface">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form id="edit-address-form" action="" method="POST" class="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+            @csrf
+            @method('PUT')
+            <input type="hidden" id="edit_latitude" name="latitude"/>
+            <input type="hidden" id="edit_longitude" name="longitude"/>
+
+            <div>
+                <label class="block font-label-md text-label-md text-on-surface mb-1 font-bold">Pilih Lokasi Toko di Peta (OpenStreetMap)</label>
+                <div class="relative">
+                    <div id="edit-map" class="w-full h-56 rounded-lg border border-outline-variant z-10"></div>
+                    <div id="edit-map-loader" class="absolute inset-0 bg-white/70 backdrop-blur-xs flex items-center justify-center z-20 hidden">
+                        <span class="font-label-md text-primary font-bold flex items-center gap-2">
+                            <span class="material-symbols-outlined animate-spin">sync</span> Mengambil alamat dari peta...
+                        </span>
+                    </div>
+                </div>
+                <p class="text-[12px] text-on-surface-variant mt-1.5 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-sm text-primary">location_on</span>
+                    Klik pada peta atau geser pin marker untuk memperbarui alamat toko.
+                </p>
+            </div>
+
+            <div>
+                <label class="block font-label-md text-label-md text-on-surface mb-1 font-bold">Label Alamat Toko *</label>
+                <input type="text" id="edit_label" name="label" required class="w-full border border-outline-variant rounded-lg px-4 py-2.5 bg-surface-container-low font-body-md focus:border-on-surface"/>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block font-label-md text-label-md text-on-surface mb-1 font-bold">Nama Pengirim / Penanggung Jawab *</label>
+                    <input type="text" id="edit_receiver_name" name="receiver_name" required class="w-full border border-outline-variant rounded-lg px-4 py-2.5 bg-surface-container-low font-body-md focus:border-on-surface"/>
+                </div>
+                <div>
+                    <label class="block font-label-md text-label-md text-on-surface mb-1 font-bold">No. HP / Telepon Toko *</label>
+                    <input type="tel" id="edit_phone" name="phone" required class="w-full border border-outline-variant rounded-lg px-4 py-2.5 bg-surface-container-low font-body-md focus:border-on-surface"/>
+                </div>
+            </div>
+            <div>
+                <label class="block font-label-md text-label-md text-on-surface mb-1 font-bold">Alamat Lengkap Toko *</label>
+                <textarea id="edit_address" name="address" required rows="3" class="w-full border border-outline-variant rounded-lg px-4 py-2.5 bg-surface-container-low font-body-md focus:border-on-surface"></textarea>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block font-label-md text-label-md text-on-surface mb-1 font-bold">Kota / Kabupaten</label>
+                    <input type="text" id="edit_city" name="city" class="w-full border border-outline-variant rounded-lg px-4 py-2.5 bg-surface-container-low font-body-md focus:border-on-surface"/>
+                </div>
+                <div>
+                    <label class="block font-label-md text-label-md text-on-surface mb-1 font-bold">Kode Pos</label>
+                    <input type="text" id="edit_postal_code" name="postal_code" class="w-full border border-outline-variant rounded-lg px-4 py-2.5 bg-surface-container-low font-body-md focus:border-on-surface"/>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 pt-2">
+                <input type="checkbox" name="is_default" id="edit_is_default" value="1" class="rounded border-outline-variant text-primary focus:ring-primary h-4 w-4"/>
+                <label for="edit_is_default" class="text-body-sm text-on-surface font-semibold cursor-pointer">Jadikan sebagai alamat utama toko (Default Shipping Origin)</label>
+            </div>
+            <div class="flex justify-end gap-3 pt-4 border-t border-outline-variant">
+                <button type="button" onclick="closeEditModal()" class="px-5 py-2.5 border border-outline-variant rounded-lg font-label-md text-label-md hover:bg-surface-variant font-semibold">Batal</button>
+                <button type="submit" class="px-5 py-2.5 bg-primary text-on-primary font-bold rounded-lg font-label-md text-label-md hover:brightness-90">Simpan Perubahan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
+    let addMap = null, addMarker = null;
+    let editMap = null, editMarker = null;
+    const defaultCenter = [-6.200000, 106.816666]; // Default Jakarta / Indonesia
+
     function toggleSidebar() {
         const sidebar = document.getElementById('main-sidebar');
         const overlay = document.getElementById('sidebar-overlay');
@@ -402,6 +630,156 @@
         const overlay = document.getElementById('sidebar-overlay');
         sidebar.classList.remove('open');
         overlay.classList.remove('active');
+    }
+
+    // Geocoding Helper: Reverse Geocode Lat/Lng to Address using OSM Nominatim API
+    async function reverseGeocode(lat, lng, addressElemId, cityElemId, postalCodeElemId, loaderElemId) {
+        if (loaderElemId) {
+            const loader = document.getElementById(loaderElemId);
+            if (loader) loader.classList.remove('hidden');
+        }
+        try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`);
+            const data = await response.json();
+            if (data && data.address) {
+                const addr = data.address;
+                const road = addr.road || addr.street || addr.pedestrian || '';
+                const suburb = addr.suburb || addr.village || addr.neighbourhood || addr.city_district || '';
+                const district = addr.county || addr.state_district || '';
+                
+                let fullAddr = [road, suburb, district].filter(Boolean).join(', ');
+                if (!fullAddr && data.display_name) {
+                    fullAddr = data.display_name;
+                }
+                
+                if (fullAddr) {
+                    document.getElementById(addressElemId).value = fullAddr;
+                }
+
+                const city = addr.city || addr.town || addr.municipality || addr.city_district || addr.regency || '';
+                if (city) {
+                    document.getElementById(cityElemId).value = city;
+                }
+
+                const postcode = addr.postcode || '';
+                if (postcode) {
+                    document.getElementById(postalCodeElemId).value = postcode;
+                }
+            }
+        } catch (error) {
+            console.error("Geocoding failed:", error);
+        } finally {
+            if (loaderElemId) {
+                const loader = document.getElementById(loaderElemId);
+                if (loader) loader.classList.add('hidden');
+            }
+        }
+    }
+
+    function initAddMap() {
+        if (addMap) return;
+        addMap = L.map('add-map').setView(defaultCenter, 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(addMap);
+
+        addMarker = L.marker(defaultCenter, { draggable: true }).addTo(addMap);
+
+        function onLocationSelect(lat, lng) {
+            addMarker.setLatLng([lat, lng]);
+            document.getElementById('add_latitude').value = lat;
+            document.getElementById('add_longitude').value = lng;
+            reverseGeocode(lat, lng, 'add_address', 'add_city', 'add_postal_code', 'add-map-loader');
+        }
+
+        addMap.on('click', function(e) {
+            onLocationSelect(e.latlng.lat, e.latlng.lng);
+        });
+
+        addMarker.on('dragend', function(e) {
+            const pos = e.target.getLatLng();
+            onLocationSelect(pos.lat, pos.lng);
+        });
+
+        // Try getting user's current location if available
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((pos) => {
+                const userLat = pos.coords.latitude;
+                const userLng = pos.coords.longitude;
+                addMap.setView([userLat, userLng], 15);
+                onLocationSelect(userLat, userLng);
+            }, () => {});
+        }
+    }
+
+    function initEditMap(lat, lng) {
+        const center = (lat && lng) ? [lat, lng] : defaultCenter;
+        if (!editMap) {
+            editMap = L.map('edit-map').setView(center, 14);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(editMap);
+
+            editMarker = L.marker(center, { draggable: true }).addTo(editMap);
+
+            function onEditLocationSelect(newLat, newLng) {
+                editMarker.setLatLng([newLat, newLng]);
+                document.getElementById('edit_latitude').value = newLat;
+                document.getElementById('edit_longitude').value = newLng;
+                reverseGeocode(newLat, newLng, 'edit_address', 'edit_city', 'edit_postal_code', 'edit-map-loader');
+            }
+
+            editMap.on('click', function(e) {
+                onEditLocationSelect(e.latlng.lat, e.latlng.lng);
+            });
+
+            editMarker.on('dragend', function(e) {
+                const pos = e.target.getLatLng();
+                onEditLocationSelect(pos.lat, pos.lng);
+            });
+        } else {
+            editMap.setView(center, 14);
+            editMarker.setLatLng(center);
+        }
+    }
+
+    function openAddModal() {
+        document.getElementById('add-address-modal').classList.remove('hidden');
+        setTimeout(() => {
+            initAddMap();
+            if (addMap) addMap.invalidateSize();
+        }, 200);
+    }
+
+    function closeAddModal() {
+        document.getElementById('add-address-modal').classList.add('hidden');
+    }
+
+    function openEditModal(addr) {
+        const form = document.getElementById('edit-address-form');
+        form.action = '/addresses/' + addr.id;
+        document.getElementById('edit_label').value = addr.label || '';
+        document.getElementById('edit_receiver_name').value = addr.receiver_name || '';
+        document.getElementById('edit_phone').value = addr.phone || '';
+        document.getElementById('edit_address').value = addr.address || '';
+        document.getElementById('edit_city').value = addr.city || '';
+        document.getElementById('edit_postal_code').value = addr.postal_code || '';
+        document.getElementById('edit_latitude').value = addr.latitude || '';
+        document.getElementById('edit_longitude').value = addr.longitude || '';
+        document.getElementById('edit_is_default').checked = addr.is_default ? true : false;
+        
+        document.getElementById('edit-address-modal').classList.remove('hidden');
+        
+        setTimeout(() => {
+            initEditMap(addr.latitude, addr.longitude);
+            if (editMap) editMap.invalidateSize();
+        }, 200);
+    }
+
+    function closeEditModal() {
+        document.getElementById('edit-address-modal').classList.add('hidden');
     }
 
     // Micro-interaction for form focus
@@ -425,6 +803,6 @@
         }
     }
 
-    console.log("Account Settings Page Initialized");
+    console.log("Seller Account Settings Page Initialized with Leaflet OSM Store Address Integration");
 </script>
 </body></html>

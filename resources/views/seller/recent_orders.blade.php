@@ -1,22 +1,17 @@
 <!DOCTYPE html>
 
-<html class="light" lang="en"><head>
+<html class="light" lang="en">
+<head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Recent Orders | Katalog IDN</title>
+<title>Pesanan Masuk | Katalog IDN</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <style>
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
             display: inline-block;
             line-height: 1;
-            text-transform: none;
-            letter-spacing: normal;
-            word-wrap: normal;
-            white-space: nowrap;
-            direction: ltr;
             vertical-align: middle;
         }
         @keyframes pageFadeIn {
@@ -28,34 +23,18 @@
             background-color: #fbf9f8;
             animation: pageFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) ease-out forwards;
         }
-        .order-card-hover {
-            transition: all 0.2s ease-in-out;
-        }
-        .order-card-hover:hover {
-            border-color: #1b1c1c;
-            transform: translateY(-2px);
-            box-shadow: 0px 4px 20px rgba(0,0,0,0.04);
-        }
-        /* Sidebar */
-        #sidebar-overlay {
-            display: none;
-        }
-        #sidebar-overlay.active {
-            display: block;
-        }
+        /* Sidebar Mobile Drawer */
+        #sidebar-overlay { display: none; }
+        #sidebar-overlay.active { display: block; }
         #main-sidebar {
             transform: translateX(-100%);
             transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
         }
-        #main-sidebar.open {
-            transform: translateX(0);
-        }
+        #main-sidebar.open { transform: translateX(0); }
         @media (min-width: 1024px) {
-            #main-sidebar {
-                transform: translateX(0) !important;
-            }
+            #main-sidebar { transform: translateX(0) !important; }
         }
-    </style>
+</style>
 <script id="tailwind-config">
       tailwind.config = {
         darkMode: "class",
@@ -137,30 +116,18 @@
                     "headline-xl": ["Hanken Grotesk"],
                     "headline-lg": ["Hanken Grotesk"],
                     "body-md": ["Plus Jakarta Sans"]
-            },
-            "fontSize": {
-                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
-                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
-                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
-                    "label-md": ["14px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
-                    "headline-xl-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
-                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
-                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
-                    "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
-                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
-                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
             }
           },
         },
       }
-    </script>
+</script>
 </head>
-<body class="bg-surface text-on-surface">
+<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col justify-between">
 
 <!-- Sidebar Overlay (mobile) -->
 <div id="sidebar-overlay" class="fixed inset-0 bg-black/40 z-30 lg:hidden" onclick="closeSidebar()"></div>
 
-<!-- TopNavBar -->
+<!-- Top Navigation Bar -->
 <nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-4 md:px-margin-desktop py-4 bg-surface border-b border-outline-variant">
 <div class="flex items-center gap-3">
     <button class="lg:hidden p-1 rounded-lg text-on-surface-variant hover:bg-surface-variant transition-colors" onclick="toggleSidebar()">
@@ -169,10 +136,6 @@
     <span class="font-headline-md text-headline-md font-bold text-primary">Katalog IDN</span>
 </div>
 <div class="flex items-center gap-3 md:gap-gutter">
-<div class="hidden md:flex items-center bg-surface-container-low rounded-full px-4 py-2 border border-outline-variant">
-<span class="material-symbols-outlined text-on-surface-variant mr-2">search</span>
-<input class="bg-transparent border-none p-0 focus:ring-0 text-body-sm w-48" placeholder="Search account..." type="text"/>
-</div>
 <button class="material-symbols-outlined text-on-surface-variant scale-95 active:scale-90 transition-transform">shopping_cart</button>
 <button class="material-symbols-outlined text-on-surface-variant scale-95 active:scale-90 transition-transform">notifications</button>
 <div class="w-8 h-8 rounded-full overflow-hidden border border-outline">
@@ -202,7 +165,7 @@
     </a>
 <!-- Active State: Orders -->
 <a class="flex items-center gap-3 px-3 py-2.5 text-on-primary-container bg-primary-container rounded-lg font-bold transition-all font-label-md text-label-md" href="{{ route('recent_orders') }}" onclick="closeSidebar()">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">receipt_long</span> Orders
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">receipt_long</span> Orders Masuk
     </a>
 <a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('inventories') }}" onclick="closeSidebar()">
 <span class="material-symbols-outlined">inventory</span> Inventory
@@ -221,188 +184,142 @@
 <a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('support') }}" onclick="closeSidebar()">
 <span class="material-symbols-outlined">help_outline</span> Support
     </a>
-<a class="flex items-center gap-3 px-3 py-2.5 text-error hover:bg-error-container rounded-lg transition-all font-label-md text-label-md" href="#">
-<span class="material-symbols-outlined">logout</span> Sign Out
-    </a>
+<form action="{{ route('logout') }}" method="POST" class="w-full">
+    @csrf
+    <button type="submit" class="w-full flex items-center gap-3 px-3 py-2.5 text-error hover:bg-error-container rounded-lg transition-all font-label-md text-label-md font-bold">
+        <span class="material-symbols-outlined">logout</span> Sign Out
+    </button>
+</form>
 </div>
 </aside>
 
 <!-- Main Content Area -->
-<main class="lg:ml-64 flex-1 pt-20 pb-stack-lg px-4 md:px-margin-desktop min-h-screen">
-<div class="max-w-container-max mx-auto py-6">
-<div class="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-stack-lg gap-4">
-<div>
-<nav class="flex gap-2 text-on-surface-variant font-body-sm text-body-sm mb-2">
-<span class="hover:underline cursor-pointer">Account</span>
-<span>/</span>
-<span class="text-on-surface font-semibold">Recent Orders</span>
-</nav>
-<h1 class="font-headline-xl text-2xl md:text-headline-xl">Order History</h1>
-</div>
-</div>
+<main class="lg:pl-64 pt-20 pb-stack-lg min-h-screen flex-grow">
+<div class="max-w-container-max mx-auto px-4 md:px-margin-desktop py-6">
+    
+    <!-- Page Title & Breadcrumbs -->
+    <div class="mb-stack-md">
+        <nav class="flex items-center gap-2 text-xs text-secondary font-medium mb-2">
+            <a href="{{ route('account') }}" class="hover:underline">Dashboard Penjual</a>
+            <span>/</span>
+            <span class="text-on-surface font-bold">Pesanan Masuk</span>
+        </nav>
+        <h1 class="font-headline-xl text-2xl md:text-headline-xl font-bold text-on-surface">Daftar Pesanan Toko</h1>
+        <p class="text-sm text-secondary mt-1">Kelola transaksi masuk dari pembeli dan periksa rincian item pesanan toko Anda.</p>
+    </div>
 
-<!-- Filters & Search -->
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-gutter mb-stack-md">
-<div class="sm:col-span-2 relative">
-<span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-on-surface-variant">search</span>
-<input class="w-full pl-12 pr-4 py-3 bg-surface border border-outline-variant rounded-lg focus:ring-4 focus:ring-primary-container/20 focus:border-on-surface outline-none transition-all" placeholder="Search orders..." type="text"/>
-</div>
-<div>
-<select class="w-full px-4 py-3 bg-surface border border-outline-variant rounded-lg focus:ring-4 focus:ring-primary-container/20 focus:border-on-surface outline-none transition-all">
-<option>Last 3 months</option>
-<option>Last 6 months</option>
-<option>Year 2023</option>
-<option>All time</option>
-</select>
-</div>
-<div>
-<select class="w-full px-4 py-3 bg-surface border border-outline-variant rounded-lg focus:ring-4 focus:ring-primary-container/20 focus:border-on-surface outline-none transition-all">
-<option>All Statuses</option>
-<option>Processing</option>
-<option>Shipped</option>
-<option>Delivered</option>
-<option>Cancelled</option>
-</select>
-</div>
-</div>
+    <!-- Search & Status Filter -->
+    <form method="GET" action="{{ route('recent_orders') }}" class="flex flex-col sm:flex-row gap-3 mb-6 items-center justify-between">
+        <div class="relative w-full sm:max-w-md">
+            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-secondary text-lg">search</span>
+            <input name="search" value="{{ request('search') }}" class="w-full pl-10 pr-4 py-2.5 bg-white border border-outline-variant rounded-xl focus:outline-none focus:border-primary text-sm font-body-sm transition-all" placeholder="Cari ID Pesanan atau nama pembeli..." type="text"/>
+        </div>
+        <div class="w-full sm:w-56 flex-shrink-0">
+            <select name="status" onchange="this.form.submit()" class="w-full px-4 py-2.5 bg-white border border-outline-variant rounded-xl focus:outline-none focus:border-primary text-sm font-bold text-on-surface cursor-pointer">
+                <option value="all" {{ request('status') == 'all' ? 'selected' : '' }}>Semua Status</option>
+                <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}>Lunas (Paid)</option>
+                <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Menunggu Pembayaran</option>
+                <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Dibatalkan</option>
+            </select>
+        </div>
+    </form>
 
-<!-- Orders List -->
-<div class="space-y-4 md:space-y-gutter">
-<!-- Order Item 1 -->
-<div class="order-card-hover bg-surface-container-lowest border border-[#EDEDED] rounded-xl p-4 md:p-6 flex flex-col gap-4">
-<div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 w-full">
-<div>
-<p class="text-on-surface-variant font-label-md text-[11px] md:text-label-md mb-1 uppercase tracking-wider">Order ID</p>
-<p class="font-headline-sm text-lg md:text-headline-sm">#LUM-89231</p>
-</div>
-<div>
-<p class="text-on-surface-variant font-label-md text-[11px] md:text-label-md mb-1 uppercase tracking-wider">Date</p>
-<p class="font-body-md text-sm md:text-body-md">Oct 24, 2024</p>
-</div>
-<div>
-<p class="text-on-surface-variant font-label-md text-[11px] md:text-label-md mb-1 uppercase tracking-wider">Total</p>
-<p class="font-body-md text-sm md:text-body-md font-bold text-primary">$1,240.50</p>
-</div>
-<div>
-<p class="text-on-surface-variant font-label-md text-[11px] md:text-label-md mb-1 uppercase tracking-wider">Status</p>
-<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-primary-container/20 text-on-primary-container rounded-full font-label-md text-[12px]">
-<span class="w-2 h-2 rounded-full bg-primary-container"></span>
-                                    Shipped
-                                </span>
-</div>
-</div>
-<div class="flex gap-3 w-full sm:w-auto">
-<button class="flex-1 sm:flex-none px-4 md:px-6 py-2.5 bg-primary-container text-on-primary-container font-label-md text-label-md rounded-lg hover:brightness-90 transition-all active:scale-95">Track Order</button>
-<button class="flex-1 sm:flex-none px-4 md:px-6 py-2.5 border-2 border-on-surface text-on-surface font-label-md text-label-md rounded-lg hover:bg-on-surface hover:text-surface transition-all active:scale-95">Details</button>
-</div>
-</div>
+    <!-- Orders List (Proportional Cards) -->
+    <div class="space-y-5">
+        @forelse($orders as $order)
+            <div class="bg-white border border-[#EDEDED] rounded-2xl p-4 sm:p-6 space-y-4 hover:shadow-md transition-all duration-300">
+                
+                <!-- Order Card Header -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-surface-container-low pb-3.5">
+                    <div class="flex items-center gap-2.5 flex-wrap">
+                        <div class="flex items-center gap-1.5 font-bold text-on-surface text-sm">
+                            <span class="material-symbols-outlined text-primary text-lg">person</span>
+                            <span>{{ $order->user->name ?? 'Pembeli' }}</span>
+                        </div>
+                        <span class="text-outline-variant">•</span>
+                        <span class="text-xs text-secondary font-semibold">#ORD-{{ $order->id }}</span>
+                        <span class="text-outline-variant">•</span>
+                        <span class="text-xs text-secondary">{{ $order->created_at ? $order->created_at->format('d M Y, H:i') : '-' }}</span>
+                    </div>
+                    <div>
+                        @if($order->status_pembayaran === 'paid')
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-xs font-bold">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Lunas (Paid)
+                            </span>
+                        @elseif($order->status_pembayaran === 'pending')
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-700 border border-amber-200 rounded-full text-xs font-bold">
+                                <span class="w-2 h-2 rounded-full bg-amber-500"></span> Menunggu Pembayaran
+                            </span>
+                        @else
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-rose-50 text-rose-700 border border-rose-200 rounded-full text-xs font-bold">
+                                <span class="w-2 h-2 rounded-full bg-rose-500"></span> {{ ucfirst($order->status_pembayaran ?? 'Dibatalkan') }}
+                            </span>
+                        @endif
+                    </div>
+                </div>
 
-<!-- Order Item 2 -->
-<div class="order-card-hover bg-surface-container-lowest border border-[#EDEDED] rounded-xl p-4 md:p-6 flex flex-col gap-4">
-<div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 w-full">
-<div>
-<p class="text-on-surface-variant font-label-md text-[11px] md:text-label-md mb-1 uppercase tracking-wider">Order ID</p>
-<p class="font-headline-sm text-lg md:text-headline-sm">#LUM-89104</p>
-</div>
-<div>
-<p class="text-on-surface-variant font-label-md text-[11px] md:text-label-md mb-1 uppercase tracking-wider">Date</p>
-<p class="font-body-md text-sm md:text-body-md">Oct 18, 2024</p>
-</div>
-<div>
-<p class="text-on-surface-variant font-label-md text-[11px] md:text-label-md mb-1 uppercase tracking-wider">Total</p>
-<p class="font-body-md text-sm md:text-body-md font-bold text-primary">$450.00</p>
-</div>
-<div>
-<p class="text-on-surface-variant font-label-md text-[11px] md:text-label-md mb-1 uppercase tracking-wider">Status</p>
-<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-tertiary-container/30 text-on-tertiary-container rounded-full font-label-md text-[12px]">
-<span class="w-2 h-2 rounded-full bg-tertiary"></span>
-                                    Delivered
-                                </span>
-</div>
-</div>
-<div class="flex gap-3 w-full sm:w-auto">
-<button class="flex-1 sm:flex-none px-4 md:px-6 py-2.5 border-2 border-on-surface text-on-surface font-label-md text-label-md rounded-lg hover:bg-on-surface hover:text-surface transition-all active:scale-95">Details</button>
-<button class="flex-1 sm:flex-none px-4 md:px-6 py-2.5 border-2 border-on-surface/20 text-on-surface/40 font-label-md text-label-md rounded-lg cursor-not-allowed">Reorder</button>
-</div>
-</div>
+                <!-- Order Items Detail List -->
+                <div class="space-y-3">
+                    @if($order->items && $order->items->count() > 0)
+                        @foreach($order->items as $item)
+                            @php
+                                $product = $item->product;
+                                $img = $product?->galleries->first()?->foto_path ?? 'https://via.placeholder.com/150';
+                                $imgUrl = str_starts_with($img, 'http') ? $img : asset($img);
+                            @endphp
+                            <div class="flex items-center gap-4">
+                                <div class="w-16 h-16 rounded-xl bg-surface-container-low overflow-hidden border border-outline-variant/30 flex-shrink-0">
+                                    <img class="w-full h-full object-cover" src="{{ $imgUrl }}" alt="{{ $product->nama_produk ?? 'Produk' }}"/>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="font-bold text-sm text-on-surface truncate">{{ $product->nama_produk ?? 'Produk Pesanan' }}</h4>
+                                    <p class="text-xs text-secondary mt-0.5">{{ $item->jumlah }} unit x Rp {{ number_format($item->harga, 0, ',', '.') }}</p>
+                                </div>
+                                <div class="text-right flex-shrink-0">
+                                    <p class="font-bold text-sm text-on-surface">Rp {{ number_format($item->harga * $item->jumlah, 0, ',', '.') }}</p>
+                                </div>
+                            </div>
+                        @endforeach
+                    @else
+                        <div class="text-xs text-secondary italic">Rincian produk tidak tersedia</div>
+                    @endif
+                </div>
 
-<!-- Order Item 3 -->
-<div class="order-card-hover bg-surface-container-lowest border border-[#EDEDED] rounded-xl p-4 md:p-6 flex flex-col gap-4">
-<div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 w-full">
-<div>
-<p class="text-on-surface-variant font-label-md text-[11px] md:text-label-md mb-1 uppercase tracking-wider">Order ID</p>
-<p class="font-headline-sm text-lg md:text-headline-sm">#LUM-88992</p>
-</div>
-<div>
-<p class="text-on-surface-variant font-label-md text-[11px] md:text-label-md mb-1 uppercase tracking-wider">Date</p>
-<p class="font-body-md text-sm md:text-body-md">Oct 12, 2024</p>
-</div>
-<div>
-<p class="text-on-surface-variant font-label-md text-[11px] md:text-label-md mb-1 uppercase tracking-wider">Total</p>
-<p class="font-body-md text-sm md:text-body-md font-bold text-primary">$2,110.25</p>
-</div>
-<div>
-<p class="text-on-surface-variant font-label-md text-[11px] md:text-label-md mb-1 uppercase tracking-wider">Status</p>
-<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-error-container/20 text-error rounded-full font-label-md text-[12px]">
-<span class="w-2 h-2 rounded-full bg-error"></span>
-                                    Cancelled
-                                </span>
-</div>
-</div>
-<div class="flex gap-3 w-full sm:w-auto">
-<button class="flex-1 sm:flex-none px-4 md:px-6 py-2.5 border-2 border-on-surface text-on-surface font-label-md text-label-md rounded-lg hover:bg-on-surface hover:text-surface transition-all active:scale-95">Support</button>
-</div>
-</div>
+                <!-- Order Footer Summary & Actions -->
+                <div class="border-t border-surface-container-low pt-3.5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div>
+                        <span class="text-xs text-secondary block">Total Nilai Pesanan</span>
+                        <span class="font-headline-sm text-lg font-bold text-primary">Rp {{ number_format($order->total_harga, 0, ',', '.') }}</span>
+                    </div>
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        @if($order->items->first() && $order->items->first()->product)
+                            <a href="{{ route('product.detail', $order->items->first()->product->id) }}" class="flex-1 sm:flex-initial px-4 py-2 border border-outline-variant text-on-surface hover:bg-surface-container-low rounded-xl font-bold text-xs text-center transition-all">
+                                Lihat Produk
+                            </a>
+                        @endif
+                    </div>
+                </div>
 
-<!-- Order Item 4 -->
-<div class="order-card-hover bg-surface-container-lowest border border-[#EDEDED] rounded-xl p-4 md:p-6 flex flex-col gap-4">
-<div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 w-full">
-<div>
-<p class="text-on-surface-variant font-label-md text-[11px] md:text-label-md mb-1 uppercase tracking-wider">Order ID</p>
-<p class="font-headline-sm text-lg md:text-headline-sm">#LUM-88840</p>
-</div>
-<div>
-<p class="text-on-surface-variant font-label-md text-[11px] md:text-label-md mb-1 uppercase tracking-wider">Date</p>
-<p class="font-body-md text-sm md:text-body-md">Sep 30, 2024</p>
-</div>
-<div>
-<p class="text-on-surface-variant font-label-md text-[11px] md:text-label-md mb-1 uppercase tracking-wider">Total</p>
-<p class="font-body-md text-sm md:text-body-md font-bold text-primary">$128.00</p>
-</div>
-<div>
-<p class="text-on-surface-variant font-label-md text-[11px] md:text-label-md mb-1 uppercase tracking-wider">Status</p>
-<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-surface-variant text-on-surface-variant rounded-full font-label-md text-[12px]">
-<span class="w-2 h-2 rounded-full bg-on-surface-variant"></span>
-                                    Processing
-                                </span>
-</div>
-</div>
-<div class="flex gap-3 w-full sm:w-auto">
-<button class="flex-1 sm:flex-none px-4 md:px-6 py-2.5 border-2 border-on-surface text-on-surface font-label-md text-label-md rounded-lg hover:bg-on-surface hover:text-surface transition-all active:scale-95">Details</button>
-</div>
-</div>
-</div>
+            </div>
+        @empty
+            <div class="p-12 text-center bg-white rounded-2xl border border-dashed border-outline-variant/80 my-4">
+                <span class="material-symbols-outlined text-5xl text-primary opacity-50 mb-3">receipt_long</span>
+                <h3 class="font-bold text-lg text-on-surface">Belum Ada Data Pesanan</h3>
+                <p class="text-sm text-secondary mt-1 max-w-md mx-auto">Toko Anda saat ini belum memiliki pesanan masuk di database. Pesanan baru dari pelanggan akan muncul di sini secara otomatis.</p>
+            </div>
+        @endforelse
+    </div>
 
-<!-- Pagination -->
-<div class="mt-stack-lg flex flex-col sm:flex-row justify-between items-center gap-4 py-6 border-t border-outline-variant">
-<p class="font-body-sm text-body-sm text-on-surface-variant">Showing 1 to 4 of 28 orders</p>
-<div class="flex gap-2">
-<button class="p-2 rounded border border-outline-variant hover:bg-surface-variant disabled:opacity-30" disabled="">
-<span class="material-symbols-outlined">chevron_left</span>
-</button>
-<button class="w-10 h-10 rounded bg-on-surface text-surface font-bold">1</button>
-<button class="w-10 h-10 rounded border border-outline-variant hover:bg-surface-variant">2</button>
-<button class="w-10 h-10 rounded border border-outline-variant hover:bg-surface-variant">3</button>
-<button class="p-2 rounded border border-outline-variant hover:bg-surface-variant">
-<span class="material-symbols-outlined">chevron_right</span>
-</button>
-</div>
-</div>
+    <!-- Dynamic Pagination -->
+    <div class="mt-8">
+        {{ $orders->links() }}
+    </div>
+
 </div>
 </main>
 
 <!-- Footer -->
-<footer class="lg:ml-64 w-full py-stack-lg px-4 md:px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-gutter bg-surface-container-high border-t border-outline-variant">
+<footer class="lg:pl-64 w-full py-stack-lg px-4 md:px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-gutter bg-surface-container-high border-t border-outline-variant">
 <div class="flex flex-col gap-2">
 <span class="font-headline-sm text-headline-sm font-bold text-on-surface">Katalog IDN</span>
 <p class="font-body-sm text-body-sm text-on-surface-variant">© 2026 Katalog IDN. All rights reserved.</p>
@@ -419,37 +336,15 @@
     function toggleSidebar() {
         const sidebar = document.getElementById('main-sidebar');
         const overlay = document.getElementById('sidebar-overlay');
-        sidebar.classList.toggle('open');
-        overlay.classList.toggle('active');
+        if (sidebar) sidebar.classList.toggle('open');
+        if (overlay) overlay.classList.toggle('active');
     }
     function closeSidebar() {
         const sidebar = document.getElementById('main-sidebar');
         const overlay = document.getElementById('sidebar-overlay');
-        sidebar.classList.remove('open');
-        overlay.classList.remove('active');
+        if (sidebar) sidebar.classList.remove('open');
+        if (overlay) overlay.classList.remove('active');
     }
-
-    // Simple micro-interactions for the sidebar items
-    document.querySelectorAll('aside nav a').forEach(link => {
-        link.addEventListener('mouseenter', () => {
-            if(!link.classList.contains('bg-primary-container')) {
-                link.style.transform = 'translateX(4px)';
-            }
-        });
-        link.addEventListener('mouseleave', () => {
-            link.style.transform = 'translateX(0)';
-        });
-    });
-
-    // Search bar focus effect
-    const searchInputs = document.querySelectorAll('input[type="text"]');
-    searchInputs.forEach(searchInput => {
-        searchInput.addEventListener('focus', () => {
-            searchInput.parentElement.style.transform = 'scale(1.01)';
-        });
-        searchInput.addEventListener('blur', () => {
-            searchInput.parentElement.style.transform = 'scale(1)';
-        });
-    });
 </script>
-</body></html>
+</body>
+</html>

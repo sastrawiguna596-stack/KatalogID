@@ -113,6 +113,7 @@ class AuthController extends Controller
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'nama_toko' => 'nullable|string|max:255',
             'deskripsi_toko' => 'nullable|string|max:1000',
+            'kota' => 'nullable|string|max:255',
             'current_password' => 'nullable|required_with:new_password',
             'new_password' => 'nullable|min:6',
         ]);
@@ -145,6 +146,7 @@ class AuthController extends Controller
                     'nama_toko' => $request->nama_toko ?: $user->name . ' Store',
                     'slug' => Str::slug(($request->nama_toko ?: $user->name . ' Store') . '-' . time()),
                     'deskripsi' => $request->deskripsi_toko ?: 'Toko resmi ' . $user->name,
+                    'kota' => $request->kota ?: 'Kota Denpasar',
                     'is_active' => true,
                 ]
             );
@@ -155,6 +157,9 @@ class AuthController extends Controller
             }
             if ($request->has('deskripsi_toko')) {
                 $store->deskripsi = $request->deskripsi_toko;
+            }
+            if ($request->filled('kota')) {
+                $store->kota = $request->kota;
             }
             $store->save();
         }
@@ -167,6 +172,9 @@ class AuthController extends Controller
      */
     private function redirectUserBasedOnRole($user)
     {
+        if ($user->role === 'admin') {
+            return redirect()->intended(route('admin.dashboard'));
+        }
         if ($user->role === 'seller') {
             return redirect()->intended(route('inventories'));
         }

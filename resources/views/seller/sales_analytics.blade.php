@@ -198,10 +198,6 @@
     <span class="font-headline-md text-headline-md font-bold text-primary">Katalog IDN</span>
 </div>
 <div class="flex items-center gap-3 md:gap-gutter">
-<div class="hidden md:flex items-center bg-surface-container-low rounded-full px-4 py-2 border border-outline-variant">
-<span class="material-symbols-outlined text-on-surface-variant mr-2">search</span>
-<input class="bg-transparent border-none p-0 focus:ring-0 text-body-sm w-48" placeholder="Search account..." type="text"/>
-</div>
 <button class="material-symbols-outlined text-on-surface-variant scale-95 active:scale-90 transition-transform">shopping_cart</button>
 <button class="material-symbols-outlined text-on-surface-variant scale-95 active:scale-90 transition-transform">notifications</button>
 <div class="w-8 h-8 rounded-full overflow-hidden border border-outline">
@@ -250,9 +246,12 @@
 <a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('support') }}" onclick="closeSidebar()">
 <span class="material-symbols-outlined">help_outline</span> Support
     </a>
-<a class="flex items-center gap-3 px-3 py-2.5 text-error hover:bg-error-container rounded-lg transition-all font-label-md text-label-md" href="#">
-<span class="material-symbols-outlined">logout</span> Sign Out
-    </a>
+<form action="{{ route('logout') }}" method="POST" class="w-full">
+    @csrf
+    <button type="submit" class="w-full flex items-center gap-3 px-3 py-2.5 text-error hover:bg-error-container rounded-lg transition-all font-label-md text-label-md font-bold">
+        <span class="material-symbols-outlined">logout</span> Sign Out
+    </button>
+</form>
 </div>
 </aside>
 
@@ -263,324 +262,222 @@
 <!-- Page Header & Filters -->
 <div class="flex flex-col md:flex-row md:items-end justify-between gap-gutter">
 <div class="space-y-1">
-<h1 class="font-headline-lg text-headline-lg text-on-background">Sales Performance</h1>
-<p class="font-body-md text-secondary">A detailed breakdown of your store's commercial health.</p>
+<h1 class="font-headline-lg text-headline-lg text-on-background">Analisis Penjualan Toko</h1>
+<p class="font-body-md text-secondary">Laporan & statistik kinerja penjualan riil dari database untuk {{ $store->nama_toko ?? 'Toko Anda' }}.</p>
 </div>
 <div class="flex items-center gap-2 p-1 bg-surface-container-low rounded-lg border border-outline-variant">
-<button class="px-4 py-2 font-label-md text-label-md rounded-md hover:bg-white hover:shadow-sm transition-all text-secondary">Last 7 Days</button>
-<button class="px-4 py-2 font-label-md text-label-md rounded-md bg-white shadow-sm text-on-surface">Last 30 Days</button>
-<button class="px-4 py-2 font-label-md text-label-md rounded-md hover:bg-white hover:shadow-sm transition-all text-secondary">Year to Date</button>
-<button class="w-10 h-10 flex items-center justify-center rounded-md hover:bg-white transition-all text-secondary">
-<span class="material-symbols-outlined">calendar_today</span>
-</button>
+<a href="{{ route('sales_analytics', ['range' => '7_days']) }}" class="px-4 py-2 font-label-md text-xs rounded-md transition-all font-bold {{ $range === '7_days' ? 'bg-white shadow-sm text-on-surface' : 'text-secondary hover:bg-white/50' }}">7 Hari Terakhir</a>
+<a href="{{ route('sales_analytics', ['range' => '30_days']) }}" class="px-4 py-2 font-label-md text-xs rounded-md transition-all font-bold {{ $range === '30_days' ? 'bg-white shadow-sm text-on-surface' : 'text-secondary hover:bg-white/50' }}">30 Hari Terakhir</a>
+<a href="{{ route('sales_analytics', ['range' => 'ytd']) }}" class="px-4 py-2 font-label-md text-xs rounded-md transition-all font-bold {{ $range === 'ytd' ? 'bg-white shadow-sm text-on-surface' : 'text-secondary hover:bg-white/50' }}">Tahun Ini (YTD)</a>
 </div>
 </div>
+
 <!-- KPI Grid -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
 <!-- Revenue KPI -->
 <div class="bg-white p-6 rounded-xl border border-[#EDEDED] flex flex-col justify-between group hover:border-primary-fixed transition-colors">
 <div class="flex justify-between items-start">
-<span class="font-label-md text-label-md text-secondary">Total Revenue</span>
+<span class="font-label-md text-label-md text-secondary">Total Pendapatan (Lunas)</span>
 <div class="w-10 h-10 bg-primary-container/20 rounded-full flex items-center justify-center">
 <span class="material-symbols-outlined text-primary text-xl">payments</span>
 </div>
 </div>
 <div class="mt-4">
-<h3 class="font-headline-md text-headline-md text-on-surface">$124,592.00</h3>
+<h3 class="font-headline-md text-xl md:text-headline-md text-on-surface font-bold">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</h3>
 <div class="flex items-center gap-1 mt-1">
-<span class="material-symbols-outlined text-green-600 text-sm">trending_up</span>
-<span class="text-sm font-semibold text-green-600">+12.5%</span>
-<span class="text-sm text-tertiary ml-1">vs last mo.</span>
+<span class="text-xs text-tertiary">{{ $paidCount }} pesanan telah lunas</span>
 </div>
 </div>
 </div>
+
 <!-- AOV KPI -->
 <div class="bg-white p-6 rounded-xl border border-[#EDEDED] flex flex-col justify-between group hover:border-primary-fixed transition-colors">
 <div class="flex justify-between items-start">
-<span class="font-label-md text-label-md text-secondary">Avg. Order Value</span>
+<span class="font-label-md text-label-md text-secondary">Rata-rata Pesanan (AOV)</span>
 <div class="w-10 h-10 bg-secondary-container rounded-full flex items-center justify-center">
 <span class="material-symbols-outlined text-secondary text-xl">shopping_bag</span>
 </div>
 </div>
 <div class="mt-4">
-<h3 class="font-headline-md text-headline-md text-on-surface">$84.50</h3>
+<h3 class="font-headline-md text-xl md:text-headline-md text-on-surface font-bold">Rp {{ number_format($avgOrderValue, 0, ',', '.') }}</h3>
 <div class="flex items-center gap-1 mt-1">
-<span class="material-symbols-outlined text-green-600 text-sm">trending_up</span>
-<span class="text-sm font-semibold text-green-600">+2.1%</span>
-<span class="text-sm text-tertiary ml-1">vs last mo.</span>
+<span class="text-xs text-tertiary">Rata-rata per transaksi lunas</span>
 </div>
 </div>
 </div>
-<!-- Conv Rate KPI -->
+
+<!-- Total Orders KPI -->
 <div class="bg-white p-6 rounded-xl border border-[#EDEDED] flex flex-col justify-between group hover:border-primary-fixed transition-colors">
 <div class="flex justify-between items-start">
-<span class="font-label-md text-label-md text-secondary">Conversion Rate</span>
+<span class="font-label-md text-label-md text-secondary">Total Pesanan</span>
 <div class="w-10 h-10 bg-tertiary-container/30 rounded-full flex items-center justify-center">
-<span class="material-symbols-outlined text-tertiary text-xl">ads_click</span>
+<span class="material-symbols-outlined text-tertiary text-xl">receipt_long</span>
 </div>
 </div>
 <div class="mt-4">
-<h3 class="font-headline-md text-headline-md text-on-surface">3.8%</h3>
+<h3 class="font-headline-md text-xl md:text-headline-md text-on-surface font-bold">{{ number_format($totalOrdersCount) }} <span class="text-sm font-normal text-secondary">Pesanan</span></h3>
 <div class="flex items-center gap-1 mt-1">
-<span class="material-symbols-outlined text-red-500 text-sm rotate-180">trending_up</span>
-<span class="text-sm font-semibold text-red-500">-0.4%</span>
-<span class="text-sm text-tertiary ml-1">vs last mo.</span>
+<span class="text-xs text-emerald-600 font-semibold">{{ $paidCount }} Lunas</span>
+<span class="text-xs text-tertiary">• {{ $totalOrdersCount - $paidCount }} Pending/Batal</span>
 </div>
 </div>
 </div>
-<!-- Growth KPI -->
+
+<!-- Units Sold KPI -->
 <div class="bg-white p-6 rounded-xl border border-[#EDEDED] flex flex-col justify-between group hover:border-primary-fixed transition-colors">
 <div class="flex justify-between items-start">
-<span class="font-label-md text-label-md text-secondary">Customer Growth</span>
+<span class="font-label-md text-label-md text-secondary">Total Unit Terjual</span>
 <div class="w-10 h-10 bg-primary-container/20 rounded-full flex items-center justify-center">
-<span class="material-symbols-outlined text-primary text-xl">group_add</span>
+<span class="material-symbols-outlined text-primary text-xl">inventory_2</span>
 </div>
 </div>
 <div class="mt-4">
-<h3 class="font-headline-md text-headline-md text-on-surface">1,204</h3>
+<h3 class="font-headline-md text-xl md:text-headline-md text-on-surface font-bold">{{ number_format($totalUnitsSold) }} <span class="text-sm font-normal text-secondary">Unit</span></h3>
 <div class="flex items-center gap-1 mt-1">
-<span class="material-symbols-outlined text-green-600 text-sm">trending_up</span>
-<span class="text-sm font-semibold text-green-600">+8.7%</span>
-<span class="text-sm text-tertiary ml-1">vs last mo.</span>
+<span class="text-xs text-tertiary">Item produk fisik terkirim</span>
 </div>
 </div>
 </div>
 </div>
+
 <!-- Main Analytics Section -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
 <!-- Revenue Overview Chart -->
-<div class="lg:col-span-2 bg-white p-8 rounded-xl border border-[#EDEDED] space-y-6">
+<div class="lg:col-span-2 bg-white p-6 md:p-8 rounded-xl border border-[#EDEDED] space-y-6">
 <div class="flex items-center justify-between">
-<h2 class="font-headline-sm text-headline-sm text-on-surface">Revenue Overview</h2>
-<div class="flex gap-4">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">Grafik Pendapatan Bulanan</h2>
+<p class="text-xs text-secondary">Penjualan riil per bulan (Tahun {{ now()->year }})</p>
+</div>
 <div class="flex items-center gap-2">
 <div class="w-3 h-3 rounded-full bg-primary"></div>
-<span class="text-xs font-label-md text-secondary uppercase">2024</span>
-</div>
-<div class="flex items-center gap-2">
-<div class="w-3 h-3 rounded-full bg-surface-variant"></div>
-<span class="text-xs font-label-md text-secondary uppercase">2023</span>
-</div>
+<span class="text-xs font-label-md text-secondary uppercase">Tahun {{ now()->year }}</span>
 </div>
 </div>
 <div class="h-64 flex items-end justify-between gap-2 pt-4 relative">
-<!-- Y-Axis Labels -->
-<div class="absolute -left-2 top-0 bottom-0 flex flex-col justify-between text-[10px] text-secondary/50 font-label-md uppercase">
-<span>100k</span>
-<span>75k</span>
-<span>50k</span>
-<span>25k</span>
-<span>0</span>
-</div>
 <!-- Chart Bars -->
-<div class="flex-grow flex items-end justify-around gap-1 ml-8">
-<!-- Jan -->
-<div class="flex flex-col items-center gap-1 w-full group">
-<div class="w-full flex items-end gap-1 justify-center h-full">
-<div class="bg-surface-variant w-3 rounded-t-sm chart-bar" style="height: 30%"></div>
-<div class="bg-primary w-3 rounded-t-sm chart-bar group-hover:bg-primary-fixed-dim" style="height: 45%"></div>
+<div class="flex-grow flex items-end justify-around gap-1.5 h-full pt-6">
+@foreach($monthlyChartData as $mItem)
+@php
+    $barHeight = $maxMonthlySales > 0 ? min(100, max(6, round(($mItem['value'] / $maxMonthlySales) * 100))) : 6;
+@endphp
+<div class="flex flex-col items-center gap-1.5 w-full group relative" title="{{ $mItem['label'] }}: Rp {{ number_format($mItem['value'], 0, ',', '.') }}">
+    <div class="w-full flex items-end justify-center h-full">
+        <div class="w-full max-w-[28px] rounded-t-md chart-bar {{ $mItem['value'] > 0 ? 'bg-primary hover:bg-primary-fixed-dim' : 'bg-surface-variant/40' }}" style="height: {{ $barHeight }}%"></div>
+    </div>
+    <span class="text-[10px] font-label-md text-tertiary font-bold">{{ $mItem['label'] }}</span>
 </div>
-<span class="text-[10px] font-label-md text-tertiary">JAN</span>
-</div>
-<!-- Feb -->
-<div class="flex flex-col items-center gap-1 w-full group">
-<div class="w-full flex items-end gap-1 justify-center h-full">
-<div class="bg-surface-variant w-3 rounded-t-sm chart-bar" style="height: 35%"></div>
-<div class="bg-primary w-3 rounded-t-sm chart-bar group-hover:bg-primary-fixed-dim" style="height: 40%"></div>
-</div>
-<span class="text-[10px] font-label-md text-tertiary">FEB</span>
-</div>
-<!-- Mar -->
-<div class="flex flex-col items-center gap-1 w-full group">
-<div class="w-full flex items-end gap-1 justify-center h-full">
-<div class="bg-surface-variant w-3 rounded-t-sm chart-bar" style="height: 40%"></div>
-<div class="bg-primary w-3 rounded-t-sm chart-bar group-hover:bg-primary-fixed-dim" style="height: 60%"></div>
-</div>
-<span class="text-[10px] font-label-md text-tertiary">MAR</span>
-</div>
-<!-- Apr -->
-<div class="flex flex-col items-center gap-1 w-full group">
-<div class="w-full flex items-end gap-1 justify-center h-full">
-<div class="bg-surface-variant w-3 rounded-t-sm chart-bar" style="height: 45%"></div>
-<div class="bg-primary w-3 rounded-t-sm chart-bar group-hover:bg-primary-fixed-dim" style="height: 75%"></div>
-</div>
-<span class="text-[10px] font-label-md text-tertiary">APR</span>
-</div>
-<!-- May -->
-<div class="flex flex-col items-center gap-1 w-full group">
-<div class="w-full flex items-end gap-1 justify-center h-full">
-<div class="bg-surface-variant w-3 rounded-t-sm chart-bar" style="height: 50%"></div>
-<div class="bg-primary w-3 rounded-t-sm chart-bar group-hover:bg-primary-fixed-dim" style="height: 85%"></div>
-</div>
-<span class="text-[10px] font-label-md text-tertiary">MAY</span>
-</div>
-<!-- Jun -->
-<div class="flex flex-col items-center gap-1 w-full group">
-<div class="w-full flex items-end gap-1 justify-center h-full">
-<div class="bg-surface-variant w-3 rounded-t-sm chart-bar" style="height: 55%"></div>
-<div class="bg-primary w-3 rounded-t-sm chart-bar group-hover:bg-primary-fixed-dim" style="height: 95%"></div>
-</div>
-<span class="text-[10px] font-label-md text-tertiary">JUN</span>
+@endforeach
 </div>
 </div>
 </div>
+
+<!-- Category Breakdown -->
+<div class="bg-white p-6 md:p-8 rounded-xl border border-[#EDEDED] flex flex-col justify-between">
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-4 font-bold">Penjualan per Kategori</h2>
+@if(count($categorySales) > 0)
+<div class="space-y-4 my-auto">
+@foreach($categorySales as $cs)
+<div>
+    <div class="flex justify-between items-center text-xs mb-1 font-semibold">
+        <span class="text-on-surface">{{ $cs->nama_kategori }}</span>
+        <span class="text-primary font-bold">Rp {{ number_format($cs->total_revenue, 0, ',', '.') }} ({{ $cs->percentage }}%)</span>
+    </div>
+    <div class="w-full bg-surface-container-low h-2.5 rounded-full overflow-hidden">
+        <div class="bg-primary h-full rounded-full" style="width: {{ $cs->percentage }}%"></div>
+    </div>
 </div>
-<!-- Category Breakdown (Donut) -->
-<div class="bg-white p-8 rounded-xl border border-[#EDEDED] flex flex-col">
-<h2 class="font-headline-sm text-headline-sm text-on-surface mb-6">Sales by Category</h2>
-<div class="relative flex-grow flex items-center justify-center">
-<!-- SVG Donut Chart Mockup -->
-<svg class="w-48 h-48 -rotate-90">
-<circle cx="96" cy="96" fill="transparent" r="80" stroke="#f5f3f3" stroke-width="12"></circle>
-<!-- Segment 1: Electronics (45%) -->
-<circle cx="96" cy="96" fill="transparent" r="80" stroke="#7c5800" stroke-dasharray="226.19 276.46" stroke-width="16"></circle>
-<!-- Segment 2: Home (30%) -->
-<circle cx="96" cy="96" fill="transparent" r="80" stroke="#ffba20" stroke-dasharray="150.8 351.85" stroke-dashoffset="-226.19" stroke-width="16"></circle>
-<!-- Segment 3: Apparel (25%) -->
-<circle cx="96" cy="96" fill="transparent" r="80" stroke="#5d5f5d" stroke-dasharray="125.66 377.14" stroke-dashoffset="-376.99" stroke-width="16"></circle>
-</svg>
-<div class="absolute flex flex-col items-center">
-<span class="font-label-md text-label-md text-secondary">Total</span>
-<span class="font-headline-md text-headline-md font-bold text-on-surface">1,482</span>
+@endforeach
 </div>
+@else
+<div class="py-12 text-center text-secondary border border-dashed border-outline-variant rounded-xl my-auto">
+    <span class="material-symbols-outlined text-4xl mb-2 text-primary opacity-50">donut_small</span>
+    <p class="font-bold text-sm text-on-surface">Belum Ada Data Penjualan</p>
+    <p class="text-xs text-secondary mt-1">Data kategori akan muncul setelah ada pesanan lunas.</p>
 </div>
-<div class="mt-8 grid grid-cols-2 gap-4">
-<div class="flex items-center gap-2">
-<div class="w-2.5 h-2.5 rounded-full bg-primary"></div>
-<span class="font-label-md text-label-md text-secondary">Electronics</span>
-</div>
-<div class="flex items-center gap-2">
-<div class="w-2.5 h-2.5 rounded-full bg-primary-fixed-dim"></div>
-<span class="font-label-md text-label-md text-secondary">Home &amp; Office</span>
-</div>
-<div class="flex items-center gap-2">
-<div class="w-2.5 h-2.5 rounded-full bg-tertiary"></div>
-<span class="font-label-md text-label-md text-secondary">Apparel</span>
-</div>
-<div class="flex items-center gap-2">
-<div class="w-2.5 h-2.5 rounded-full bg-surface-variant"></div>
-<span class="font-label-md text-label-md text-secondary">Others</span>
+@endif
 </div>
 </div>
-</div>
-</div>
+
 <!-- Bottom Sections -->
 <div class="grid grid-cols-1 xl:grid-cols-2 gap-gutter pb-10">
 <!-- Top Selling Products -->
-<div class="bg-white rounded-xl border border-[#EDEDED] overflow-hidden">
+<div class="bg-white rounded-xl border border-[#EDEDED] overflow-hidden flex flex-col">
 <div class="p-6 border-b border-[#EDEDED] flex justify-between items-center">
-<h2 class="font-headline-sm text-headline-sm text-on-surface">Top Selling Products</h2>
-<button class="text-primary font-label-md text-label-md hover:underline transition-all">View All</button>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">Produk Terlaris</h2>
+<a href="{{ route('inventories') }}" class="text-primary font-label-md text-xs hover:underline transition-all font-bold">Lihat Inventaris</a>
 </div>
-<div class="overflow-x-auto">
+<div class="overflow-x-auto flex-1">
+@if(count($topProducts) > 0)
 <table class="w-full text-left">
 <thead class="bg-surface-container-low">
 <tr>
-<th class="px-6 py-4 font-label-md text-label-md text-secondary uppercase tracking-wider">Product</th>
-<th class="px-6 py-4 font-label-md text-label-md text-secondary uppercase tracking-wider text-center">Units</th>
-<th class="px-6 py-4 font-label-md text-label-md text-secondary uppercase tracking-wider text-right">Revenue</th>
-<th class="px-6 py-4 font-label-md text-label-md text-secondary uppercase tracking-wider text-right">Trend</th>
+<th class="px-6 py-3.5 font-label-md text-xs text-secondary uppercase tracking-wider">Produk</th>
+<th class="px-6 py-3.5 font-label-md text-xs text-secondary uppercase tracking-wider text-center">Terjual</th>
+<th class="px-6 py-3.5 font-label-md text-xs text-secondary uppercase tracking-wider text-right">Pendapatan</th>
 </tr>
 </thead>
 <tbody class="divide-y divide-[#EDEDED]">
+@foreach($topProducts as $tp)
 <tr class="hover:bg-surface-container-low/50 transition-colors">
-<td class="px-6 py-4 flex items-center gap-3">
-<div class="w-12 h-12 rounded bg-surface-variant shrink-0" data-alt="A clean, minimalist product photography shot of a high-end ergonomic keyboard on a neutral desk setup with soft morning lighting. The aesthetic is modern and professional, reflecting the Luminous Commerce brand's trustworthy and accessible feel." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAJMkXy3nivUdk2AGQrrfBgOe1fI2Y3HBlf46o5HcRz84MX-Dc16Cia_ViBcNprOl2pg2y7Qve5afKmyEe9bIaZ9Y6UYU5xpM5JWxA2t0Dx_Jl9MLVnZOXoj5mfN-KUAPPoXPeHB1Pz2KRDqQUG-ENe5Lo08PAbdmnFoT_CqyQp6jkDSz86ND1eNHDtL6Rpj0YCphG3DIrgo89OIaCzj-FsO0UABn6oM9GJ_R7hQl2iyzo5HXo8ZjPK')"></div>
-<div class="font-body-md font-semibold text-on-surface">Pro Mechanical Keyboard</div>
+<td class="px-6 py-3 flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg overflow-hidden bg-surface-variant shrink-0 border border-outline-variant/30">
+    <img src="{{ $tp->image_url }}" alt="{{ $tp->nama_produk }}" class="w-full h-full object-cover"/>
+</div>
+<div class="font-body-sm font-bold text-on-surface line-clamp-1">{{ $tp->nama_produk }}</div>
 </td>
-<td class="px-6 py-4 font-body-md text-secondary text-center">452</td>
-<td class="px-6 py-4 font-body-md font-bold text-on-surface text-right">$36,160</td>
-<td class="px-6 py-4 text-right">
-<span class="material-symbols-outlined text-green-600">trending_up</span>
-</td>
+<td class="px-6 py-3 font-body-sm font-semibold text-secondary text-center">{{ $tp->total_qty }} unit</td>
+<td class="px-6 py-3 font-body-sm font-bold text-primary text-right">Rp {{ number_format($tp->total_revenue, 0, ',', '.') }}</td>
 </tr>
-<tr class="hover:bg-surface-container-low/50 transition-colors">
-<td class="px-6 py-4 flex items-center gap-3">
-<div class="w-12 h-12 rounded bg-surface-variant shrink-0" data-alt="Studio product shot of a sleek, matte black wireless headphone set floating in a neutral, brightly lit space. The lighting is soft and high-key, emphasizing the premium textures of the material. The style is minimalist and clean." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCpXPFU4yVGb-_g1XPKzQdYXjkWa6NEB8enazP-g46zRQzhi36kBsB9fTCVHyd4M6LbcDkwvfvvXd_9SvCrPO_61OFsDv05JagukYKhwLEbNGG6sBfSGJI6gE5TahBXsdNY4JIydR8zuIgtTw51pHTfW0h0Zsld1MoOuEJicrs-G__zR8cyTuhL-PMTfoSIVUpUWy12ink4CHzXGMfogAkctL1hq8txCXyA8NTPsBZrWjgeM1CwRGrQ')"></div>
-<div class="font-body-md font-semibold text-on-surface">Acoustic Aura Headphones</div>
-</td>
-<td class="px-6 py-4 font-body-md text-secondary text-center">318</td>
-<td class="px-6 py-4 font-body-md font-bold text-on-surface text-right">$25,440</td>
-<td class="px-6 py-4 text-right">
-<span class="material-symbols-outlined text-green-600">trending_up</span>
-</td>
-</tr>
-<tr class="hover:bg-surface-container-low/50 transition-colors">
-<td class="px-6 py-4 flex items-center gap-3">
-<div class="w-12 h-12 rounded bg-surface-variant shrink-0" data-alt="A minimalist overhead view of a handcrafted ceramic desk organizer set in earthy tones. The setting is a clean, bright wooden desk with soft natural window light. The mood is calm, organized, and high-quality." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAUI9-pzoZgfljn44zbbkQMkmA7qJum240MLIQ9d63fHn4oQOPMgcC5XeQ848ClWvtiNt747yvwj5rSXjrdsyeMgM4GCTh-ZfjaRsLZhSiYQsdFrmBLnm_4hZMZCQFqLXb8sdyR9aJuJyYCaONm6-BBU_BR28gNKB4dZaQaWuwKpj9Tykqf4JXQW7V8GUJvbWHJpepTzegOoOFaVDEnSS05Y9ruzLRPY0UCw0FkSeS1GPp10cqeQfSb')"></div>
-<div class="font-body-md font-semibold text-on-surface">Zen Desk Organizer</div>
-</td>
-<td class="px-6 py-4 font-body-md text-secondary text-center">290</td>
-<td class="px-6 py-4 font-body-md font-bold text-on-surface text-right">$14,500</td>
-<td class="px-6 py-4 text-right">
-<span class="material-symbols-outlined text-red-500 rotate-180">trending_up</span>
-</td>
-</tr>
+@endforeach
 </tbody>
 </table>
+@else
+<div class="p-8 text-center text-secondary">
+    <span class="material-symbols-outlined text-4xl mb-2 text-primary opacity-40">inventory_2</span>
+    <p class="font-bold text-sm text-on-surface">Belum Ada Produk Terjual</p>
+    <p class="text-xs text-secondary mt-1">Daftar produk terlaris akan muncul di sini setelah transaksi terjadi.</p>
+</div>
+@endif
 </div>
 </div>
+
 <!-- Recent Sales Activity -->
 <div class="bg-white rounded-xl border border-[#EDEDED] flex flex-col">
 <div class="p-6 border-b border-[#EDEDED] flex justify-between items-center">
-<h2 class="font-headline-sm text-headline-sm text-on-surface">Recent Activity</h2>
-<span class="material-symbols-outlined text-secondary cursor-pointer hover:text-on-surface transition-colors">refresh</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">Aktivitas Transaksi Terbaru</h2>
+<a href="{{ route('recent_orders') }}" class="text-primary font-label-md text-xs hover:underline transition-all font-bold">Lihat Semua Pesanan</a>
 </div>
 <div class="flex-grow overflow-y-auto max-h-[360px] custom-scrollbar p-6">
-<div class="space-y-6">
-<!-- Activity Item -->
-<div class="flex gap-4 group">
-<div class="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center shrink-0">
-<span class="material-symbols-outlined text-green-600 text-[20px]">shopping_cart_checkout</span>
+@if(count($recentOrders) > 0)
+<div class="space-y-4">
+@foreach($recentOrders as $ro)
+<div class="flex items-center justify-between p-3 rounded-xl border border-surface-container-high hover:bg-surface-container-low transition-colors gap-3">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-10 h-10 rounded-full {{ $ro->status_pembayaran === 'paid' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600' }} flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-xl">{{ $ro->status_pembayaran === 'paid' ? 'shopping_cart_checkout' : 'pending' }}</span>
 </div>
-<div class="space-y-1">
-<p class="font-body-md text-on-surface leading-tight">New Order <span class="font-bold">#ORD-9023</span> by <span class="text-primary font-semibold">Sarah Jenkins</span></p>
-<div class="flex items-center gap-3">
-<span class="font-label-md text-[12px] text-tertiary">Just now</span>
-<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
-<span class="font-label-md text-[12px] text-on-surface-variant font-bold">+$124.99</span>
-</div>
+<div class="min-w-0">
+<p class="font-body-sm font-bold text-on-surface truncate">Pesanan #ORD-{{ $ro->id }}</p>
+<p class="text-xs text-secondary truncate">Oleh: {{ $ro->user->name ?? 'Pelanggan' }} • {{ $ro->created_at ? $ro->created_at->diffForHumans() : '-' }}</p>
 </div>
 </div>
-<div class="flex gap-4 group">
-<div class="w-10 h-10 rounded-full bg-primary-container/20 flex items-center justify-center shrink-0">
-<span class="material-symbols-outlined text-primary text-[20px]">package_2</span>
-</div>
-<div class="space-y-1">
-<p class="font-body-md text-on-surface leading-tight">Product <span class="font-bold">Lumina Lamp</span> restocked (50 units)</p>
-<div class="flex items-center gap-3">
-<span class="font-label-md text-[12px] text-tertiary">2 hours ago</span>
-<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
-<span class="font-label-md text-[12px] text-secondary">Inventory Update</span>
+<div class="text-right flex-shrink-0">
+<p class="font-bold text-sm text-primary">Rp {{ number_format($ro->total_harga, 0, ',', '.') }}</p>
+<span class="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold {{ $ro->status_pembayaran === 'paid' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800' }}">
+    {{ strtoupper($ro->status_pembayaran ?? 'pending') }}
+</span>
 </div>
 </div>
+@endforeach
 </div>
-<div class="flex gap-4 group">
-<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center shrink-0">
-<span class="material-symbols-outlined text-secondary text-[20px]">reviews</span>
+@else
+<div class="py-12 text-center text-secondary border border-dashed border-outline-variant rounded-xl my-auto">
+<span class="material-symbols-outlined text-4xl mb-2 text-primary opacity-40">receipt_long</span>
+<p class="font-bold text-sm text-on-surface">Belum Ada Transaksi Terbaru</p>
+<p class="text-xs text-secondary mt-1">Aktivitas pesanan nyata pelanggan akan muncul di sini secara real-time.</p>
 </div>
-<div class="space-y-1">
-<p class="font-body-md text-on-surface leading-tight">New 5-star review from <span class="font-bold">Michael R.</span></p>
-<p class="text-xs text-secondary italic">"Exceeded my expectations! Fast shipping."</p>
-<div class="flex items-center gap-3">
-<span class="font-label-md text-[12px] text-tertiary">4 hours ago</span>
-</div>
-</div>
-</div>
-<div class="flex gap-4 group">
-<div class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center shrink-0">
-<span class="material-symbols-outlined text-red-500 text-[20px]">assignment_return</span>
-</div>
-<div class="space-y-1">
-<p class="font-body-md text-on-surface leading-tight">Refund requested for <span class="font-bold">#ORD-8941</span></p>
-<div class="flex items-center gap-3">
-<span class="font-label-md text-[12px] text-tertiary">6 hours ago</span>
-<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
-<span class="font-label-md text-[12px] text-red-500 font-bold">-$45.00</span>
-</div>
-</div>
-</div>
-</div>
+@endif
 </div>
 </div>
 </div>

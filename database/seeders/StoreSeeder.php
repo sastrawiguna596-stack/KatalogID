@@ -28,6 +28,7 @@ class StoreSeeder extends Seeder
             'nama_toko' => 'Artisan Nusantara Store',
             'slug' => Str::slug('Artisan Nusantara Store'),
             'deskripsi' => 'Penyedia kerajinan tanah liat, kayu, dan perlengkapan rumah tangga kualitas terbaik buatan pengrajin lokal Indonesia.',
+            'kota' => 'Kota Denpasar',
             'is_active' => true,
         ]);
     }

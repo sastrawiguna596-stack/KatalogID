@@ -164,11 +164,12 @@
 </a>
 </div>
 </nav>
-<div class="px-4 py-4 mt-auto border-t border-surface-container">
-<a href="{{ route('login') }}" class="flex items-center gap-2 text-error font-label-md hover:underline">
-<span class="material-symbols-outlined">logout</span> Sign Out
-</a>
-</div>
+<form action="{{ route('logout') }}" method="POST" class="w-full">
+    @csrf
+    <button type="submit" class="flex items-center gap-2 text-error font-label-md hover:underline font-bold">
+        <span class="material-symbols-outlined">logout</span> Sign Out
+    </button>
+</form>
 </aside>
 <!-- Top Navigation Shell -->
 <header class="h-16 fixed top-0 right-0 left-64 bg-surface dark:bg-surface-bright border-b border-surface-container dark:border-outline-variant flex items-center justify-between px-gutter w-full z-40">

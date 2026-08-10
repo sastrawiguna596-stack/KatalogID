@@ -41,4 +41,10 @@ class Product extends Model
     {
         return $this->hasMany(Review::class);
     }
+
+    // Relasi: 1 Produk memiliki BANYAK Order Item
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
 }

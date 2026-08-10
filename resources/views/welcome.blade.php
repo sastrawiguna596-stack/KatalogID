@@ -166,231 +166,7 @@
 
 <body class="bg-surface text-on-surface font-body-md selection:bg-primary-fixed selection:text-on-primary-fixed">
 
-<!-- Mobile Nav Overlay -->
-<div id="nav-overlay" class="fixed inset-0 bg-black/40 z-40 md:hidden" onclick="closeNavDrawer()"></div>
-<!-- Mobile Nav Drawer -->
-<div id="mobile-nav-drawer" class="fixed left-0 top-0 h-full w-72 z-50 bg-surface border-r border-outline-variant flex flex-col p-6 md:hidden">
-    <div class="flex items-center justify-between mb-8">
-        <span class="font-headline-md text-headline-md font-bold text-on-surface">Katalog IDN</span>
-        <button onclick="closeNavDrawer()" class="p-1 rounded-lg text-on-surface-variant hover:bg-surface-variant">
-            <span class="material-symbols-outlined">close</span>
-        </button>
-    </div>
-    <nav class="flex flex-col gap-1">
-        <a href="{{ route('home') }}" class="flex items-center gap-3 px-3 py-3 text-on-primary-container bg-primary-container rounded-lg font-bold font-label-md text-label-md transition-all" onclick="closeNavDrawer()">
-            <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">home</span> Home
-        </a>
-        <a href="{{ route('shop') }}" class="flex items-center gap-3 px-3 py-3 text-on-surface-variant hover:bg-surface-variant rounded-lg font-label-md text-label-md transition-all" onclick="closeNavDrawer()">
-            <span class="material-symbols-outlined">storefront</span> Shop
-        </a>
-        <a href="{{ route('cart') }}" class="flex items-center gap-3 px-3 py-3 text-on-surface-variant hover:bg-surface-variant rounded-lg font-label-md text-label-md transition-all" onclick="closeNavDrawer()">
-            <span class="material-symbols-outlined">shopping_cart</span> Cart
-        </a>
-        <a href="{{ route('account') }}" class="flex items-center gap-3 px-3 py-3 text-on-surface-variant hover:bg-surface-variant rounded-lg font-label-md text-label-md transition-all" onclick="closeNavDrawer()">
-            <span class="material-symbols-outlined">person</span> Profile
-        </a>
-    </nav>
-    <div class="mt-auto border-t border-outline-variant pt-4">
-        <a href="{{ route('login') }}" class="flex items-center gap-3 px-3 py-3 text-error hover:bg-error-container rounded-lg font-label-md text-label-md transition-all">
-            <span class="material-symbols-outlined">logout</span> Sign Out
-        </a>
-    </div>
-</div>
-
-    <!-- Top Navigation Shell -->
-    <header
-        class="flex justify-between items-center px-4 md:px-margin-desktop w-full h-16 sticky top-0 z-30 bg-surface/80 glass-header border-b border-outline-variant">
-        <div class="flex items-center gap-3">
-            <!-- Hamburger (mobile only) -->
-            <button class="md:hidden p-1 rounded-lg text-on-surface-variant hover:bg-surface-variant transition-colors" onclick="openNavDrawer()">
-                <span class="material-symbols-outlined">menu</span>
-            </button>
-            <span class="font-headline-md text-headline-md font-bold text-on-surface">Katalog IDN</span>
-        </div>
-        <nav class="hidden md:flex items-center gap-gutter">
-            <a class="font-label-md text-label-md text-primary active-nav-line hover:text-primary transition-colors duration-200 flex"   
-                href="{{ route('home') }}">Home</a>
-            <a class="font-label-md text-label-md text-secondary hover:text-primary transition-colors duration-200"
-                href="{{ route('shop') }}">Shop</a>
-            <!-- ── Mega Menu Trigger ── -->
-            <div class="mega-menu-wrapper" id="mega-menu-wrapper">
-                <button class="mega-menu-trigger font-label-md text-label-md text-secondary hover:text-primary transition-colors duration-200"
-                    id="mega-menu-btn" aria-haspopup="true" aria-expanded="false" aria-controls="mega-menu-panel">
-                    Produk
-                    <span class="material-symbols-outlined mega-chevron" aria-hidden="true">expand_more</span>
-                </button>
-
-                <!-- ── Mega Menu Panel ── -->
-                <!-- ── Mega Menu Panel ── -->
-                <div class="mega-menu-panel" id="mega-menu-panel" role="region" aria-label="Category menu">
-                    <!-- top accent bar -->
-                    <div class="mega-menu-accent"></div>
-
-                    <!-- ── Main body: 3 link columns + 1 featured panel ── -->
-                    <div class="mega-menu-inner">
-
-                        <!-- ═══ COLUMN 1: Kategori Produk ═══ -->
-                        <div class="mega-col">
-                            <p class="mega-col-heading">KATEGORI PRODUK</p>
-                            <a href="#" class="mega-link-row" data-index="0">
-                                <span class="material-symbols-outlined mega-link-icon">texture</span>
-                                <span class="mega-link-text">Tekstil &amp; Batik</span>
-                            </a>
-                            <a href="#" class="mega-link-row" data-index="1">
-                                <span class="material-symbols-outlined mega-link-icon">local_cafe</span>
-                                <span class="mega-link-text">Keramik &amp; Gerabah</span>
-                            </a>
-                            <a href="#" class="mega-link-row" data-index="2">
-                                <span class="material-symbols-outlined mega-link-icon">work</span>
-                                <span class="mega-link-text">Kerajinan Kulit</span>
-                            </a>
-                            <a href="#" class="mega-link-row" data-index="3">
-                                <span class="material-symbols-outlined mega-link-icon">chair</span>
-                                <span class="mega-link-text">Furnitur</span>
-                            </a>
-                            <a href="#" class="mega-link-row" data-index="4">
-                                <span class="material-symbols-outlined mega-link-icon">light_mode</span>
-                                <span class="mega-link-text">Lampu &amp; Dekorasi</span>
-                            </a>
-                            <a href="#" class="mega-link-row" data-index="5">
-                                <span class="material-symbols-outlined mega-link-icon">spa</span>
-                                <span class="mega-link-text">Aromaterapi</span>
-                            </a>
-                            <a href="#" class="mega-link-row" data-index="5">
-                                <span class="material-symbols-outlined mega-link-icon">sports</span>
-                                <span class="mega-link-text">Alat olahraga</span>
-                            </a>
-                            <a href="#" class="mega-link-row" data-index="5">
-                                <span class="material-symbols-outlined mega-link-icon">menu</span>
-                                <span class="mega-link-text">Lainnya</span>
-                            </a>    
-                        </div>
-
-                        <!-- ═══ COLUMN 2: Saluran Penjualan ═══ -->
-                        <div class="mega-col">
-                            <p class="mega-col-heading">METODE PENJUALAN</p>
-                            <a href="#" class="mega-link-row" data-index="9">
-                                <span class="material-symbols-outlined mega-link-icon">language</span>
-                                <span class="mega-link-text">Website Katalog IDN</span>
-                            </a>
-                            <a href="#" class="mega-link-row" data-index="10">
-                                <span class="material-symbols-outlined mega-link-icon">chat</span>
-                                <span class="mega-link-text font-bold text-green-600">WhatsApp Order</span>
-                            </a>
-                            <a href="#" class="mega-link-row" data-index="11">
-                                <span class="material-symbols-outlined mega-link-icon">point_of_sale</span>
-                                <span class="mega-link-text">Kasir Digital (POS)</span>
-                            </a>
-                            <a href="#" class="mega-link-row" data-index="13">
-                                <span class="material-symbols-outlined mega-link-icon">share</span>
-                                <span class="mega-link-text">Promosi Media Sosial</span>
-                            </a>
-
-                             <p class="mega-col-heading" style="margin-top:20px">JALANKAN TOKO</p>
-                            <a href="#" class="mega-link-row" data-index="6">
-                                <span class="material-symbols-outlined mega-link-icon">inventory_2</span>
-                                <span class="mega-link-text font-bold text-primary">Manajemen Stok</span>
-                            </a>
-                            <a href="#" class="mega-link-row" data-index="7">
-                                <span class="material-symbols-outlined mega-link-icon">local_shipping</span>
-                                <span class="mega-link-text">Pengiriman &amp; Kurir</span>
-                            </a>
-                            <a href="#" class="mega-link-row" data-index="8">
-                                <span class="material-symbols-outlined mega-link-icon">support_agent</span>
-                                <span class="mega-link-text">Hubungi Admin Toko</span>
-                            </a>
-
-                        </div>
-
-                        <!-- ═══ COLUMN 3: Promosi & Keuangan ═══ -->
-                        <div class="mega-col">
-                            <p class="mega-col-heading">PROMOSI &amp; LAPORAN</p>
-                            <a href="#" class="mega-link-row" data-index="17">
-                                <span class="material-symbols-outlined mega-link-icon">sell</span>
-                                <span class="mega-link-text">Kupon &amp; Diskon UMKM</span>
-                            </a>
-                            <a href="#" class="mega-link-row" data-index="18">
-                                <span class="material-symbols-outlined mega-link-icon">mark_email_read</span>
-                                <span class="mega-link-text">Broadcast Chat Pelanggan</span>
-                            </a>
-                            <a href="#" class="mega-link-row" data-index="19">
-                                <span class="material-symbols-outlined mega-link-icon">bar_chart</span>
-                                <span class="mega-link-text">Laporan Penjualan</span>
-                            </a>
-
-                            <p class="mega-col-heading" style="margin-top:20px">TERIMA PEMBAYARAN</p>
-                            <a href="#" class="mega-link-row" data-index="21">
-                                <span class="material-symbols-outlined mega-link-icon">qr_code_2</span>
-                                <span class="mega-link-text font-bold text-primary">Transfer QRIS / e-Wallet</span>
-                            </a>
-                            <a href="#" class="mega-link-row" data-index="22">
-                                <span class="material-symbols-outlined mega-link-icon">account_balance</span>
-                                <span class="mega-link-text">Transfer Bank Lokal</span>
-                            </a>
-                            <a href="#" class="mega-link-row" data-index="23">
-                                <span class="material-symbols-outlined mega-link-icon">handshake</span>
-                                <span class="mega-link-text">Bayar di Tempat (COD)</span>
-                            </a>
-                        </div>
-
-                        <!-- ═══ COLUMN 4: Karya Pilihan (Wadah UMKM) ═══ -->
-                        <div class="mega-col mega-col--featured">
-                            <p class="mega-col-heading mega-col-heading--accent">KARYA LOKAL PILIHAN</p>
-                            <div class="mega-featured-card">
-                                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUPhyFELQsHWGcI58Ik0I6JfirOT_z2ndkwyVGq86Bf9ScTXIdybxUJmndDtV4d_PHDM0Yi-Z1yWww5h7jGt3jsg7IyKEC-uZ131MxRcPAQuA2BW0RCpR5TajpS1_r7WtsuSvjgRCxWd0Hs_L1vwn4HRckjKAMMY6QFNgDjPtlj45z7I0Mo8IgIdXNpq9EDUCwsHVUgPKLZjAeHCWyGd4PufPzWiXB-xGN7Zt1_1XKJpCsgPTn_C6R"
-                                     alt="Tenun Ikat NTT" class="mega-featured-card-img" />
-                                <div class="mega-featured-card-body">
-                                    <p class="mega-featured-card-title">Tenun Ikat Tradisional</p>
-                                    <p class="mega-featured-card-desc">Dibuat langsung oleh pengrajin lokal NTT, mendukung keberlanjutan ekonomi desa.</p>
-                                </div>
-                            </div>
-
-                            <p class="mega-col-heading mega-col-heading--accent" style="margin-top:16px">PRODUK TERBARU</p>
-                            <ul class="mega-whats-new">
-                                <li><a href="#">Madu Hutan Asli</a></li>
-                                <li><a href="#">Tas Rotan Etnik Bali</a></li>
-                                <li><a href="#">Lilin Aromaterapi</a></li>
-                                <li><a href="#">Cobek Batu Gunung</a></li>
-                            </ul>
-                        </div>
-
-                    </div><!-- /.mega-menu-inner -->
-
-                </div><!-- /.mega-menu-panel -->
-            </div><!-- /.mega-menu-wrapper -->
-            <a class="font-label-md text-label-md text-secondary hover:text-primary transition-colors duration-200"
-                href="{{ route('home') }}#about">About</a>
-        </nav>
-        <div class="flex items-center gap-stack-md">
-            <a href="{{ route('shop') }}" class="material-symbols-outlined text-secondary hover:text-primary transition-colors" title="Cari Produk">
-                search
-            </a>
-            <div class="relative group">
-                <a href="{{ route('cart') }}" class="material-symbols-outlined text-secondary group-hover:text-primary transition-colors" title="Keranjang Belanja">
-                    shopping_cart
-                </a>
-                @if(count(session('cart', [])) > 0)
-                <span class="absolute -top-2 -right-2 bg-primary text-on-primary text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">{{ count(session('cart', [])) }}</span>
-                @endif
-            </div>
-            @auth
-            <a href="{{ route('profile') }}" class="flex items-center gap-1 text-primary font-bold font-label-md hover:underline" title="Profil Saya">
-                <span class="material-symbols-outlined">account_circle</span>
-                <span class="hidden md:inline">{{ Auth::user()->name }}</span>
-            </a>
-            <form action="{{ route('logout') }}" method="POST" class="inline">
-                @csrf
-                <button type="submit" class="text-error hover:text-red-700 transition-colors p-1 flex items-center justify-center" title="Keluar / Logout">
-                    <span class="material-symbols-outlined">logout</span>
-                </button>
-            </form>
-            @else
-            <a href="{{ route('login') }}" class="flex items-center gap-1 font-label-md text-primary font-bold px-3 py-1.5 border border-primary rounded-lg hover:bg-primary hover:text-on-primary transition-all">
-                <span class="material-symbols-outlined text-sm">login</span> Masuk
-            </a>
-            @endauth
-        </div>
-    </header>
+@include('layouts.navbar', ['active' => 'home'])
     <!-- Hero Section – full viewport width, outside the constrained <main> -->
     <section class="relative w-full min-h-[60vh] flex items-center px-margin-mobile md:px-margin-desktop">
         <!-- Background Video Container -->
@@ -408,14 +184,14 @@
                 COLLECTION 2026
             </span>
             <h1 class="font-headline-xl text-headline-xl text-on-secondary mb-stack-sm leading-tight">
-                Nikmati <br class="block sm:hidden" />
+                {{ $settings['hero_title_base'] ?? 'Nikmati' }} <br class="block sm:hidden" />
                 <!-- Kata di bawah ini yang akan berganti secara dinamis -->
                 <span id="changing-text" class="inline-block text-on-secondary transition-all duration-500 transform opacity-100 translate-y-0">
                     Kehangatan produk lokal
                 </span>
             </h1>
             <p class="font-body-lg text-body-lg text-on-secondary mb-stack-md max-w-lg">
-                Tempat menemukan karya atau pun produk yang dijual oleh masyarakat lokal dari anak-anak sampai orang tua, dari karya tangan maupun barang kebutuhan sehari-hari.
+                {{ $settings['hero_desc'] ?? 'Tempat menemukan karya atau pun produk yang dijual oleh masyarakat lokal dari anak-anak sampai orang tua, dari karya tangan maupun barang kebutuhan sehari-hari.' }}
             </p>
             <div class="flex gap-stack-md">
                 <a href="{{ route('shop') }}" class="px-8 py-4 bg-on-secondary text-on-surface font-label-md text-label-md rounded-lg hover:brightness-90 active:scale-95 transition-all inline-block">
@@ -432,7 +208,7 @@
         <!-- Category Browser -->
         <section class="py-stack-lg px-margin-mobile md:px-margin-desktop scroll-reveal">
             <div class="flex justify-between items-end mb-stack-md">
-                <h2 class="font-headline-lg text-headline-lg text-on-surface">Browse Categories</h2>
+                <h2 class="font-headline-lg text-headline-lg text-on-surface">{{ $settings['categories_title'] ?? 'Browse Categories' }}</h2>
                 <a class="font-label-md text-label-md text-primary hover:underline underline-offset-4" href="{{ route('shop') }}">View
                     All</a>
             </div>
@@ -453,19 +229,19 @@
         <!-- Featured Products Grid -->
         <section class="py-stack-lg px-margin-mobile md:px-margin-desktop bg-surface-container-lowest scroll-reveal">
             <div class="flex flex-col items-center text-center mb-stack-lg">
-                <h2 class="font-headline-lg text-headline-lg text-on-surface mb-base">Barang Unggulan</h2>
-                <p class="font-body-md text-body-md text-on-surface-variant max-w-xl">Produk yang dibuat untuk kegiatan sehari-hari dirumah maupun dliuar rumah.</p>
+                <h2 class="font-headline-lg text-headline-lg text-on-surface mb-base">{{ $settings['featured_title'] ?? 'Barang Unggulan' }}</h2>
+                <p class="font-body-md text-body-md text-on-surface-variant max-w-xl">{{ $settings['featured_desc'] ?? 'Produk yang dibuat untuk kegiatan sehari-hari dirumah maupun dliuar rumah.' }}</p>
             </div>
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 stagger-children">
                 @foreach($products as $product)
-                <div class="bg-surface rounded-xl border border-[#EDEDED] p-2.5 sm:p-4 product-card-hover group relative flex flex-col justify-between">
+                <div class="bg-surface rounded-sm border border-[#EDEDED] p-2.5 sm:p-4 product-card-hover group relative flex flex-col justify-between">
                     @if($product->badge)
                     <div class="absolute top-4 left-4 z-10">
-                        <span class="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-primary text-on-primary text-[9px] sm:text-[10px] font-bold rounded">{{ $product->badge }}</span>
+                        <span class="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-primary text-on-primary text-[9px] sm:text-[10px] font-bold rounded-sm">{{ $product->badge }}</span>
                     </div>
                     @endif
                     <div>
-                        <div class="aspect-square rounded-lg overflow-hidden bg-surface-container-low mb-2.5 sm:mb-4">
+                        <div class="aspect-square rounded-sm overflow-hidden bg-surface-container-low mb-2.5 sm:mb-4">
                             <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                 src="{{ $product->galleries->first()?->foto_path ?? 'https://via.placeholder.com/400' }}"
                                 alt="{{ $product->nama_produk }}" />
@@ -490,101 +266,37 @@
         <section class="py-stack-lg px-margin-mobile md:px-margin-desktop scroll-reveal">
             <div class="flex justify-between items-end mb-stack-lg">
                 <div>
-                    <h2 class="font-headline-lg text-headline-lg text-on-surface">Barang Baru</h2>
-                    <p class="font-body-md text-body-md text-on-surface-variant mt-2">Barang untuk kehidupan sehari-hari.</p>
+                    <h2 class="font-headline-lg text-headline-lg text-on-surface">{{ $settings['new_title'] ?? 'Barang Baru' }}</h2>
+                    <p class="font-body-md text-body-md text-on-surface-variant mt-2">{{ $settings['new_desc'] ?? 'Barang untuk kehidupan sehari-hari.' }}</p>
                 </div>
                 <a class="font-label-md text-label-md text-primary hover:underline underline-offset-4" href="{{ route('shop') }}">Shop All
                     New</a>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
-                <!-- New Product 1 -->
-                <div class="bg-surface rounded-xl border border-[#EDEDED] p-4 product-card-hover group relative">
+                @foreach($newProducts as $product)
+                <div class="bg-surface rounded-sm border border-[#EDEDED] p-4 product-card-hover group relative flex flex-col justify-between">
                     <div class="absolute top-6 left-6 z-10">
-                        <span
-                            class="px-2 py-1 bg-primary-container text-on-primary-container text-[10px] font-bold rounded">BARU</span>
+                        <span class="px-2 py-1 bg-primary-container text-on-primary-container text-[10px] font-bold rounded-sm">BARU</span>
                     </div>
-                    <div class="aspect-square rounded-lg overflow-hidden bg-surface-container-low mb-4">
-                        <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            data-alt="Synthetic leather futsal ball made by local workshop"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjoZq2o5SL99Z2cxfGyq2Zd_jIlELi7ExaXvAGeyQe0rXo_4OO0j9q1PAW2ilSexz0SHtRdtZAfm70F6pIEOAstAKwafSigcvLzS4RR5DS3Za0em-9r-sZ7_z9bctnRxo67qunehx7tBXQgi64YNaw_dTLJwJHCziTHXSLjb0n4GhFOjxmuhCWmYKgJ9isxMSpmONm_XJykpG1-vJfjz_qy1oBBI-wkra4_mxOBvKmRcWtCuKRiELT" />
+                    <div>
+                        <div class="aspect-square rounded-sm overflow-hidden bg-surface-container-low mb-4">
+                            <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                src="{{ $product->galleries->first()?->foto_path ?? 'https://via.placeholder.com/400' }}"
+                                alt="{{ $product->nama_produk }}" />
+                        </div>
+                        <span class="font-label-md text-[10px] text-primary uppercase tracking-widest mb-1 block">{{ $product->category->nama_kategori ?? 'Kategori' }}</span>
+                        <h3 class="font-headline-sm text-headline-sm text-on-surface mb-1">
+                            <a href="{{ route('product.detail', $product->id) }}" class="hover:text-primary transition-colors block line-clamp-2">{{ $product->nama_produk }}</a>
+                        </h3>
                     </div>
-                    <span
-                        class="font-label-md text-[10px] text-primary uppercase tracking-widest mb-1 block">Kerajinan tangan</span>
-                    <h3 class="font-headline-sm text-headline-sm text-on-surface mb-1">Tas Mini Kanvas</h3>
-                    <div class="flex justify-between items-center">
-                        <p class="font-body-md text-body-md font-bold text-on-surface">Rp. 65.000</p>
-                        <button
-                            class="w-8 h-8 rounded-full border border-primary text-primary flex items-center justify-center hover:bg-primary hover:text-on-primary transition-all">
-                            <span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
-                        </button>
+                    <div class="flex justify-between items-center mt-2">
+                        <p class="font-body-md text-body-md font-bold text-on-surface">Rp {{ number_format($product->harga, 0, ',', '.') }}</p>
+                        <a href="{{ route('product.detail', $product->id) }}" class="w-8 h-8 rounded-full border border-primary text-primary flex items-center justify-center hover:bg-primary hover:text-on-primary transition-all">
+                            <span class="material-symbols-outlined text-[18px]">add</span>
+                        </a>
                     </div>
                 </div>
-                <!-- New Product 2 -->
-                <div class="bg-surface rounded-xl border border-[#EDEDED] p-4 product-card-hover group relative">
-                    <div class="absolute top-6 left-6 z-10">
-                        <span
-                            class="px-2 py-1 bg-primary-container text-on-primary-container text-[10px] font-bold rounded">BARU</span>
-                    </div>
-                    <div class="aspect-square rounded-lg overflow-hidden bg-surface-container-low mb-4">
-                        <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            data-alt="Hand-painted wooden pencil box by students"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6fPuM5P2DGAuNQYpZU4GCxcOrdNkFZAzkSfx4BaFrra9e34Q2CuR2FxY2NZXJTMUijUmMqrHiSJWnJvQs2ERyiPNm_yRUpHkW1ZEbeaE7zCs_c8sMPsblhpY8sfTQYmMtqXwBmaJnonZiPURdLAG4DGTzvZIZT8HhvoSWCeDD7eGc9LhkVOfXQn2k56WnlDdDSO1OWRhlvSus7dNDQJD1J5zW2HKmv7a5aS64xiN8YcgBvRDVOd6U" />
-                    </div>
-                    <span
-                        class="font-label-md text-[10px] text-primary uppercase tracking-widest mb-1 block">Kerajinan tangan</span>
-                    <h3 class="font-headline-sm text-headline-sm text-on-surface mb-1">Kursi kayu</h3>
-                    <div class="flex justify-between items-center">
-                        <p class="font-body-md text-body-md font-bold text-on-surface">Rp. 38.000</p>
-                        <button
-                            class="w-8 h-8 rounded-full border border-primary text-primary flex items-center justify-center hover:bg-primary hover:text-on-primary transition-all">
-                            <span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
-                        </button>
-                    </div>
-                </div>
-                <!-- New Product 3 -->
-                <div class="bg-surface rounded-xl border border-[#EDEDED] p-4 product-card-hover group relative">
-                    <div class="absolute top-6 left-6 z-10">
-                        <span
-                            class="px-2 py-1 bg-primary-container text-on-primary-container text-[10px] font-bold rounded">BARU</span>
-                    </div>
-                    <div class="aspect-square rounded-lg overflow-hidden bg-surface-container-low mb-4">
-                        <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            data-alt="Eco-friendly natural fiber skipping rope"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvZ8ivuXL-vy8M8ru6XtmcZOqiDSFHbIF_SO5w15O3RbmGeloxTLekJ-F-sVM22yjwPp6EZKoNfXUThopsh_XU5JUpxSxrfj4U2tMly_gRsdlvwKF8p_reySA3aaX2fKz1G82vJsD2SUCGqtY-qiQoPinlQBRsNGhgEk9P0l8uzV3WAKOnmijbHUz-zP5CR1M1h4EMDBya7gGBKUWZ9DZSTH2EyvrB9uZNbOT3S3nLZZCv5aqN3Xaq" />
-                    </div>
-                    <span
-                        class="font-label-md text-[10px] text-primary uppercase tracking-widest mb-1 block">Aromatherapy</span>
-                    <h3 class="font-headline-sm text-headline-sm text-on-surface mb-1">Dupa rempah</h3>
-                    <div class="flex justify-between items-center">
-                        <p class="font-body-md text-body-md font-bold text-on-surface">Rp. 20.000</p>
-                        <button
-                            class="w-8 h-8 rounded-full border border-primary text-primary flex items-center justify-center hover:bg-primary hover:text-on-primary transition-all">
-                            <span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
-                        </button>
-                    </div>
-                </div>
-                <!-- New Product 4 -->
-                <div class="bg-surface rounded-xl border border-[#EDEDED] p-4 product-card-hover group relative">
-                    <div class="absolute top-6 left-6 z-10">
-                        <span
-                            class="px-2 py-1 bg-primary-container text-on-primary-container text-[10px] font-bold rounded">BARU</span>
-                    </div>
-                    <div class="aspect-square rounded-lg overflow-hidden bg-surface-container-low mb-4">
-                        <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            data-alt="Creative stickers and pins set designed by students"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUPhyFELQsHWGcI58Ik0I6JfirOT_z2ndkwyVGq86Bf9ScTXIdybxUJmndDtV4d_PHDM0Yi-Z1yWww5h7jGt3jsg7IyKEC-uZ131MxRcPAQuA2BW0RCpR5TajpS1_r7WtsuSvjgRCxWd0Hs_L1vwn4HRckjKAMMY6QFNgDjPtlj45z7I0Mo8IgIdXNpq9EDUCwsHVUgPKLZjAeHCWyGd4PufPzWiXB-xGN7Zt1_1XKJpCsgPTn_C6R" />
-                    </div>
-                    <span
-                        class="font-label-md text-[10px] text-primary uppercase tracking-widest mb-1 block">Kerajinan tangan</span>
-                    <h3 class="font-headline-sm text-headline-sm text-on-surface mb-1">Gerabah mini</h3>
-                    <div class="flex justify-between items-center">
-                        <p class="font-body-md text-body-md font-bold text-on-surface">Rp. 70.000</p>
-                        <button
-                            class="w-8 h-8 rounded-full border border-primary text-primary flex items-center justify-center hover:bg-primary hover:text-on-primary transition-all">
-                            <span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
-                        </button>
-                    </div>
-                </div>
+                @endforeach
             </div>
         </section>
         <!-- Our Story -->
@@ -596,13 +308,10 @@
                 </div>
                 <div class="flex flex-col gap-stack-md">
                     <span class="font-label-md text-label-md text-primary uppercase tracking-widest">Our Mission</span>
-                    <h2 class="font-headline-xl text-headline-xl text-on-surface leading-tight">Supporting Small
-                        Businesses and Master Artisans</h2>
-                    <p class="font-body-lg text-body-lg text-on-surface-variant">Katalog IDN adalah platform yang hadir sebagai wadah bagi pelaku Usaha Mikro, Kecil, dan Menengah (UMKM) untuk memperkenalkan serta memasarkan produk unggulan mereka kepada masyarakat luas. Kami percaya bahwa setiap produk lokal memiliki nilai, kualitas, dan potensi untuk berkembang di era digital.<br>    <br>
-
-Melalui Katalog IDN, kami menghubungkan pembeli dengan beragam produk UMKM terpercaya dalam satu platform yang mudah diakses, aman, dan nyaman digunakan. Dengan mendukung UMKM, setiap transaksi bukan hanya memenuhi kebutuhan, tetapi juga berkontribusi pada pertumbuhan ekonomi lokal dan kemajuan usaha Indonesia.<br><br>
-
-Misi kami adalah menjadikan produk UMKM lebih mudah ditemukan, lebih dipercaya, dan lebih dikenal oleh seluruh masyarakat Indonesia.</p>
+                    <h2 class="font-headline-xl text-headline-xl text-on-surface leading-tight">{{ $settings['mission_title'] ?? 'Supporting Small Businesses and Master Artisans' }}</h2>
+                    <div class="font-body-lg text-body-lg text-on-surface-variant">
+                        {!! $settings['mission_desc'] ?? 'Katalog IDN adalah platform yang hadir sebagai wadah bagi pelaku Usaha Mikro, Kecil, dan Menengah (UMKM) untuk memperkenalkan serta memasarkan produk unggulan mereka kepada masyarakat luas. Kami percaya bahwa setiap produk lokal memiliki nilai, kualitas, dan potensi untuk berkembang di era digital.<br><br>Melalui Katalog IDN, kami menghubungkan pembeli dengan beragam produk UMKM terpercaya dalam satu platform yang mudah diakses, aman, dan nyaman digunakan. Dengan mendukung UMKM, setiap transaksi bukan hanya memenuhi kebutuhan, tetapi juga berkontribusi pada pertumbuhan ekonomi lokal dan kemajuan usaha Indonesia.<br><br>Misi kami adalah menjadikan produk UMKM lebih mudah ditemukan, lebih dipercaya, dan lebih dikenal oleh seluruh masyarakat Indonesia.' !!}
+                    </div>
                     <div>
                         <button
                             class="px-8 py-4 bg-primary text-on-primary font-label-md text-label-md rounded-lg hover:brightness-90 active:scale-95 transition-all">Learn
@@ -817,7 +526,7 @@ Misi kami adalah menjadikan produk UMKM lebih mudah ditemukan, lebih dipercaya, 
 
         document.addEventListener("DOMContentLoaded", () => {
     // 1. Tentukan daftar kata/frasa yang ingin diganti
-    const words = ["Produk lokal berkualitas terbaik", "Belanja aman setiap hari", "Pilihan produk lokal terbaik", "Karya & Produk Asli Indonesia"];
+    const words = {!! $settings['hero_words'] ?? '["Produk lokal berkualitas terbaik", "Belanja aman setiap hari", "Pilihan produk lokal terbaik", "Karya & Produk Asli Indonesia"]' !!};
     let currentIndex = 0;
     
     const textElement = document.getElementById("changing-text");

@@ -167,9 +167,18 @@
         </a>
     </nav>
     <div class="mt-auto border-t border-outline-variant pt-4">
-        <a href="{{ route('login') }}" class="flex items-center gap-3 px-3 py-3 text-error hover:bg-error-container rounded-lg font-label-md text-label-md transition-all">
-            <span class="material-symbols-outlined">logout</span> Sign Out
+        @auth
+        <form action="{{ route('logout') }}" method="POST" class="w-full">
+            @csrf
+            <button type="submit" class="w-full flex items-center gap-3 px-3 py-3 text-error hover:bg-error-container rounded-lg font-label-md text-label-md font-bold transition-all">
+                <span class="material-symbols-outlined">logout</span> Sign Out
+            </button>
+        </form>
+        @else
+        <a href="{{ route('login') }}" class="flex items-center justify-center gap-2 w-full py-3 bg-primary text-white rounded-lg font-label-md text-label-md font-bold hover:brightness-110 transition-all">
+            <span class="material-symbols-outlined">login</span> Masuk / Daftar
         </a>
+        @endauth
     </div>
 </div>
 
@@ -178,74 +187,79 @@
 <!-- Filter Drawer (mobile) -->
 <div id="filter-drawer" class="fixed left-0 top-0 h-full w-80 z-50 bg-surface border-r border-outline-variant flex flex-col md:hidden overflow-y-auto">
     <div class="flex items-center justify-between p-4 border-b border-outline-variant">
-        <h2 class="font-headline-sm text-headline-sm">Filters</h2>
+        <h2 class="font-headline-sm text-headline-sm">Filter Katalog</h2>
         <button onclick="closeFilterDrawer()" class="p-1 rounded-lg text-on-surface-variant hover:bg-surface-variant">
             <span class="material-symbols-outlined">close</span>
         </button>
     </div>
     <div class="p-4 flex-1 overflow-y-auto">
         <div class="flex items-center justify-between mb-4">
-            <button id="clearFiltersBtn2" class="text-body-sm font-body-sm text-primary hover:underline">Clear all</button>
+            <a href="{{ route('shop') }}" class="text-body-sm font-body-sm text-primary hover:underline font-bold">Reset Filter</a>
         </div>
         <!-- Category -->
         <div class="mb-6">
-            <h3 class="font-label-md text-label-md text-on-surface mb-3">Categories</h3>
+            <h3 class="font-label-md text-label-md text-on-surface mb-3">Kategori Produk</h3>
             <div class="flex flex-col gap-2">
-                <label class="flex items-center gap-3 cursor-pointer"><input class="category-checkbox w-5 h-5 rounded border-outline text-primary" type="checkbox" value="Essentials"/><span class="font-body-md">Essentials</span></label>
-                <label class="flex items-center gap-3 cursor-pointer"><input class="category-checkbox w-5 h-5 rounded border-outline text-primary" type="checkbox" value="Furniture"/><span class="font-body-md">Furniture</span></label>
-                <label class="flex items-center gap-3 cursor-pointer"><input class="category-checkbox w-5 h-5 rounded border-outline text-primary" type="checkbox" value="Lighting"/><span class="font-body-md">Lighting</span></label>
-                <label class="flex items-center gap-3 cursor-pointer"><input class="category-checkbox w-5 h-5 rounded border-outline text-primary" type="checkbox" value="Kitchenware"/><span class="font-body-md">Kitchenware</span></label>
+                <a href="{{ route('shop', request()->except(['category', 'page'])) }}" class="flex items-center justify-between p-2.5 rounded-xl border border-outline-variant/30 {{ !request('category') ? 'bg-primary text-white font-bold' : 'text-secondary hover:bg-surface-variant' }}">
+                    <span>Semua Kategori</span>
+                </a>
+                @foreach($categories as $cat)
+                <a href="{{ route('shop', array_merge(request()->except(['category', 'page']), ['category' => $cat->slug])) }}" class="flex items-center justify-between p-2.5 rounded-xl border border-outline-variant/30 {{ request('category') == $cat->slug ? 'bg-primary text-white font-bold' : 'text-secondary hover:bg-surface-variant' }}">
+                    <span>{{ $cat->nama_kategori }}</span>
+                </a>
+                @endforeach
+            </div>
+        </div>
+        <!-- Lokasi Kota/Kabupaten -->
+        <div class="mb-6">
+            <h3 class="font-label-md text-label-md text-on-surface mb-3 flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-primary text-base">location_on</span>
+                <span>Lokasi Toko</span>
+            </h3>
+            <div class="flex flex-wrap gap-2">
+                <a href="{{ route('shop', request()->except(['kota', 'page'])) }}" class="px-3 py-1.5 rounded-full text-xs font-semibold border {{ !request('kota') ? 'bg-primary text-white border-primary font-bold' : 'border-outline-variant text-secondary bg-surface' }}">
+                    Semua Lokasi
+                </a>
+                @if(isset($cities) && count($cities) > 0)
+                    @foreach($cities as $c)
+                    <a href="{{ route('shop', array_merge(request()->except(['kota', 'page']), ['kota' => $c])) }}" class="px-3 py-1.5 rounded-full text-xs font-semibold border {{ request('kota') == $c ? 'bg-primary text-white border-primary font-bold' : 'border-outline-variant text-secondary bg-surface' }}">
+                        {{ $c }}
+                    </a>
+                    @endforeach
+                @endif
             </div>
         </div>
         <!-- Price -->
-        <div class="mb-6">
-            <h3 class="font-label-md text-label-md text-on-surface mb-3">Price Range</h3>
-            <div class="flex items-center gap-2 mb-4">
-                <div class="flex-1 bg-surface border border-outline-variant rounded p-2 text-center text-body-sm">Rp 0</div>
+        <form action="{{ route('shop') }}" method="GET" class="mb-6">
+            @foreach(request()->except(['max_price', 'page']) as $k => $v)
+                @if(is_array($v))
+                    @foreach($v as $subV)
+                        <input type="hidden" name="{{ $k }}[]" value="{{ $subV }}">
+                    @endforeach
+                @else
+                    <input type="hidden" name="{{ $k }}" value="{{ $v }}">
+                @endif
+            @endforeach
+            <h3 class="font-label-md text-label-md text-on-surface mb-3">Rentang Harga Maksimal</h3>
+            @php
+                $currentMaxPriceMob = request('max_price', $maxProductPrice ?? 5000000);
+            @endphp
+            <div class="flex items-center gap-2 mb-3">
+                <div class="flex-1 bg-surface border border-outline-variant rounded p-2 text-center text-xs font-bold text-secondary">Rp 0</div>
                 <div class="w-4 h-[1px] bg-outline-variant"></div>
-                <div id="maxPriceDisplay2" class="flex-1 bg-surface border border-outline-variant rounded p-2 text-center text-body-sm">Rp 500.000</div>
+                <div id="maxPriceDisplay2" class="flex-1 bg-surface border border-outline-variant rounded p-2 text-center text-xs font-bold text-primary">Rp {{ number_format($currentMaxPriceMob, 0, ',', '.') }}</div>
             </div>
-            <input id="priceRange2" class="w-full accent-primary h-1 bg-outline-variant rounded-lg appearance-none cursor-pointer" max="500000" min="0" step="5000" value="500000" type="range"/>
-        </div>
+            <input id="priceRange2" name="max_price" onchange="this.form.submit()" oninput="document.getElementById('maxPriceDisplay2').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(this.value)" class="w-full accent-primary h-1 bg-outline-variant rounded-lg appearance-none cursor-pointer" max="{{ $maxProductPrice ?? 5000000 }}" min="10000" step="50000" value="{{ $currentMaxPriceMob }}" type="range"/>
+            <button type="submit" class="w-full mt-4 py-2.5 bg-primary text-on-primary rounded-xl font-label-md font-bold text-xs">Terapkan Filter Harga</button>
+        </form>
     </div>
     <div class="p-4 border-t border-outline-variant">
-        <button onclick="closeFilterDrawer()" class="w-full py-3 bg-primary text-on-primary rounded-lg font-label-md font-bold">Apply Filters</button>
+        <button onclick="closeFilterDrawer()" class="w-full py-3 bg-surface-container-high text-on-surface rounded-lg font-label-md font-bold">Tutup</button>
     </div>
 </div>
 
 <!-- TopAppBar -->
-<header class="flex justify-between items-center px-4 md:px-margin-desktop w-full h-16 sticky top-0 z-30 bg-surface/80 backdrop-blur-md border-b border-outline-variant">
-<div class="flex items-center gap-3">
-    <!-- Hamburger (mobile only) -->
-    <button class="md:hidden p-1 rounded-lg text-on-surface-variant hover:bg-surface-variant transition-colors" onclick="openNavDrawer()">
-        <span class="material-symbols-outlined">menu</span>
-    </button>
-    <span class="font-headline-md text-headline-md font-bold text-on-surface">Katalog IDN</span>
-</div>
-<nav class="hidden md:flex items-center gap-gutter">
-<a class="font-label-md text-label-md text-secondary hover:text-primary transition-colors duration-200" href="{{ route('home') }}">Home</a>
-<a class="font-label-md text-label-md text-primary border-b-2 border-primary pb-1" href="{{ route('shop') }}">Shop</a>
-<a class="font-label-md text-label-md text-secondary hover:text-primary transition-colors duration-200" href="{{ route('profile') }}">Profile</a>
-</nav>
-<div class="flex items-center gap-2">
-<a href="{{ route('cart') }}" title="Keranjang Belanja" class="relative">
-    <button class="material-symbols-outlined text-primary p-2">shopping_cart</button>
-    @if(count(session('cart', [])) > 0)
-    <span class="absolute top-0 right-0 bg-primary text-on-primary text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">{{ count(session('cart', [])) }}</span>
-    @endif
-</a>
-@auth
-<form action="{{ route('logout') }}" method="POST" class="inline">
-    @csrf
-    <button type="submit" class="text-error hover:text-red-700 transition-colors p-2 flex items-center justify-center" title="Keluar">
-        <span class="material-symbols-outlined">logout</span>
-    </button>
-</form>
-@else
-<a href="{{ route('login') }}" class="font-label-md text-sm text-primary font-bold px-3 py-1 border border-primary rounded-lg hover:bg-primary hover:text-on-primary transition-all">Masuk</a>
-@endauth
-</div>
-</header>
+@include('layouts.navbar', ['active' => 'shop'])
 <main class="max-w-container-max mx-auto px-4 md:px-margin-desktop py-stack-md">
 <!-- Breadcrumbs & Sticky Search -->
 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-stack-md">
@@ -257,6 +271,12 @@
 <form action="{{ route('shop') }}" method="GET" class="flex items-center gap-2 w-full md:w-auto">
     @if(request('category'))
         <input type="hidden" name="category" value="{{ request('category') }}"/>
+    @endif
+    @if(request('kota'))
+        <input type="hidden" name="kota" value="{{ request('kota') }}"/>
+    @endif
+    @if(request('max_price'))
+        <input type="hidden" name="max_price" value="{{ request('max_price') }}"/>
     @endif
     <div class="flex-1 sticky-search flex items-center bg-surface-container-lowest border border-outline-variant rounded-full px-3 py-1.5 w-full md:w-[460px] focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all shadow-xs">
         <!-- Search Type Selector (Produk vs Toko) -->
@@ -281,56 +301,75 @@
 <aside class="hidden md:block w-64 flex-shrink-0">
 <div class="bg-surface-container-lowest border border-[#EDEDED] rounded-xl p-6 sticky top-32">
 <div class="flex items-center justify-between mb-stack-md">
-<h2 class="font-headline-sm text-headline-sm text-on-surface">Filters</h2>
-<button id="clearFiltersBtn" class="text-body-sm font-body-sm text-primary hover:underline">Clear all</button>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Filter</h2>
+<a href="{{ route('shop') }}" id="clearFiltersBtn" class="text-body-sm font-body-sm text-primary hover:underline font-bold">Reset Filter</a>
 </div>
 <!-- Category -->
 <div class="mb-stack-md">
-<h3 class="font-label-md text-label-md text-on-surface mb-3">Categories</h3>
+<h3 class="font-label-md text-label-md text-on-surface mb-3">Kategori Produk</h3>
 <div class="flex flex-col gap-2">
+<a href="{{ route('shop', request()->except(['category', 'page'])) }}" class="flex items-center gap-3 cursor-pointer group py-1 border-b border-outline-variant/30">
+    <span class="font-body-md text-body-md text-secondary group-hover:text-primary {{ !request('category') ? 'font-bold text-primary' : '' }}">Semua Kategori</span>
+</a>
 @foreach($categories as $cat)
-<a href="{{ route('shop', ['category' => $cat->slug]) }}" class="flex items-center gap-3 cursor-pointer group py-1 border-b border-outline-variant/30">
+<a href="{{ route('shop', array_merge(request()->except(['category', 'page']), ['category' => $cat->slug])) }}" class="flex items-center gap-3 cursor-pointer group py-1 border-b border-outline-variant/30">
 <span class="font-body-md text-body-md text-secondary group-hover:text-primary {{ request('category') == $cat->slug ? 'font-bold text-primary' : '' }}">{{ $cat->nama_kategori }}</span>
 </a>
 @endforeach
 </div>
 </div>
-<!-- Price Range -->
+<!-- Lokasi Kota/Kabupaten -->
 <div class="mb-stack-md">
-<h3 class="font-label-md text-label-md text-on-surface mb-3">Price Range</h3>
-<div class="flex items-center gap-2 mb-4">
-<div class="flex-1 bg-surface border border-outline-variant rounded p-2 text-center text-body-sm">Rp 0</div>
+<h3 class="font-label-md text-label-md text-on-surface mb-3 flex items-center gap-1.5">
+    <span class="material-symbols-outlined text-primary text-base">location_on</span>
+    <span>Lokasi Toko</span>
+</h3>
+<div class="flex flex-col gap-1.5 max-h-48 overflow-y-auto pr-1">
+    <a href="{{ route('shop', request()->except(['kota', 'page'])) }}" class="flex items-center justify-between px-3 py-1.5 rounded-lg text-xs font-semibold {{ !request('kota') ? 'bg-primary-container text-on-primary-container font-bold' : 'text-secondary hover:bg-surface-container-high transition-colors' }}">
+        <span>Semua Lokasi</span>
+        @if(!request('kota'))
+            <span class="material-symbols-outlined text-sm">check</span>
+        @endif
+    </a>
+    @if(isset($cities) && count($cities) > 0)
+        @foreach($cities as $c)
+        <a href="{{ route('shop', array_merge(request()->except(['kota', 'page']), ['kota' => $c])) }}" class="flex items-center justify-between px-3 py-1.5 rounded-lg text-xs font-semibold {{ request('kota') == $c ? 'bg-primary-container text-on-primary-container font-bold' : 'text-secondary hover:bg-surface-container-high transition-colors' }}">
+            <span>{{ $c }}</span>
+            @if(request('kota') == $c)
+                <span class="material-symbols-outlined text-sm">check</span>
+            @endif
+        </a>
+        @endforeach
+    @endif
+</div>
+</div>
+<!-- Price Range Form -->
+<form action="{{ route('shop') }}" method="GET" class="mb-stack-md">
+@foreach(request()->except(['max_price', 'page']) as $k => $v)
+    @if(is_array($v))
+        @foreach($v as $subV)
+            <input type="hidden" name="{{ $k }}[]" value="{{ $subV }}">
+        @endforeach
+    @else
+        <input type="hidden" name="{{ $k }}" value="{{ $v }}">
+    @endif
+@endforeach
+<h3 class="font-label-md text-label-md text-on-surface mb-3">Rentang Harga Maksimal</h3>
+@php
+    $currentMaxPrice = request('max_price', $maxProductPrice ?? 5000000);
+@endphp
+<div class="flex items-center gap-2 mb-3">
+<div class="flex-1 bg-surface border border-outline-variant rounded p-2 text-center text-xs font-bold text-secondary">Rp 0</div>
 <div class="w-4 h-[1px] bg-outline-variant"></div>
-<div id="maxPriceDisplay" class="flex-1 bg-surface border border-outline-variant rounded p-2 text-center text-body-sm">Rp 500.000</div>
+<div id="maxPriceDisplay" class="flex-1 bg-surface border border-outline-variant rounded p-2 text-center text-xs font-bold text-primary">Rp {{ number_format($currentMaxPrice, 0, ',', '.') }}</div>
 </div>
-<input id="priceRange" class="w-full accent-primary h-1 bg-outline-variant rounded-lg appearance-none cursor-pointer" max="500000" min="0" step="5000" value="500000" type="range"/>
+<input id="priceRange" name="max_price" onchange="this.form.submit()" oninput="document.getElementById('maxPriceDisplay').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(this.value)" class="w-full accent-primary h-1 bg-outline-variant rounded-lg appearance-none cursor-pointer" max="{{ $maxProductPrice ?? 5000000 }}" min="10000" step="50000" value="{{ $currentMaxPrice }}" type="range"/>
+<div class="flex justify-between items-center mt-2">
+    <span class="text-[10px] text-secondary font-semibold">Min: Rp 10rb</span>
+    <span class="text-[10px] text-secondary font-semibold">Max: Rp {{ number_format($maxProductPrice ?? 5000000, 0, ',', '.') }}</span>
 </div>
-<!-- Ratings -->
-<div>
-<h3 class="font-label-md text-label-md text-on-surface mb-3">Ratings</h3>
-<div class="flex flex-col gap-2">
-<button class="rating-filter-btn flex items-center justify-between p-2 rounded-lg hover:bg-surface-container-high transition-all group" data-min-rating="4.5">
-<div class="flex text-amber-500">
-<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star_half</span>
-</div>
-<span class="text-body-sm text-secondary group-hover:text-on-surface">4.5 &amp; Up</span>
-</button>
-<button class="rating-filter-btn flex items-center justify-between p-2 rounded-lg hover:bg-surface-container-high transition-all group" data-min-rating="4.0">
-<div class="flex text-amber-500">
-<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[18px]">star</span>
-</div>
-<span class="text-body-sm text-secondary group-hover:text-on-surface">4.0 &amp; Up</span>
-</button>
-</div>
-</div>
+</form>
+
 </div>
 </aside>
 <!-- Product Grid -->
@@ -360,17 +399,26 @@
 </div>
 @endif
 
-<div class="flex items-center justify-between mb-gutter">
+<div class="flex items-center justify-between mb-gutter flex-wrap gap-3">
 <h1 class="font-headline-lg text-headline-lg text-on-surface">Katalog Produk</h1>
-<div class="flex items-center gap-2">
-<span class="text-body-sm text-secondary">Sort by:</span>
-<select id="sortSelect" class="bg-transparent border-none focus:ring-0 font-label-md text-label-md text-on-surface cursor-pointer">
-<option value="newest">Newest First</option>
-<option value="price-low">Price: Low to High</option>
-<option value="price-high">Price: High to Low</option>
-<option value="rating">Best Rating</option>
-</select>
-</div>
+<form id="sortForm" action="{{ route('shop') }}" method="GET" class="flex items-center gap-2">
+    @foreach(request()->except(['sort', 'page']) as $k => $v)
+        @if(is_array($v))
+            @foreach($v as $subV)
+                <input type="hidden" name="{{ $k }}[]" value="{{ $subV }}">
+            @endforeach
+        @else
+            <input type="hidden" name="{{ $k }}" value="{{ $v }}">
+        @endif
+    @endforeach
+    <span class="text-body-sm font-bold text-secondary">Urutkan:</span>
+    <select name="sort" id="sortSelect" onchange="this.form.submit()" class="bg-surface-container-low border border-outline-variant rounded-xl px-3 py-1.5 font-label-md text-xs font-bold text-on-surface cursor-pointer focus:ring-primary focus:border-primary">
+        <option value="newest" {{ request('sort', 'newest') == 'newest' ? 'selected' : '' }}>Terbaru</option>
+        <option value="price_low" {{ (request('sort') == 'price_low' || request('sort') == 'price-low') ? 'selected' : '' }}>Harga: Terendah ke Tertinggi</option>
+        <option value="price_high" {{ (request('sort') == 'price_high' || request('sort') == 'price-high') ? 'selected' : '' }}>Harga: Tertinggi ke Terendah</option>
+        <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Terlama</option>
+    </select>
+</form>
 </div>
 
 <div id="noProductsMessage" class="hidden text-center py-12 bg-surface-container-lowest border border-dashed border-outline-variant rounded-xl my-4">
@@ -381,9 +429,9 @@
 
 <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
 @forelse($products as $product)
-<div onclick="window.location.href='{{ route('product.detail', $product->id) }}'" class="product-card-item product-card-hover group bg-surface-container-lowest border border-[#EDEDED] rounded-xl p-2.5 sm:p-4 flex flex-col justify-between cursor-pointer transition-all duration-300" data-id="{{ $product->id }}" data-title="{{ $product->nama_produk }}" data-category="{{ $product->category->nama_kategori ?? 'Umum' }}" data-store="{{ strtolower($product->store->nama_toko ?? '') }}" data-price="{{ $product->harga }}" data-rating="4.8">
+<div onclick="window.location.href='{{ route('product.detail', $product->id) }}'" class="product-card-item product-card-hover group bg-surface-container-lowest border border-[#EDEDED] rounded-sm p-2.5 sm:p-4 flex flex-col justify-between cursor-pointer transition-all duration-300" data-id="{{ $product->id }}" data-title="{{ $product->nama_produk }}" data-category="{{ $product->category->nama_kategori ?? 'Umum' }}" data-store="{{ strtolower($product->store->nama_toko ?? '') }}" data-price="{{ $product->harga }}" data-rating="4.8">
 <div>
-    <div class="relative w-full aspect-square bg-[#F5F5F5] rounded-lg overflow-hidden mb-2.5 sm:mb-4">
+    <div class="relative w-full aspect-square bg-[#F5F5F5] rounded-sm overflow-hidden mb-2.5 sm:mb-4">
     @php
         $img = $product->galleries->first()?->foto_path ?? 'https://via.placeholder.com/400';
         $imgUrl = str_starts_with($img, 'http') ? $img : asset($img);
@@ -401,9 +449,17 @@
     </div>
     </div>
     <h4 class="text-xs sm:text-sm font-bold text-on-surface group-hover:text-primary transition-colors line-clamp-2 min-h-[32px] sm:min-h-[40px] leading-snug mb-1">{{ $product->nama_produk }}</h4>
-    <div class="text-[10px] sm:text-[11px] text-primary font-bold flex items-center gap-1 mb-2">
-        <span class="material-symbols-outlined text-xs">store</span>
-        <span class="truncate">{{ $product->store->nama_toko ?? 'Toko' }}</span>
+    <div class="text-[10px] sm:text-[11px] text-primary font-bold flex items-center justify-between gap-1 mb-2">
+        <div class="flex items-center gap-1 min-w-0">
+            <span class="material-symbols-outlined text-xs">store</span>
+            <span class="truncate">{{ $product->store->nama_toko ?? 'Toko' }}</span>
+        </div>
+        @if(!empty($product->store->kota))
+        <span class="text-[9px] sm:text-[10px] text-secondary font-medium flex items-center gap-0.5 flex-shrink-0" title="Lokasi Toko">
+            <span class="material-symbols-outlined text-[11px]">location_on</span>
+            <span class="truncate max-w-[70px] sm:max-w-[90px]">{{ $product->store->kota }}</span>
+        </span>
+        @endif
     </div>
 </div>
 <div class="pt-2 border-t border-surface-container-low flex items-center justify-between">
@@ -428,18 +484,7 @@
 <div class="mt-8 flex justify-center">
 {{ $products->links() }}
 </div>
-<!-- Pagination -->
-<div class="flex items-center justify-center gap-2 mt-stack-lg">
-<button class="w-10 h-10 flex items-center justify-center rounded-full border border-outline-variant text-on-surface hover:bg-surface-container-high transition-colors">
-<span class="material-symbols-outlined">chevron_left</span>
-</button>
-<button class="w-10 h-10 flex items-center justify-center rounded-full bg-primary text-on-primary font-bold">1</button>
-<button class="w-10 h-10 flex items-center justify-center rounded-full border border-outline-variant text-on-surface hover:bg-surface-container-high transition-colors">2</button>
-<button class="w-10 h-10 flex items-center justify-center rounded-full border border-outline-variant text-on-surface hover:bg-surface-container-high transition-colors">3</button>
-<button class="w-10 h-10 flex items-center justify-center rounded-full border border-outline-variant text-on-surface hover:bg-surface-container-high transition-colors">
-<span class="material-symbols-outlined">chevron_right</span>
-</button>
-</div>
+
 </section>
 </div>
 </main>

@@ -138,10 +138,6 @@
     <span class="font-headline-md text-headline-md font-bold text-primary">Katalog IDN</span>
 </div>
 <div class="flex items-center gap-3 md:gap-gutter">
-<div class="hidden md:flex items-center bg-surface-container-low rounded-full px-4 py-2 border border-outline-variant">
-<span class="material-symbols-outlined text-on-surface-variant mr-2">search</span>
-<input class="bg-transparent border-none p-0 focus:ring-0 text-body-sm w-48" placeholder="Search inventory..." type="text"/>
-</div>
 <button class="material-symbols-outlined text-on-surface-variant scale-95 active:scale-90 transition-transform">shopping_cart</button>
 <button class="material-symbols-outlined text-on-surface-variant scale-95 active:scale-90 transition-transform">notifications</button>
 <div class="w-8 h-8 rounded-full overflow-hidden border border-outline">
@@ -187,9 +183,12 @@
 <a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('support') }}" onclick="closeSidebar()">
 <span class="material-symbols-outlined">help_outline</span> Support
     </a>
-<a class="flex items-center gap-3 px-3 py-2.5 text-error hover:bg-error-container rounded-lg transition-all font-label-md text-label-md" href="{{ route('login') }}">
-<span class="material-symbols-outlined">logout</span> Sign Out
-    </a>
+<form action="{{ route('logout') }}" method="POST" class="w-full">
+    @csrf
+    <button type="submit" class="w-full flex items-center gap-3 px-3 py-2.5 text-error hover:bg-error-container rounded-lg transition-all font-label-md text-label-md font-bold">
+        <span class="material-symbols-outlined">logout</span> Sign Out
+    </button>
+</form>
 </div>
 </aside>
 
@@ -258,12 +257,34 @@
                     </section>
 
                     <section class="bg-surface-container-lowest p-gutter rounded-xl border border-[#EDEDED]">
-                        <h3 class="font-headline-sm text-headline-sm mb-stack-md text-on-surface">Upload Foto Produk</h3>
+                        <h3 class="font-headline-sm text-headline-sm mb-stack-md text-on-surface">Upload Galeri Foto Produk</h3>
                         <div class="border-2 border-dashed border-outline-variant rounded-xl p-8 text-center flex flex-col items-center justify-center gap-3">
                             <span class="material-symbols-outlined text-4xl text-primary">cloud_upload</span>
-                            <p class="font-label-md text-on-surface">Pilih file gambar untuk produk ini</p>
+                            <p class="font-label-md text-on-surface">Pilih file gambar untuk produk ini (Bisa pilih lebih dari satu foto)</p>
                             <input type="file" name="gambar[]" multiple class="block w-full text-sm text-secondary file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-container file:text-on-primary-container hover:file:bg-[#ffaa00]"/>
-                            <p class="text-body-sm text-secondary">PNG, JPG, WEBP hingga 2MB per file</p>
+                            <p class="text-body-sm text-secondary">PNG, JPG, WEBP hingga 2MB per file. Foto pertama akan menjadi foto utama.</p>
+                        </div>
+                    </section>
+
+                    <section class="bg-surface-container-lowest p-gutter rounded-xl border border-[#EDEDED]">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h3 class="font-headline-sm text-headline-sm text-on-surface">Varian / Jenis Produk</h3>
+                                <p class="text-xs text-secondary mt-0.5">Tambahkan opsi varian seperti Warna, Ukuran, atau Tipe produk beserta harga tambahannya (opsional).</p>
+                            </div>
+                            <button type="button" onclick="addVariantRow()" class="text-xs bg-primary/10 text-primary font-bold px-3 py-2 rounded-lg hover:bg-primary/20 transition-all flex items-center gap-1">
+                                <span class="material-symbols-outlined text-sm">add</span> Tambah Varian
+                            </button>
+                        </div>
+                        <div id="variant-rows" class="space-y-3">
+                            <div class="flex items-center gap-3 variant-row">
+                                <input name="variants[0][nama]" class="flex-1 bg-transparent border border-outline-variant rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 outline-none" type="text" placeholder="Nama Varian (misal: Merah / Size L / Wooden)"/>
+                                <input name="variants[0][harga]" class="w-36 bg-transparent border border-outline-variant rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 outline-none" type="number" placeholder="Harga Tambahan Rp (0)"/>
+                                <input name="variants[0][stok]" class="w-28 bg-transparent border border-outline-variant rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 outline-none" type="number" placeholder="Stok (20)"/>
+                                <button type="button" onclick="this.parentElement.remove()" class="text-error p-1.5 hover:bg-error-container/20 rounded-lg">
+                                    <span class="material-symbols-outlined text-sm">delete</span>
+                                </button>
+                            </div>
                         </div>
                     </section>
                 </div>
@@ -295,6 +316,24 @@
         </form>
     </div>
 <script>
+        let variantIndex = 1;
+        function addVariantRow() {
+            const container = document.getElementById('variant-rows');
+            if (!container) return;
+            const div = document.createElement('div');
+            div.className = 'flex items-center gap-3 variant-row';
+            div.innerHTML = `
+                <input name="variants[${variantIndex}][nama]" class="flex-1 bg-transparent border border-outline-variant rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 outline-none" type="text" placeholder="Nama Varian (misal: Merah / Size L / Wooden)"/>
+                <input name="variants[${variantIndex}][harga]" class="w-36 bg-transparent border border-outline-variant rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 outline-none" type="number" placeholder="Harga Tambahan Rp (0)"/>
+                <input name="variants[${variantIndex}][stok]" class="w-28 bg-transparent border border-outline-variant rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 outline-none" type="number" placeholder="Stok (20)"/>
+                <button type="button" onclick="this.parentElement.remove()" class="text-error p-1.5 hover:bg-error-container/20 rounded-lg">
+                    <span class="material-symbols-outlined text-sm">delete</span>
+                </button>
+            `;
+            container.appendChild(div);
+            variantIndex++;
+        }
+
         function toggleSidebar() {
             document.getElementById('main-sidebar').classList.toggle('open');
             document.getElementById('sidebar-overlay').classList.toggle('active');

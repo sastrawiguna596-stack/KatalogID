@@ -178,47 +178,8 @@
     </div>
 </aside>
 
-<!-- Header Navigation - Full Width Responsive -->
-<header class="w-full top-0 sticky bg-white/95 backdrop-blur-md border-b border-surface-container-highest z-40 transition-all">
-    <div class="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12 py-3.5 flex items-center justify-between gap-4 md:gap-6">
-        <div class="flex items-center gap-3">
-            <!-- Mobile Hamburger Button -->
-            <button type="button" onclick="toggleSidebar()" class="lg:hidden p-2 rounded-lg text-on-surface hover:bg-surface-container-low transition-colors" aria-label="Open Menu">
-                <span class="material-symbols-outlined text-2xl">menu</span>
-            </button>
-
-            <a class="font-headline-sm text-headline-sm font-bold text-primary flex-shrink-0 flex items-center gap-1.5" href="{{ route('home') }}">
-                <span class="material-symbols-outlined text-primary text-2xl">storefront</span>
-                <span>Katalog IDN</span>
-            </a>
-
-            <div class="hidden lg:flex items-center gap-5 text-label-md ml-4">
-                <a class="text-secondary hover:text-primary transition-colors font-semibold" href="{{ route('store_product', ['id' => $store->id, 'view' => 'all']) }}">Semua Produk Toko</a>
-            </div>
-        </div>
-
-        <!-- Search Bar Desktop & Tablet -->
-        <div class="flex-grow max-w-2xl relative hidden sm:block">
-            <input class="w-full bg-surface-container-low border border-surface-container-highest rounded-full pl-10 pr-4 py-2 text-body-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="Cari produk di {{ $store->nama_toko }}..." type="text"/>
-            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-secondary text-xl">search</span>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="flex items-center gap-3">
-            <a href="{{ route('cart') }}" aria-label="Cart" class="p-2 rounded-full hover:bg-surface-container-low text-secondary hover:text-primary transition-colors relative">
-                <span class="material-symbols-outlined text-2xl">shopping_cart</span>
-            </a>
-            @auth
-                <a href="{{ route('account') }}" class="hidden sm:inline-flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg font-label-md font-bold hover:brightness-110 transition-all">
-                    <span class="material-symbols-outlined text-xl">dashboard</span>
-                    <span>Dashboard Seller</span>
-                </a>
-            @else
-                <a href="{{ route('login') }}" class="hidden sm:inline-flex border border-primary text-primary px-4 py-2 rounded-lg font-label-md font-bold hover:bg-primary/5 transition-all">Masuk</a>
-            @endauth
-        </div>
-    </div>
-</header>
+<!-- Header Navigation -->
+@include('layouts.navbar', ['active' => 'store'])
 
 <main class="w-full flex-grow">
     <!-- Store Hero Banner Section - Full Width -->
@@ -288,8 +249,8 @@
 
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-6">
             @forelse($products as $product)
-                <div onclick="window.location.href='{{ url('/product') }}/{{ $product->id }}'" class="product-card border border-surface-container-highest rounded-xl sm:rounded-2xl bg-white overflow-hidden cursor-pointer flex flex-col justify-between hover:shadow-xl hover:border-primary/30 transition-all duration-300 group">
-                    <div class="aspect-square bg-surface-container-low overflow-hidden relative">
+                <div onclick="window.location.href='{{ url('/product') }}/{{ $product->id }}'" class="product-card border border-surface-container-highest rounded-sm bg-white overflow-hidden cursor-pointer flex flex-col justify-between hover:shadow-xl hover:border-primary/30 transition-all duration-300 group">
+                    <div class="aspect-square bg-surface-container-low rounded-sm overflow-hidden relative">
                         <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="{{ str_starts_with($product->galleries->first()?->foto_path ?? '', 'http') ? $product->galleries->first()?->foto_path : asset($product->galleries->first()?->foto_path ?: 'https://via.placeholder.com/300') }}" alt="{{ $product->nama_produk }}"/>
                         @if($product->badge)
                             <span class="absolute top-2 left-2 sm:top-3 sm:left-3 bg-primary text-on-primary text-[9px] sm:text-[10px] font-bold px-2 py-0.5 sm:py-1 rounded-md shadow-sm">{{ $product->badge }}</span>
@@ -328,31 +289,35 @@
     <!-- Curated Collections Section -->
     <section class="w-full bg-surface-container-low py-10 border-t border-surface-container-highest">
         <div class="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12 space-y-6">
-            <h2 class="font-headline-md text-xl sm:text-2xl text-on-surface font-bold">Pilihan Kategori</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-                <a href="{{ route('shop') }}" class="group cursor-pointer bg-white p-3 rounded-2xl border border-surface-container-highest hover:shadow-md transition-all">
-                    <div class="aspect-[4/3] rounded-xl overflow-hidden mb-3 bg-surface-container-low">
-                        <img alt="Decor" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBD8oIbLdEJ27VrY6N4RIYehPehrCajSLKuL4nOrFR5Re1te7TCYcSqeL5nM2IHnO0uwHhTU3RpG-5wYab9q4o6q4dBuEXkmO0I9SMxkym3R9AHXLeYFq9-dfAMwrCMk4whExXZ7aYxHVFcS164rrJ50VzULt3aeSpVKqWRGbPS4G_-hPjw04d1OH5EuQ3nmummxik7vYIzUmmCyRdlyvDMMYmKui4aB2uYaEXvgh06kKaJlKd3AUAC"/>
-                    </div>
-                    <p class="text-body-sm font-bold text-center group-hover:text-primary transition-colors">Handcrafted Decor</p>
+            <div class="flex items-center justify-between">
+                <h2 class="font-headline-md text-xl sm:text-2xl text-on-surface font-bold">Pilihan Kategori Toko</h2>
+                <a href="{{ route('store_product', ['id' => $store->id, 'view' => 'all']) }}" class="text-xs sm:text-sm font-bold text-primary hover:underline flex items-center gap-1">
+                    <span>Lihat Semua Kategori</span>
+                    <span class="material-symbols-outlined text-base">chevron_right</span>
                 </a>
-                <a href="{{ route('shop') }}" class="group cursor-pointer bg-white p-3 rounded-2xl border border-surface-container-highest hover:shadow-md transition-all">
-                    <div class="aspect-[4/3] rounded-xl overflow-hidden mb-3 bg-surface-container-low">
-                        <img alt="Kitchen" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzs4LoaaViAat6vXRgB8ql1FD2-wU4dTj_KWdBAB2znRCHywAGJT6V78Uj8utS88mtg9EFs7CqZ553hUFXUz9mT0u30sMFR6GqPBA2mEoVKgOLUgByYKLPoj2mkvrIEE-z5-wKF7IcX9dLD3g-1LbPywaJS0nbWuhm2vv3Yv8Wx6QXgsX5cq3PiWo7fn5Pj0vEt9pM56LHbc8Sa7Qm16pou3Mf4xusrnAUwKM4rMpdsS4jsD1iCk8k"/>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
+                @if(isset($categories) && count($categories) > 0)
+                    @foreach($categories as $cat)
+                    <a href="{{ route('store_product', ['id' => $store->id, 'view' => 'all', 'category' => $cat->slug]) }}" class="group cursor-pointer bg-white p-4 rounded-2xl border border-surface-container-highest hover:shadow-md hover:border-primary/40 transition-all flex flex-col justify-between">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold group-hover:bg-primary group-hover:text-white transition-colors">
+                                <span class="material-symbols-outlined">category</span>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <h3 class="font-bold text-on-surface text-sm sm:text-base group-hover:text-primary transition-colors truncate">{{ $cat->nama_kategori }}</h3>
+                                <p class="text-[11px] text-secondary">Filter Produk Toko</p>
+                            </div>
+                        </div>
+                    </a>
+                    @endforeach
+                @endif
+                <a href="{{ route('store_product', ['id' => $store->id, 'view' => 'all']) }}" class="group cursor-pointer bg-primary text-on-primary p-4 rounded-2xl border border-primary hover:brightness-110 transition-all flex items-center justify-between shadow-sm">
+                    <div>
+                        <h3 class="font-bold text-sm sm:text-base">Semua Kategori</h3>
+                        <p class="text-[11px] text-on-primary/80">Lihat Katalog Lengkap Toko</p>
                     </div>
-                    <p class="text-body-sm font-bold text-center group-hover:text-primary transition-colors">Essential Kitchenware</p>
-                </a>
-                <a href="{{ route('shop') }}" class="group cursor-pointer bg-white p-3 rounded-2xl border border-surface-container-highest hover:shadow-md transition-all">
-                    <div class="aspect-[4/3] rounded-xl overflow-hidden mb-3 bg-surface-container-low">
-                        <img alt="Office" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCps2VzngqRRv77XdCeicXCGQFux2NJWbOHVl2j7M-Y8L3CQKCA2g-DNJYX8Vk2Sf2ena-_o_lUWqUXz5MvO8tBvfH9SRz7TvNBcrEBz6v7ZItftIknCSxDFDH9zzbCzFbt7Gh_DOlz_eSagaTe4WurY2c0DuUm8c3PqUqvdwoKeEM_i1nKzj2jd_IQq803rYKCepciPz3hPem96_-8HvBgzwNd_2PVvrjRlXhz1YMwMQOEHKFH0mvd"/>
-                    </div>
-                    <p class="text-body-sm font-bold text-center group-hover:text-primary transition-colors">Modern Office</p>
-                </a>
-                <a href="{{ route('shop') }}" class="group cursor-pointer bg-white p-3 rounded-2xl border border-surface-container-highest hover:shadow-md transition-all flex flex-col justify-center items-center">
-                    <div class="aspect-[4/3] w-full rounded-xl overflow-hidden mb-3 bg-surface-container-high flex items-center justify-center">
-                        <span class="material-symbols-outlined text-4xl text-primary">grid_view</span>
-                    </div>
-                    <p class="text-body-sm font-bold text-center group-hover:text-primary transition-colors">Semua Kategori</p>
+                    <span class="material-symbols-outlined text-2xl">arrow_forward</span>
                 </a>
             </div>
         </div>

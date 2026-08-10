@@ -178,10 +178,6 @@
     <span class="font-headline-md text-headline-md font-bold text-primary">Katalog IDN</span>
 </div>
 <div class="flex items-center gap-3 md:gap-gutter">
-<div class="hidden md:flex items-center bg-surface-container-low rounded-full px-4 py-2 border border-outline-variant">
-<span class="material-symbols-outlined text-on-surface-variant mr-2">search</span>
-<input class="bg-transparent border-none p-0 focus:ring-0 text-body-sm w-48" placeholder="Search account..." type="text"/>
-</div>
 <button class="material-symbols-outlined text-on-surface-variant scale-95 active:scale-90 transition-transform">shopping_cart</button>
 <button class="material-symbols-outlined text-on-surface-variant scale-95 active:scale-90 transition-transform">notifications</button>
 <div class="w-8 h-8 rounded-full overflow-hidden border border-outline">
@@ -230,9 +226,12 @@
 <a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('support') }}" onclick="closeSidebar()">
 <span class="material-symbols-outlined">help_outline</span> Support
     </a>
-<a class="flex items-center gap-3 px-3 py-2.5 text-error hover:bg-error-container rounded-lg transition-all font-label-md text-label-md" href="{{ route('login') }}">
-<span class="material-symbols-outlined">logout</span> Sign Out
-    </a>
+<form action="{{ route('logout') }}" method="POST" class="w-full">
+    @csrf
+    <button type="submit" class="w-full flex items-center gap-3 px-3 py-2.5 text-error hover:bg-error-container rounded-lg transition-all font-label-md text-label-md font-bold">
+        <span class="material-symbols-outlined">logout</span> Sign Out
+    </button>
+</form>
 </div>
 </aside>
 
@@ -301,11 +300,35 @@
                 <input name="phone" class="border border-outline-variant rounded-lg px-4 py-3 bg-surface-container-low font-body-md focus:border-on-surface" type="tel" value="{{ old('phone', Auth::user()->phone) }}"/>
             </div>
             <div class="flex flex-col gap-2">
-                <label class="font-label-md text-label-md text-on-surface font-bold">Nama Toko (Store Name)</label>
-                <input name="nama_toko" class="border border-outline-variant rounded-lg px-4 py-3 bg-surface-container-low font-body-md focus:border-on-surface" type="text" value="{{ old('nama_toko', Auth::user()->store->nama_toko ?? '') }}"/>
+                <label class="font-label-md text-label-md text-on-surface font-bold flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-primary text-base">location_on</span>
+                    <span>Lokasi Tempat Jual (Kota / Kabupaten)</span>
+                </label>
+                <select name="kota" class="border border-outline-variant rounded-lg px-4 py-3 bg-surface-container-low font-body-md focus:border-on-surface cursor-pointer">
+                    @php
+                        $currentKota = old('kota', Auth::user()->store->kota ?? 'Kota Denpasar');
+                        $baliLocations = [
+                            'Kota Denpasar',
+                            'Kabupaten Badung',
+                            'Kabupaten Gianyar',
+                            'Kabupaten Tabanan',
+                            'Kabupaten Buleleng',
+                            'Kabupaten Karangasem',
+                            'Kabupaten Klungkung',
+                            'Kabupaten Bangli',
+                            'Kabupaten Jembrana',
+                        ];
+                    @endphp
+                    @foreach($baliLocations as $bLoc)
+                        <option value="{{ $bLoc }}" {{ $currentKota == $bLoc ? 'selected' : '' }}>
+                            - {{ $bLoc }}
+                        </option>
+                    @endforeach
+                </select>
+                <p class="text-[11px] text-on-surface-variant">Pilih kota/kabupaten asal toko Anda di Provinsi Bali untuk ditampilkan di katalog produk.</p>
             </div>
             <div class="col-span-1 md:col-span-2 flex flex-col gap-2">
-                <label class="font-label-md text-label-md text-on-surface font-bold">Alamat (Address)</label>
+                <label class="font-label-md text-label-md text-on-surface font-bold">Alamat Lengkap Toko</label>
                 <textarea name="address" class="border border-outline-variant rounded-lg px-4 py-3 bg-surface-container-low font-body-md focus:border-on-surface" rows="2">{{ old('address', Auth::user()->address) }}</textarea>
             </div>
             <div class="col-span-1 md:col-span-2 flex flex-col gap-2">

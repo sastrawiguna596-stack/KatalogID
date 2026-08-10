@@ -155,55 +155,8 @@
 
 <body class="bg-surface text-on-surface font-body-md min-h-screen">
 
-<!-- Mobile Nav Overlay -->
-<div id="nav-overlay" class="fixed inset-0 bg-black/40 z-40 md:hidden" onclick="closeNavDrawer()"></div>
-<!-- Mobile Nav Drawer -->
-<div id="mobile-nav-drawer" class="fixed left-0 top-0 h-full w-72 z-50 bg-surface border-r border-outline-variant flex flex-col p-6 md:hidden">
-    <div class="flex items-center justify-between mb-8">
-        <span class="font-headline-md text-headline-md font-bold text-on-surface">Katalog IDN</span>
-        <button onclick="closeNavDrawer()" class="p-1 rounded-lg text-on-surface-variant hover:bg-surface-variant">
-            <span class="material-symbols-outlined">close</span>
-        </button>
-    </div>
-    <nav class="flex flex-col gap-1">
-        <a href="{{ route('home') }}" class="flex items-center gap-3 px-3 py-3 text-on-surface-variant hover:bg-surface-variant rounded-lg font-label-md text-label-md transition-all" onclick="closeNavDrawer()">
-            <span class="material-symbols-outlined">home</span> Home
-        </a>
-        <a href="{{ route('shop') }}" class="flex items-center gap-3 px-3 py-3 text-on-surface-variant hover:bg-surface-variant rounded-lg font-label-md text-label-md transition-all" onclick="closeNavDrawer()">
-            <span class="material-symbols-outlined">storefront</span> Shop
-        </a>
-        <a href="{{ route('cart') }}" class="flex items-center gap-3 px-3 py-3 text-on-primary-container bg-primary-container rounded-lg font-bold font-label-md text-label-md transition-all" onclick="closeNavDrawer()">
-            <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">shopping_cart</span> Cart
-        </a>
-        <a href="{{ route('account') }}" class="flex items-center gap-3 px-3 py-3 text-on-surface-variant hover:bg-surface-variant rounded-lg font-label-md text-label-md transition-all" onclick="closeNavDrawer()">
-            <span class="material-symbols-outlined">person</span> Profile
-        </a>
-    </nav>
-    <div class="mt-auto border-t border-outline-variant pt-4">
-        <a href="{{ route('login') }}" class="flex items-center gap-3 px-3 py-3 text-error hover:bg-error-container rounded-lg font-label-md text-label-md transition-all">
-            <span class="material-symbols-outlined">logout</span> Sign Out
-        </a>
-    </div>
-</div>
-
-    <!-- TopAppBar -->
-   <header class="flex justify-between items-center px-4 md:px-margin-desktop w-full h-16 sticky top-0 z-30 bg-surface/80 backdrop-blur-md border-b border-outline-variant">
-<div class="flex items-center gap-3">
-    <!-- Hamburger (mobile only) -->
-    <button class="md:hidden p-1 rounded-lg text-on-surface-variant hover:bg-surface-variant transition-colors" onclick="openNavDrawer()">
-        <span class="material-symbols-outlined">menu</span>
-    </button>
-    <span class="font-headline-md text-headline-md font-bold text-on-surface">Katalog IDN</span>
-</div>
-<nav class="hidden md:flex items-center gap-gutter">
-<a class="font-label-md text-label-md text-secondary hover:text-primary transition-colors duration-200" href="{{ route('home') }}">Home</a>
-<a class="font-label-md text-label-md text-secondary hover:text-primary transition-colors duration-200" href="{{ route('shop') }}">Shop</a>
-<a class="font-label-md text-label-md text-secondary hover:text-primary transition-colors duration-200" href="{{ route('account') }}">Profile</a>
-</nav>
-<div class="flex items-center gap-2">
-<a href="{{ route('cart') }}"><button class="material-symbols-outlined text-primary p-2">shopping_cart</button></a>
-</div>
-</header>
+<!-- TopAppBar -->
+@include('layouts.navbar', ['active' => 'cart'])
     <main class="w-full px-4 md:px-margin-desktop py-6 md:py-8 overflow-hidden">
         <h1 class="font-headline-xl text-xl md:text-headline-xl mb-stack-md">Your Checkout</h1>
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
@@ -233,9 +186,28 @@
                                 <div>
                                     <div class="flex justify-between items-start">
                                         <h3 class="font-headline-sm text-[18px] font-bold">{{ $item['nama_produk'] }}</h3>
-                                        <p class="font-bold text-primary">Rp {{ number_format($item['harga'] * $item['jumlah'], 0, ',', '.') }}</p>
+                                        <div class="text-right">
+                                            <p class="font-bold text-primary">Rp {{ number_format($item['harga'] * $item['jumlah'], 0, ',', '.') }}</p>
+                                            @if(!empty($item['harga_asal']) && $item['harga_asal'] > $item['harga'])
+                                                <p class="text-xs text-secondary line-through">Rp {{ number_format($item['harga_asal'] * $item['jumlah'], 0, ',', '.') }}</p>
+                                            @endif
+                                        </div>
                                     </div>
-                                    <p class="text-body-sm text-secondary mt-1">Toko: {{ $item['store_name'] }} | Satuan: Rp {{ number_format($item['harga'], 0, ',', '.') }}</p>
+                                    <p class="text-body-sm text-secondary mt-1">
+                                        <span>Toko: {{ $item['store_name'] }}</span>
+                                        @if(!empty($item['variant_name']))
+                                            <span class="mx-1">•</span>
+                                            <span class="inline-flex items-center gap-1 bg-amber-500/10 text-primary font-bold px-2 py-0.5 rounded text-xs">
+                                                <span class="material-symbols-outlined text-xs">tune</span>
+                                                Varian: {{ $item['variant_name'] }}
+                                            </span>
+                                        @endif
+                                        <span class="mx-1">•</span>
+                                        <span>Satuan: Rp {{ number_format($item['harga'], 0, ',', '.') }}</span>
+                                        @if(!empty($item['harga_asal']) && $item['harga_asal'] > $item['harga'])
+                                            <span class="text-xs text-secondary line-through ml-1">Rp {{ number_format($item['harga_asal'], 0, ',', '.') }}</span>
+                                        @endif
+                                    </p>
                                 </div>
                                 <div class="flex justify-between items-center mt-4">
                                     <div class="flex items-center border border-[#EDEDED] rounded-lg">
@@ -330,23 +302,23 @@
             <aside class="lg:col-span-4 sticky top-24">
                 <div
                     class="bg-surface-container-lowest border border-[#EDEDED] rounded-xl p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.04)]">
-                    <h2 class="font-headline-sm text-headline-sm mb-6">Order Summary</h2>
+                    <h2 class="font-headline-sm text-headline-sm mb-6">Ringkasan Pesanan</h2>
                     <div class="space-y-4 mb-6">
                         <div class="flex justify-between text-body-md text-secondary">
-                            <span>Subtotal</span>
-                            <span>Rp. 245.000</span>
+                            <span>Subtotal Produk</span>
+                            <span class="font-semibold text-on-surface">Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
                         </div>
                         <div class="flex justify-between text-body-md text-secondary">
-                            <span>Estimated Shipping</span>
-                            <span>Rp. 20.000</span>
+                            <span>Estimasi Pengiriman</span>
+                            <span class="font-semibold text-on-surface">Rp {{ number_format($shipping, 0, ',', '.') }}</span>
                         </div>
                         <div class="flex justify-between text-body-md text-secondary pb-4 border-b border-[#EDEDED]">
-                            <span>Tax</span>
-                            <span>Rp. 7.600</span>
+                            <span>Biaya Operasional</span>
+                            <span class="font-semibold text-on-surface">Rp {{ number_format($biayaOperasional, 0, ',', '.') }}</span>
                         </div>
                         <div class="flex justify-between text-headline-sm font-bold pt-2">
-                            <span>Total</span>
-                            <span class="text-primary">Rp. 272.600</span>
+                            <span>Total Pembayaran</span>
+                            <span class="text-primary text-xl font-extrabold">Rp {{ number_format($total, 0, ',', '.') }}</span>
                         </div>
                     </div>
                     <div class="mb-6">
@@ -359,11 +331,14 @@
                                 class="px-4 py-2 bg-secondary text-white text-label-md rounded-lg hover:bg-on-surface transition-colors">Apply</button>
                         </div>
                     </div>
-                    <button
-                        class="w-full py-4 bg-primary text-on-secondary font-bold rounded-xl text-headline-sm shadow-lg hover:brightness-90 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
-                        Place Order
-                        <span class="material-symbols-outlined">arrow_forward</span>
-                    </button>
+                    <form action="{{ route('checkout.process') }}" method="POST">
+                        @csrf
+                        <button type="submit"
+                            class="w-full py-4 bg-primary text-on-secondary font-bold rounded-xl text-headline-sm shadow-lg hover:brightness-90 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+                            Buat Pesanan Sekarang
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                    </form>
                     <div class="mt-6 flex items-center justify-center gap-4 opacity-50 grayscale">
                         <span class="material-symbols-outlined">verified_user</span>
                         <p class="text-[10px] text-center uppercase tracking-widest font-bold">Secure SSL Checkout</p>

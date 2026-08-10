@@ -177,36 +177,7 @@
 </aside>
 
 <!-- Top Navigation Bar -->
-<header class="w-full top-0 sticky bg-white/95 backdrop-blur-md border-b border-surface-container-highest z-40 transition-all">
-    <div class="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12 py-3.5 flex items-center justify-between gap-4">
-        <div class="flex items-center gap-4">
-            <button type="button" onclick="toggleSidebar()" class="lg:hidden p-2 rounded-lg text-on-surface hover:bg-surface-container-low transition-colors" aria-label="Open Menu">
-                <span class="material-symbols-outlined text-2xl">menu</span>
-            </button>
-            <a class="font-headline-sm text-headline-sm font-bold text-primary flex items-center gap-2" href="{{ route('home') }}">
-                <span class="material-symbols-outlined text-primary text-2xl">storefront</span>
-                <span>Katalog IDN</span>
-            </a>
-            <nav class="hidden lg:flex gap-6 items-center ml-4">
-                <a class="font-label-md text-label-md text-primary font-bold border-b-2 border-primary pb-1" href="#">Semua Produk Toko</a>
-                @if(isset($store))
-                    <a class="font-label-md text-label-md text-secondary hover:text-primary transition-colors font-semibold" href="{{ route('store_product', $store->id) }}">Beranda Toko</a>
-                @endif
-            </nav>
-        </div>
-        <div class="flex items-center gap-3">
-            @if(isset($store))
-                <a href="{{ route('store_product', $store->id) }}" class="hidden sm:inline-flex items-center gap-1.5 border border-primary text-primary px-4 py-2 rounded-lg font-label-md font-bold hover:bg-primary/5 transition-all">
-                    <span class="material-symbols-outlined text-lg">arrow_back</span>
-                    <span>Kembali ke Beranda Toko</span>
-                </a>
-            @endif
-            <a href="{{ route('cart') }}" class="p-2 text-secondary hover:text-primary transition-colors">
-                <span class="material-symbols-outlined text-2xl">shopping_cart</span>
-            </a>
-        </div>
-    </div>
-</header>
+@include('layouts.navbar', ['active' => 'store'])
 
 <main class="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12 py-8 flex-grow">
     
@@ -281,8 +252,8 @@
             <!-- Product Grid -->
             <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                 @forelse($products as $product)
-                    <div onclick="window.location.href='{{ url('/product') }}/{{ $product->id }}'" class="group product-card bg-white border border-surface-container-highest rounded-2xl overflow-hidden cursor-pointer flex flex-col justify-between transition-all duration-300">
-                        <div class="relative aspect-square overflow-hidden bg-surface-container-low">
+                    <div onclick="window.location.href='{{ url('/product') }}/{{ $product->id }}'" class="group product-card bg-white border border-surface-container-highest rounded-sm overflow-hidden cursor-pointer flex flex-col justify-between transition-all duration-300">
+                        <div class="relative aspect-square overflow-hidden bg-surface-container-low rounded-sm">
                             <img class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105" src="{{ str_starts_with($product->galleries->first()?->foto_path ?? '', 'http') ? $product->galleries->first()?->foto_path : asset($product->galleries->first()?->foto_path ?: 'https://via.placeholder.com/300') }}" alt="{{ $product->nama_produk }}"/>
                             @if($product->badge)
                                 <div class="absolute top-3 left-3 bg-primary text-on-primary font-bold text-[10px] px-2.5 py-1 rounded-md shadow-sm">{{ $product->badge }}</div>

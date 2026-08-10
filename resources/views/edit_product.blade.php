@@ -162,10 +162,6 @@
     <span class="font-headline-md text-headline-md font-bold text-primary">Katalog IDN</span>
 </div>
 <div class="flex items-center gap-3 md:gap-gutter">
-<div class="hidden md:flex items-center bg-surface-container-low rounded-full px-4 py-2 border border-outline-variant">
-<span class="material-symbols-outlined text-on-surface-variant mr-2">search</span>
-<input class="bg-transparent border-none p-0 focus:ring-0 text-body-sm w-48" placeholder="Search inventory..." type="text"/>
-</div>
 <button class="material-symbols-outlined text-on-surface-variant scale-95 active:scale-90 transition-transform">shopping_cart</button>
 <button class="material-symbols-outlined text-on-surface-variant scale-95 active:scale-90 transition-transform">notifications</button>
 <div class="w-8 h-8 rounded-full overflow-hidden border border-outline">
@@ -211,9 +207,12 @@
 <a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('support') }}" onclick="closeSidebar()">
 <span class="material-symbols-outlined">help_outline</span> Support
     </a>
-<a class="flex items-center gap-3 px-3 py-2.5 text-error hover:bg-error-container rounded-lg transition-all font-label-md text-label-md" href="{{ route('login') }}">
-<span class="material-symbols-outlined">logout</span> Sign Out
-    </a>
+<form action="{{ route('logout') }}" method="POST" class="w-full">
+    @csrf
+    <button type="submit" class="w-full flex items-center gap-3 px-3 py-2.5 text-error hover:bg-error-container rounded-lg transition-all font-label-md text-label-md font-bold">
+        <span class="material-symbols-outlined">logout</span> Sign Out
+    </button>
+</form>
 </div>
 </aside>
 
@@ -246,21 +245,21 @@
                 </div>
             </div>
 
-            <!-- Edit Grid (Bento Style) -->
+            <!-- Edit Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
                 <!-- Left Column: Primary Details & Media -->
                 <div class="lg:col-span-2 space-y-gutter">
                     <!-- Basic Information Card -->
                     <section class="bg-surface-container-lowest p-gutter rounded-xl border border-[#EDEDED]">
-                        <h3 class="font-headline-sm text-headline-sm mb-stack-md text-on-surface">Basic Information</h3>
+                        <h3 class="font-headline-sm text-headline-sm mb-stack-md text-on-surface">Informasi Dasar Produk</h3>
                         <div class="space-y-6">
                             <div>
-                                <label class="block font-label-md text-label-md text-secondary mb-2">Product Name</label>
+                                <label class="block font-label-md text-label-md text-secondary mb-2">Nama Produk *</label>
                                 <input name="nama_produk" value="{{ $product->nama_produk }}" required class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-on-background transition-all outline-none" type="text"/>
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label class="block font-label-md text-label-md text-secondary mb-2">Category</label>
+                                    <label class="block font-label-md text-label-md text-secondary mb-2">Kategori *</label>
                                     <select name="category_id" required class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-on-background transition-all outline-none appearance-none cursor-pointer">
                                         @foreach($categories as $cat)
                                         <option value="{{ $cat->id }}" {{ $product->category_id == $cat->id ? 'selected' : '' }}>{{ $cat->nama_kategori }}</option>
@@ -268,23 +267,99 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block font-label-md text-label-md text-secondary mb-2">Berat (Gram)</label>
+                                    <label class="block font-label-md text-label-md text-secondary mb-2">Berat (Gram) *</label>
                                     <input name="berat_gram" value="{{ $product->berat_gram }}" required class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-on-background transition-all outline-none" type="number"/>
                                 </div>
                             </div>
                             <div>
-                                <label class="block font-label-md text-label-md text-secondary mb-2">Description</label>
+                                <label class="block font-label-md text-label-md text-secondary mb-2">Deskripsi Lengkap *</label>
                                 <textarea name="deskripsi_lengkap" required class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-on-background transition-all outline-none" rows="5">{{ $product->deskripsi_lengkap }}</textarea>
                             </div>
                         </div>
                     </section>
 
-                    <!-- Media Upload -->
+                    <!-- Galeri Foto Saat Ini & Upload Baru -->
                     <section class="bg-surface-container-lowest p-gutter rounded-xl border border-[#EDEDED]">
-                        <h3 class="font-headline-sm text-headline-sm mb-stack-md text-on-surface">Tambah Foto Produk Baru</h3>
-                        <div class="border-2 border-dashed border-outline-variant rounded-xl p-8 text-center flex flex-col items-center justify-center gap-3">
-                            <span class="material-symbols-outlined text-4xl text-primary">cloud_upload</span>
-                            <input type="file" name="gambar[]" multiple class="block w-full text-sm text-secondary file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-container file:text-on-primary-container hover:file:bg-[#ffaa00]"/>
+                        <h3 class="font-headline-sm text-headline-sm mb-4 text-on-surface">Galeri Foto Produk</h3>
+                        
+                        <!-- List Foto Tersimpan -->
+                        @if($product->galleries->count() > 0)
+                        <p class="text-xs text-secondary mb-3">Foto tersimpan (klik 'Hapus' untuk menghapus foto):</p>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+                            @foreach($product->galleries as $gallery)
+                            <div class="relative group aspect-square rounded-xl overflow-hidden border border-outline-variant bg-surface-container-low">
+                                <img class="w-full h-full object-cover" src="{{ str_starts_with($gallery->foto_path, 'http') ? $gallery->foto_path : asset($gallery->foto_path) }}" alt="{{ $product->nama_produk }}"/>
+                                <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                    <button type="button" onclick="event.preventDefault(); document.getElementById('delete-photo-{{ $gallery->id }}').submit();" class="px-3 py-1.5 bg-error text-white font-bold text-xs rounded-lg shadow-md hover:bg-red-700 transition-all flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-xs">delete</span> Hapus
+                                    </button>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                        @endif
+
+                        <div class="border-2 border-dashed border-outline-variant rounded-xl p-6 text-center flex flex-col items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-3xl text-primary">cloud_upload</span>
+                            <p class="font-label-md text-on-surface text-sm">Tambah Foto Galeri Baru (Dapat pilih beberapa foto)</p>
+                            <input type="file" name="gambar[]" multiple class="block w-full text-xs text-secondary file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-primary-container file:text-on-primary-container hover:file:bg-[#ffaa00]"/>
+                        </div>
+                    </section>
+
+                    <!-- Kelola Varian Produk -->
+                    <section class="bg-surface-container-lowest p-gutter rounded-xl border border-[#EDEDED]">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h3 class="font-headline-sm text-headline-sm text-on-surface">Varian / Jenis Produk</h3>
+                                <p class="text-xs text-secondary mt-0.5">Kelola opsi varian seperti Warna, Ukuran, atau Jenis produk beserta harga tambahan & stoknya.</p>
+                            </div>
+                            <button type="button" onclick="addVariantRow()" class="text-xs bg-primary/10 text-primary font-bold px-3 py-2 rounded-lg hover:bg-primary/20 transition-all flex items-center gap-1">
+                                <span class="material-symbols-outlined text-sm">add</span> Tambah Varian
+                            </button>
+                        </div>
+                        <div id="variant-rows" class="space-y-3">
+                            @forelse($product->variants as $vIndex => $variant)
+                            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 variant-row bg-surface-container-low/50 p-3 rounded-xl border border-outline-variant/50">
+                                <div class="flex-1">
+                                    <label class="block text-[10px] text-secondary font-bold mb-1">Nama Varian</label>
+                                    <input name="variants[{{ $vIndex }}][nama]" value="{{ $variant->nama_varian }}" class="w-full bg-white border border-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/20 outline-none" type="text" placeholder="Nama Varian (misal: Merah / Size L)"/>
+                                </div>
+                                <div class="w-full sm:w-36">
+                                    <label class="block text-[10px] text-secondary font-bold mb-1">Harga Tambahan (Rp)</label>
+                                    <input name="variants[{{ $vIndex }}][harga]" value="{{ (int)$variant->harga_tambahan }}" class="w-full bg-white border border-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/20 outline-none" type="number" placeholder="0"/>
+                                </div>
+                                <div class="w-full sm:w-28">
+                                    <label class="block text-[10px] text-secondary font-bold mb-1">Stok Varian</label>
+                                    <input name="variants[{{ $vIndex }}][stok]" value="{{ $variant->stok_varian }}" class="w-full bg-white border border-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/20 outline-none" type="number" placeholder="20"/>
+                                </div>
+                                <div class="self-end sm:self-center pt-2 sm:pt-4">
+                                    <button type="button" onclick="this.closest('.variant-row').remove()" class="text-error p-2 hover:bg-error-container/20 rounded-lg flex items-center gap-1 text-xs font-bold" title="Hapus Varian Ini">
+                                        <span class="material-symbols-outlined text-sm">delete</span>
+                                        <span class="sm:hidden">Hapus</span>
+                                    </button>
+                                </div>
+                            </div>
+                            @empty
+                            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 variant-row bg-surface-container-low/50 p-3 rounded-xl border border-outline-variant/50">
+                                <div class="flex-1">
+                                    <label class="block text-[10px] text-secondary font-bold mb-1">Nama Varian</label>
+                                    <input name="variants[0][nama]" class="w-full bg-white border border-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/20 outline-none" type="text" placeholder="Nama Varian (misal: Standard / Original)"/>
+                                </div>
+                                <div class="w-full sm:w-36">
+                                    <label class="block text-[10px] text-secondary font-bold mb-1">Harga Tambahan (Rp)</label>
+                                    <input name="variants[0][harga]" class="w-full bg-white border border-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/20 outline-none" type="number" placeholder="0"/>
+                                </div>
+                                <div class="w-full sm:w-28">
+                                    <label class="block text-[10px] text-secondary font-bold mb-1">Stok Varian</label>
+                                    <input name="variants[0][stok]" value="{{ $product->stok }}" class="w-full bg-white border border-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/20 outline-none" type="number" placeholder="20"/>
+                                </div>
+                                <div class="self-end sm:self-center pt-2 sm:pt-4">
+                                    <button type="button" onclick="this.closest('.variant-row').remove()" class="text-error p-2 hover:bg-error-container/20 rounded-lg flex items-center gap-1 text-xs font-bold">
+                                        <span class="material-symbols-outlined text-sm">delete</span>
+                                    </button>
+                                </div>
+                            </div>
+                            @endforelse
                         </div>
                     </section>
                 </div>
@@ -292,118 +367,69 @@
                 <!-- Right Column: Sidebar Settings -->
                 <div class="space-y-gutter">
                     <section class="bg-surface-container-lowest p-gutter rounded-xl border border-[#EDEDED]">
-                        <h3 class="font-headline-sm text-headline-sm mb-stack-md text-on-surface">Harga & Stok</h3>
+                        <h3 class="font-headline-sm text-headline-sm mb-stack-md text-on-surface">Harga & Stok Utuh</h3>
                         <div class="space-y-4">
                             <div>
-                                <label class="block font-label-md text-secondary mb-2">Harga (Rp) *</label>
-                                <input name="harga" value="{{ $product->harga }}" required class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 outline-none" type="number"/>
+                                <label class="block font-label-md text-secondary mb-2">Harga Utama (Rp) *</label>
+                                <input name="harga" value="{{ $product->harga }}" required class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 outline-none font-bold text-primary" type="number"/>
                             </div>
                             <div>
-                                <label class="block font-label-md text-secondary mb-2">Harga Diskon (Rp)</label>
+                                <label class="block font-label-md text-secondary mb-2">Harga Sebelum Diskon (Rp)</label>
                                 <input name="harga_diskon" value="{{ $product->harga_diskon }}" class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 outline-none" type="number"/>
                             </div>
                             <div>
-                                <label class="block font-label-md text-secondary mb-2">Stok *</label>
+                                <label class="block font-label-md text-secondary mb-2">Stok Total Produk *</label>
                                 <input name="stok" value="{{ $product->stok }}" required class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 outline-none" type="number"/>
                             </div>
                             <div>
-                                <label class="block font-label-md text-secondary mb-2">Badge</label>
-                                <input name="badge" value="{{ $product->badge }}" class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 outline-none" type="text"/>
+                                <label class="block font-label-md text-secondary mb-2">Badge (Opsional)</label>
+                                <input name="badge" value="{{ $product->badge }}" class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 outline-none" type="text" placeholder="NEW / SALE / BEST SELLER"/>
                             </div>
                         </div>
                     </section>
                 </div>
             </div>
         </form>
-<button class="w-10 h-10 border border-outline-variant rounded flex items-center justify-center hover:bg-surface-container transition-colors">-</button>
-<input class="w-full text-center border-none bg-transparent font-bold" type="number" value="124"/>
-<button class="w-10 h-10 border border-outline-variant rounded flex items-center justify-center hover:bg-surface-container transition-colors">+</button>
-</div>
-</div>
-</div>
-</section>
-<!-- Visibility & Shipping -->
-<section class="bg-surface-container-lowest p-gutter rounded-xl border border-[#EDEDED]">
-<h3 class="font-headline-sm text-headline-sm mb-stack-md text-on-surface">Logistics</h3>
-<div class="space-y-6">
-<div class="flex items-center justify-between">
-<div>
-<p class="font-label-md text-on-surface">Product Visibility</p>
-<p class="text-[12px] text-secondary">Visible on storefront</p>
-</div>
-<label class="relative inline-flex items-center cursor-pointer">
-<input checked="" class="sr-only peer" type="checkbox"/>
-<div class="w-11 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-</label>
-</div>
-<div>
-<label class="block font-label-md text-label-md text-secondary mb-2">Weight (kg)</label>
-<input class="w-full bg-transparent border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-on-background outline-none" type="text" value="0.45"/>
-</div>
-<div>
-<label class="block font-label-md text-label-md text-secondary mb-2">Shipping Type</label>
-<div class="space-y-2">
-<label class="flex items-center gap-3 p-3 border border-outline-variant rounded-lg cursor-pointer hover:bg-surface-container-low transition-colors">
-<input checked="" class="text-primary focus:ring-primary" name="shipping" type="radio"/>
-<span class="text-body-sm">Standard Shipping</span>
-</label>
-<label class="flex items-center gap-3 p-3 border border-outline-variant rounded-lg cursor-pointer hover:bg-surface-container-low transition-colors">
-<input class="text-primary focus:ring-primary" name="shipping" type="radio"/>
-<span class="text-body-sm">Express Available</span>
-</label>
-</div>
-</div>
-</div>
-</section>
-<!-- Variations Chip List -->
-<section class="bg-surface-container-lowest p-gutter rounded-xl border border-[#EDEDED]">
-<div class="flex items-center justify-between mb-stack-md">
-<h3 class="font-headline-sm text-headline-sm text-on-surface">Variants</h3>
-<button class="material-symbols-outlined text-primary" data-icon="add_circle">add_circle</button>
-</div>
-<div class="flex flex-wrap gap-2">
-<div class="px-3 py-1 bg-primary-fixed text-on-primary-fixed-variant rounded-full text-sm font-label-md flex items-center gap-2">
-                                Medium / Gray <span class="material-symbols-outlined text-[14px] cursor-pointer" data-icon="close">close</span>
-</div>
-<div class="px-3 py-1 bg-surface-container-high text-secondary rounded-full text-sm font-label-md flex items-center gap-2">
-                                Large / Gray <span class="material-symbols-outlined text-[14px] cursor-pointer" data-icon="close">close</span>
-</div>
-<div class="px-3 py-1 bg-surface-container-high text-secondary rounded-full text-sm font-label-md flex items-center gap-2">
-                                Medium / Tan <span class="material-symbols-outlined text-[14px] cursor-pointer" data-icon="close">close</span>
-</div>
-</div>
-</section>
-</div>
-</div>
-<!-- Footer Meta -->
-<footer class="mt-stack-lg pt-gutter border-t border-surface-container flex flex-col md:flex-row items-center justify-between gap-4 text-secondary text-sm mb-12">
-<p>Last edited by <strong>John Doe</strong> on Oct 12, 2023 • 14:32</p>
-<div class="flex items-center gap-6">
-<a class="hover:text-on-surface transition-colors" href="#">Audit Log</a>
-<a class="hover:text-on-surface transition-colors" href="#">Preview on Storefront</a>
-</div>
-</footer>
-</div>
-</main>
-<!-- Delete Confirmation Modal -->
-<div class="fixed inset-0 z-[100] hidden" id="deleteModal">
-<div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="toggleDeleteModal()"></div>
-<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-surface-container-lowest p-stack-md rounded-xl modal-shadow">
-<div class="flex items-center gap-4 text-error mb-4">
-<span class="material-symbols-outlined text-3xl" data-icon="warning">warning</span>
-<h4 class="font-headline-sm text-headline-sm">Delete Product?</h4>
-</div>
-<p class="text-secondary mb-stack-md">Are you sure you want to delete <strong class="text-on-surface">"Minimalist Felt Desk Mat"</strong>? This action cannot be undone and the product will be permanently removed from your inventory.</p>
-<div class="flex items-center justify-end gap-4">
-<button class="px-gutter py-2 text-secondary font-label-md hover:text-on-surface transition-colors" onclick="toggleDeleteModal()">Cancel</button>
-<button class="px-gutter py-2 bg-error text-white font-label-md rounded-lg hover:bg-[#93000a] transition-colors active:scale-95">Delete Permanently</button>
-</div>
-</div>
-</div>
+
+        <!-- Hidden Forms for Photo Deletion -->
+        @if($product->galleries->count() > 0)
+            @foreach($product->galleries as $gallery)
+            <form id="delete-photo-{{ $gallery->id }}" action="{{ route('product_galleries.destroy', $gallery->id) }}" method="POST" class="hidden">
+                @csrf
+                @method('DELETE')
+            </form>
+            @endforeach
+        @endif
+    </div>
+
 <script>
-        function toggleDeleteModal() {
-            const modal = document.getElementById('deleteModal');
-            modal.classList.toggle('hidden');
+        let variantCounter = {{ $product->variants->count() > 0 ? $product->variants->count() + 10 : 10 }};
+        function addVariantRow() {
+            const container = document.getElementById('variant-rows');
+            if (!container) return;
+            const div = document.createElement('div');
+            div.className = 'flex flex-col sm:flex-row items-stretch sm:items-center gap-3 variant-row bg-surface-container-low/50 p-3 rounded-xl border border-outline-variant/50';
+            div.innerHTML = `
+                <div class="flex-1">
+                    <label class="block text-[10px] text-secondary font-bold mb-1">Nama Varian</label>
+                    <input name="variants[${variantCounter}][nama]" class="w-full bg-white border border-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/20 outline-none" type="text" placeholder="Nama Varian (misal: Merah / Size L)"/>
+                </div>
+                <div class="w-full sm:w-36">
+                    <label class="block text-[10px] text-secondary font-bold mb-1">Harga Tambahan (Rp)</label>
+                    <input name="variants[${variantCounter}][harga]" value="0" class="w-full bg-white border border-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/20 outline-none" type="number" placeholder="0"/>
+                </div>
+                <div class="w-full sm:w-28">
+                    <label class="block text-[10px] text-secondary font-bold mb-1">Stok Varian</label>
+                    <input name="variants[${variantCounter}][stok]" value="{{ $product->stok }}" class="w-full bg-white border border-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/20 outline-none" type="number" placeholder="20"/>
+                </div>
+                <div class="self-end sm:self-center pt-2 sm:pt-4">
+                    <button type="button" onclick="this.closest('.variant-row').remove()" class="text-error p-2 hover:bg-error-container/20 rounded-lg flex items-center gap-1 text-xs font-bold">
+                        <span class="material-symbols-outlined text-sm">delete</span>
+                    </button>
+                </div>
+            `;
+            container.appendChild(div);
+            variantCounter++;
         }
 
         // Sidebar toggle
@@ -415,16 +441,5 @@
             document.getElementById('main-sidebar').classList.remove('open');
             document.getElementById('sidebar-overlay').classList.remove('active');
         }
-
-        // Simple interactive feedback for inputs
-        document.querySelectorAll('input, textarea, select').forEach(element => {
-            element.addEventListener('focus', () => {
-                element.parentElement.classList.add('scale-[1.01]');
-                element.parentElement.classList.add('transition-transform');
-            });
-            element.addEventListener('blur', () => {
-                element.parentElement.classList.remove('scale-[1.01]');
-            });
-        });
     </script>
 </body></html>

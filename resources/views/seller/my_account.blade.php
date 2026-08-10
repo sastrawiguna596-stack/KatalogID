@@ -167,10 +167,6 @@
     <span class="font-headline-md text-headline-md font-bold text-primary">Katalog IDN</span>
 </div>
 <div class="flex items-center gap-3 md:gap-gutter">
-<div class="hidden md:flex items-center bg-surface-container-low rounded-full px-4 py-2 border border-outline-variant">
-<span class="material-symbols-outlined text-on-surface-variant mr-2">search</span>
-<input class="bg-transparent border-none p-0 focus:ring-0 text-body-sm w-48" placeholder="Search account..." type="text"/>
-</div>
 <button class="material-symbols-outlined text-on-surface-variant scale-95 active:scale-90 transition-transform">shopping_cart</button>
 <button class="material-symbols-outlined text-on-surface-variant scale-95 active:scale-90 transition-transform">notifications</button>
 <div class="w-8 h-8 rounded-full overflow-hidden border border-outline">
@@ -262,47 +258,30 @@
 </section>
 
 <!-- Quick Stats Bento Grid -->
-<section class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-gutter mb-stack-lg">
+<section class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-gutter mb-stack-lg">
 <div class="bg-white border border-[#EDEDED] p-4 md:p-gutter rounded-xl flex flex-col gap-2 transition-transform hover:-translate-y-1">
-<span class="text-on-surface-variant font-label-md text-label-md uppercase tracking-wider text-xs md:text-label-md">Total Orders</span>
+<span class="text-on-surface-variant font-label-md text-label-md uppercase tracking-wider text-xs md:text-label-md">Total Pesanan Toko</span>
 <div class="flex items-baseline gap-2">
-<span class="font-headline-lg text-2xl md:text-headline-lg text-on-surface">142</span>
-<span class="text-primary font-bold text-body-sm">+12%</span>
+<span class="font-headline-lg text-2xl md:text-headline-lg text-on-surface">{{ number_format($totalOrders ?? 0) }}</span>
+<span class="text-primary font-bold text-body-sm">Pesanan</span>
 </div>
 <div class="mt-2 md:mt-4 flex -space-x-2">
-<div class="w-7 h-7 md:w-8 md:h-8 rounded-full border-2 border-white bg-surface-container"></div>
-<div class="w-7 h-7 md:w-8 md:h-8 rounded-full border-2 border-white bg-surface-container-high"></div>
-<div class="w-7 h-7 md:w-8 md:h-8 rounded-full border-2 border-white bg-surface-container-highest"></div>
+<div class="w-7 h-7 md:w-8 md:h-8 rounded-full border-2 border-white bg-surface-container flex items-center justify-center text-[10px] font-bold text-primary">IDN</div>
 </div>
 </div>
 <div class="bg-white border border-[#EDEDED] p-4 md:p-gutter rounded-xl flex flex-col gap-2 transition-transform hover:-translate-y-1">
-<span class="text-on-surface-variant font-label-md text-label-md uppercase tracking-wider text-xs md:text-label-md">Wishlist Items</span>
+<span class="text-on-surface-variant font-label-md text-label-md uppercase tracking-wider text-xs md:text-label-md">Status Toko</span>
 <div class="flex items-baseline gap-2">
-<span class="font-headline-lg text-2xl md:text-headline-lg text-on-surface">28</span>
-<span class="text-on-surface-variant text-body-sm">Saved</span>
+<span class="font-headline-lg text-xl md:text-2xl font-bold text-emerald-600">Aktif</span>
 </div>
-<div class="mt-2 md:mt-4 h-1 w-full bg-surface-container rounded-full overflow-hidden">
-<div class="h-full bg-primary w-2/3"></div>
-</div>
-</div>
-<div class="bg-white border border-[#EDEDED] p-4 md:p-gutter rounded-xl flex flex-col gap-2 transition-transform hover:-translate-y-1">
-<span class="text-on-surface-variant font-label-md text-label-md uppercase tracking-wider text-xs md:text-label-md">Reviews</span>
-<div class="flex items-baseline gap-2">
-<span class="font-headline-lg text-2xl md:text-headline-lg text-on-surface">56</span>
-<div class="flex text-primary">
-<span class="material-symbols-outlined text-base" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-base" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-base" style="font-variation-settings: 'FILL' 1;">star</span>
-</div>
-</div>
-<p class="text-xs text-on-surface-variant mt-auto">Top 5% Reviewer</p>
+<p class="text-xs text-on-surface-variant mt-auto">Penjual Terverifikasi</p>
 </div>
 <div class="bg-primary text-on-primary p-4 md:p-gutter rounded-xl flex flex-col gap-2 transition-transform hover:-translate-y-1 shadow-md">
-<span class="text-on-primary/80 font-label-md text-label-md uppercase tracking-wider text-xs md:text-label-md">Points</span>
+<span class="text-on-primary/80 font-label-md text-label-md uppercase tracking-wider text-xs md:text-label-md">Lokasi Toko</span>
 <div class="flex items-baseline gap-2">
-<span class="font-headline-lg text-xl md:text-headline-lg">12,450</span>
+<span class="font-headline-lg text-base md:text-lg font-bold">{{ $store->kota ?? 'Kota Denpasar' }}</span>
 </div>
-<button class="mt-2 md:mt-4 text-left font-label-md text-label-md underline hover:text-white transition-colors text-xs md:text-label-md">Redeem Rewards</button>
+<p class="text-xs text-on-primary/70 mt-auto">Provinsi Bali</p>
 </div>
 </section>
 
@@ -311,103 +290,86 @@
 <!-- Recent Order Summary -->
 <div class="lg:col-span-2 space-y-gutter">
 <div class="flex justify-between items-center px-2">
-<h3 class="font-headline-md text-headline-md text-on-surface">Recent Order</h3>
-<a class="text-primary font-label-md text-label-md hover:underline" href="#">View all</a>
+<h3 class="font-headline-md text-headline-md text-on-surface font-bold">Pesanan Terbaru</h3>
+<a class="text-primary font-label-md text-label-md hover:underline font-bold" href="{{ route('recent_orders') }}">Lihat Semua</a>
 </div>
+
+@if($recentOrder)
+@php
+    $firstItem = $recentOrder->items->first();
+    $product = $firstItem?->product;
+    $img = $product?->galleries->first()?->foto_path ?? 'https://via.placeholder.com/150';
+    $imgUrl = str_starts_with($img, 'http') ? $img : asset($img);
+@endphp
 <div class="bg-white border border-[#EDEDED] rounded-xl overflow-hidden">
 <div class="p-4 md:p-6 flex flex-col sm:flex-row gap-4 md:gap-gutter">
-<div class="w-24 h-24 sm:w-32 sm:h-32 rounded-lg bg-surface-container overflow-hidden flex-shrink-0">
-<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAObnP9YDPZ846WqWpbOzz001tzZRm3b4GRXmZ56XTbxDO0piO2qBqBq7iSZg-EzM0ldewz1Q2qn4MXDkJEYBFTsZt85NCSmUzxwQ_5dvtv8oTZImOj0pXCglE847uvfROLGBTcXQwyTcAG2vfzNjeVDxNikkNhQlbtK4w3iAILBe0NWRoIr2oHe3cTCq_-vulJwYM_HjHdatwKSCySVoG2Y_RDkeeSYGp_yCS022e4FVxU0uUan_29" alt="Chair"/>
+<div class="w-24 h-24 sm:w-28 sm:h-28 rounded-lg bg-surface-container overflow-hidden flex-shrink-0 border border-outline-variant/30">
+<img class="w-full h-full object-cover" src="{{ $imgUrl }}" alt="{{ $product->nama_produk ?? 'Produk' }}"/>
 </div>
 <div class="flex-1">
 <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
 <div>
-<h4 class="font-headline-sm text-headline-sm text-on-surface">ErgoStream Ultra-Desk Chair</h4>
-<p class="text-body-sm text-on-surface-variant">Order #LM-9923481 • Oct 12, 2023</p>
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-bold">{{ $product->nama_produk ?? 'Pesanan Produk' }}</h4>
+<p class="text-body-sm text-on-surface-variant text-xs mt-0.5">Pesanan #ORD-{{ $recentOrder->id }} • {{ $recentOrder->created_at ? $recentOrder->created_at->format('d M Y, H:i') : '-' }}</p>
+<p class="text-xs text-secondary mt-0.5">Pembeli: {{ $recentOrder->user->name ?? 'Pelanggan' }}</p>
 </div>
-<span class="self-start px-3 py-1 bg-secondary-container text-on-secondary-container font-label-md text-label-md rounded-full text-xs whitespace-nowrap">In Transit</span>
+<span class="self-start px-3 py-1 font-bold rounded-full text-xs whitespace-nowrap {{ $recentOrder->status_pembayaran === 'paid' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800' }}">
+    {{ strtoupper($recentOrder->status_pembayaran ?? 'pending') }}
+</span>
 </div>
 <div class="mt-4 flex items-center justify-between flex-wrap gap-3">
 <div class="flex gap-4">
 <div class="text-center">
-<p class="text-[10px] uppercase text-on-surface-variant font-bold">Qty</p>
-<p class="font-label-md text-label-md">01</p>
+<p class="text-[10px] uppercase text-on-surface-variant font-bold">Total Item</p>
+<p class="font-label-md text-label-md font-bold">{{ $recentOrder->items->sum('jumlah') }} unit</p>
 </div>
 <div class="text-center">
-<p class="text-[10px] uppercase text-on-surface-variant font-bold">Price</p>
-<p class="font-label-md text-label-md">$899.00</p>
+<p class="text-[10px] uppercase text-on-surface-variant font-bold">Total Tagihan</p>
+<p class="font-label-md text-label-md font-bold text-primary">Rp {{ number_format($recentOrder->total_harga, 0, ',', '.') }}</p>
 </div>
 </div>
-<button class="px-4 py-2 bg-primary-container text-on-primary-container font-label-md text-label-md rounded-lg hover:brightness-95 transition-all text-sm">Track Shipment</button>
+<a href="{{ route('recent_orders') }}" class="px-4 py-2 bg-primary-container text-on-primary-container font-label-md text-label-md rounded-lg hover:brightness-95 transition-all text-sm font-bold">Kelola Pesanan</a>
 </div>
 </div>
 </div>
 </div>
+@else
+<div class="bg-white border border-[#EDEDED] rounded-xl p-8 text-center text-secondary">
+<span class="material-symbols-outlined text-4xl text-primary opacity-50 mb-2">receipt_long</span>
+<p class="font-bold text-base text-on-surface">Belum Ada Pesanan Terbaru</p>
+<p class="text-xs text-secondary mt-1">Toko Anda saat ini belum memiliki pesanan masuk di database. Pesanan baru dari pelanggan akan muncul di sini secara otomatis.</p>
+<a href="{{ route('inventories') }}" class="inline-flex items-center gap-1.5 px-4 py-2 mt-4 bg-primary text-on-primary font-bold text-xs rounded-lg hover:brightness-95 transition-all">
+<span class="material-symbols-outlined text-sm">inventory</span> Kelola Inventaris
+</a>
+</div>
+@endif
+</div>
+
 <!-- Account Highlights Feed -->
-<div class="bg-white border border-[#EDEDED] rounded-xl p-4 md:p-6">
-<h4 class="font-headline-sm text-headline-sm text-on-surface mb-4 md:mb-6">Account Highlights</h4>
+<div class="bg-white border border-[#EDEDED] rounded-xl p-4 md:p-6 flex flex-col justify-between">
+<div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface mb-4 md:mb-6 font-bold">Informasi Toko</h4>
 <div class="space-y-4 md:space-y-6">
 <div class="flex gap-3 md:gap-4">
 <div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary flex-shrink-0">
 <span class="material-symbols-outlined">verified</span>
 </div>
 <div>
-<p class="font-label-md text-label-md text-on-surface">Anniversary Achievement</p>
-<p class="text-body-sm text-on-surface-variant text-sm">You've been a member of Katalog IDN for 2 years. Enjoy 500 bonus points!</p>
+<p class="font-label-md text-label-md text-on-surface font-bold">Toko Terverifikasi</p>
+<p class="text-body-sm text-on-surface-variant text-sm">Toko Anda terverifikasi sebagai penjual resmi di Katalog IDN.</p>
 </div>
 </div>
 <div class="flex gap-3 md:gap-4">
 <div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary flex-shrink-0">
-<span class="material-symbols-outlined">loyalty</span>
+<span class="material-symbols-outlined">storefront</span>
 </div>
 <div>
-<p class="font-label-md text-label-md text-on-surface">New Offer Available</p>
-<p class="text-body-sm text-on-surface-variant text-sm">Get 20% off your next purchase in the 'Technology' category.</p>
+<p class="font-label-md text-label-md text-on-surface font-bold">Kelola Inventaris</p>
+<p class="text-body-sm text-on-surface-variant text-sm">Update stok dan tambah produk baru kapan saja dari menu inventaris.</p>
 </div>
 </div>
 </div>
 </div>
-</div>
-<!-- Wishlist Preview -->
-<div class="space-y-gutter">
-<div class="flex justify-between items-center px-2">
-<h3 class="font-headline-md text-headline-md text-on-surface">Wishlist</h3>
-<a class="text-primary font-label-md text-label-md hover:underline" href="#">Manage</a>
-</div>
-<div class="flex flex-col gap-3 md:gap-4">
-<div class="bg-white border border-[#EDEDED] p-3 md:p-4 rounded-xl flex items-center gap-3 md:gap-4 group cursor-pointer hover:border-primary-container transition-colors">
-<div class="w-14 h-14 md:w-16 md:h-16 rounded-lg bg-surface-container overflow-hidden shrink-0">
-<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4VQefca9zjbx9LwIj2nPdt6nOsI8pNgp--m2iURKiO_-Qwo_oyqw9erDjmGCspNSS4nPeHB0hSWGyHWJ7giMpmmHSWp1AmzeOm6ZX-FOSw9cUPTOXaE-OaqUJL4VTRRqji7r0E5LVVPVbH2fWYG8emvGksSNcrxNuFbwRG1mLhnj1sNzc52eB2oyEtoMNPs1Q-sM12Jn-fK2JN62c5P-bESI71fAJVbbAu5Uxi8ImeA7y7dE9jtyU" alt="Headphones"/>
-</div>
-<div class="flex-1 overflow-hidden">
-<h5 class="font-label-md text-label-md text-on-surface truncate">Acoustic Pro Headphones</h5>
-<p class="text-primary font-bold text-body-sm">$349.00</p>
-</div>
-<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">shopping_bag</span>
-</div>
-<div class="bg-white border border-[#EDEDED] p-3 md:p-4 rounded-xl flex items-center gap-3 md:gap-4 group cursor-pointer hover:border-primary-container transition-colors">
-<div class="w-14 h-14 md:w-16 md:h-16 rounded-lg bg-surface-container overflow-hidden shrink-0">
-<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAssXm1kq7OfCGMfBA6pWQnPYjgFhg0fT7P-OwFBjTdExqNEM1riw5mu9xoJC53jaQNLMYle89jWtDSEe4pRI_hSjizo7pA4pgfo3rVYo2ZZBHoLOLZpaBBsqz3FNtum6EDuMQgGMVL-roN01REwOlhxXIO7UrFIv_3RPwZ9XE_uysotlFIPEOjZbSC_Ge7FpNa82hKtT2rR_hHtp6JBWPhghRpUKUz67hUOuG55BgJuEtF-gmh8XiT" alt="Bag"/>
-</div>
-<div class="flex-1 overflow-hidden">
-<h5 class="font-label-md text-label-md text-on-surface truncate">Cognac Work Satchel</h5>
-<p class="text-primary font-bold text-body-sm">$210.00</p>
-</div>
-<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">shopping_bag</span>
-</div>
-<div class="bg-white border border-[#EDEDED] p-3 md:p-4 rounded-xl flex items-center gap-3 md:gap-4 group cursor-pointer hover:border-primary-container transition-colors">
-<div class="w-14 h-14 md:w-16 md:h-16 rounded-lg bg-surface-container overflow-hidden shrink-0">
-<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5QPJp11uQc1EvqqVym5qoK6yfu0_o_GC--ln-aHGqlFon2Ca25n8GYwJgS1GUdtll-pd3Xksd6xxj_-C2tphqkxRY2f833l72xo90WDSXV8ETdVVHAlKVoA9YQJIK9n8soLfUlfMoBluHvwtK4qUIBvmjy-lzLg7f7_A-tS_eRk3nXthGI1TkRsm6EvJpto43LkK009DP-tmgPuq790uv_G-oOqPMaEJBRteGGzNJYtlgRDtsh6V3" alt="Keyboard"/>
-</div>
-<div class="flex-1 overflow-hidden">
-<h5 class="font-label-md text-label-md text-on-surface truncate">SteelSeries Mech-K1</h5>
-<p class="text-primary font-bold text-body-sm">$185.00</p>
-</div>
-<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">shopping_bag</span>
-</div>
-<button class="w-full py-4 border-2 border-dashed border-outline-variant rounded-xl text-on-surface-variant font-label-md text-label-md hover:bg-surface-container transition-all">
-                        + Add New List
-                    </button>
 </div>
 </div>
 </div>

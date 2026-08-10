@@ -181,10 +181,6 @@
     <span class="font-headline-md text-headline-md font-bold text-primary">Katalog IDN</span>
 </div>
 <div class="flex items-center gap-3 md:gap-gutter">
-<div class="hidden md:flex items-center bg-surface-container-low rounded-full px-4 py-2 border border-outline-variant">
-<span class="material-symbols-outlined text-on-surface-variant mr-2">search</span>
-<input class="bg-transparent border-none p-0 focus:ring-0 text-body-sm w-48" placeholder="Search inventory..." type="text"/>
-</div>
 <button class="material-symbols-outlined text-on-surface-variant scale-95 active:scale-90 transition-transform">shopping_cart</button>
 <button class="material-symbols-outlined text-on-surface-variant scale-95 active:scale-90 transition-transform">notifications</button>
 <div class="w-8 h-8 rounded-full overflow-hidden border border-outline">
@@ -233,9 +229,12 @@
 <a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('support') }}" onclick="closeSidebar()">
 <span class="material-symbols-outlined">help_outline</span> Support
     </a>
-<a class="flex items-center gap-3 px-3 py-2.5 text-error hover:bg-error-container rounded-lg transition-all font-label-md text-label-md" href="{{ route('login') }}">
-<span class="material-symbols-outlined">logout</span> Sign Out
-    </a>
+<form action="{{ route('logout') }}" method="POST" class="w-full">
+    @csrf
+    <button type="submit" class="w-full flex items-center gap-3 px-3 py-2.5 text-error hover:bg-error-container rounded-lg transition-all font-label-md text-label-md font-bold">
+        <span class="material-symbols-outlined">logout</span> Sign Out
+    </button>
+</form>
 </div>
 </aside>
 
@@ -256,70 +255,86 @@
 <!-- Dashboard Stats Brief -->
 <div class="grid grid-cols-1 md:grid-cols-4 gap-gutter mb-stack-lg">
 <div class="bg-surface border border-[#EDEDED] p-gutter rounded-xl">
-<p class="font-label-md text-secondary mb-2">Total Products</p>
-<p class="font-headline-md text-on-surface">1,284</p>
+<p class="font-label-md text-secondary mb-2">Total Produk</p>
+<p class="font-headline-md text-on-surface font-bold">{{ number_format($totalProductsCount ?? 0, 0, ',', '.') }}</p>
 </div>
 <div class="bg-surface border border-[#EDEDED] p-gutter rounded-xl">
-<p class="font-label-md text-secondary mb-2">Low Stock Alerts</p>
-<p class="font-headline-md text-error">12</p>
+<p class="font-label-md text-secondary mb-2">Peringatan Stok Menipis</p>
+<p class="font-headline-md text-error font-bold">{{ number_format($lowStockCount ?? 0, 0, ',', '.') }}</p>
 </div>
 <div class="bg-surface border border-[#EDEDED] p-gutter rounded-xl">
-<p class="font-label-md text-secondary mb-2">Out of Stock</p>
-<p class="font-headline-md text-on-surface-variant">3</p>
+<p class="font-label-md text-secondary mb-2">Stok Habis</p>
+<p class="font-headline-md text-on-surface-variant font-bold">{{ number_format($outOfStockCount ?? 0, 0, ',', '.') }}</p>
 </div>
 <div class="bg-surface border border-[#EDEDED] p-gutter rounded-xl">
-<p class="font-label-md text-secondary mb-2">Inventory Value</p>
-<p class="font-headline-md text-on-surface">$45,200.00</p>
+<p class="font-label-md text-secondary mb-2">Nilai Total Inventaris</p>
+<p class="font-headline-md text-primary font-bold">Rp {{ number_format($totalInventoryValue ?? 0, 0, ',', '.') }}</p>
 </div>
 </div>
 <!-- Filters & Search Bar Section -->
-<div class="bg-surface border border-[#EDEDED] p-stack-sm rounded-xl mb-gutter flex flex-wrap items-center gap-4">
-<div class="flex items-center gap-x-2 px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg">
-<span class="material-symbols-outlined text-secondary" data-icon="filter_list">filter_list</span>
-<select class="bg-transparent border-none focus:ring-0 font-label-md text-on-surface-variant cursor-pointer">
-<option>All Categories</option>
-<option>Electronics</option>
-<option>Home Decor</option>
-<option>Fashion</option>
-<option>Wellness</option>
-</select>
-</div>
-<div class="flex items-center gap-x-2 px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg">
-<span class="material-symbols-outlined text-secondary" data-icon="inventory">inventory</span>
-<select class="bg-transparent border-none focus:ring-0 font-label-md text-on-surface-variant cursor-pointer">
-<option>Stock Status</option>
-<option>In Stock</option>
-<option>Low Stock</option>
-<option>Out of Stock</option>
-</select>
-</div>
-<div class="flex items-center gap-x-2 px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg">
-<span class="material-symbols-outlined text-secondary" data-icon="sort">sort</span>
-<select class="bg-transparent border-none focus:ring-0 font-label-md text-on-surface-variant cursor-pointer">
-<option>Sort by: Newest</option>
-<option>Price: Low to High</option>
-<option>Price: High to Low</option>
-<option>Stock: Low to High</option>
-</select>
-</div>
-<button class="ml-auto flex items-center gap-x-2 px-4 py-2 text-secondary hover:text-on-surface font-label-md transition-colors">
-<span class="material-symbols-outlined" data-icon="download">download</span>
-                    Export CSV
-                </button>
-</div>
+<form action="{{ route('inventories') }}" method="GET" class="bg-surface border border-[#EDEDED] p-stack-sm rounded-xl mb-gutter flex flex-wrap items-center gap-4">
+    <!-- Category Filter -->
+    <div class="flex items-center gap-x-2 px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg">
+        <span class="material-symbols-outlined text-secondary" data-icon="filter_list">filter_list</span>
+        <select name="category" onchange="this.form.submit()" class="bg-transparent border-none focus:ring-0 font-label-md text-on-surface-variant text-xs font-bold cursor-pointer">
+            <option value="">Semua Kategori</option>
+            @foreach($categories as $cat)
+                <option value="{{ $cat->id }}" {{ request('category') == $cat->id ? 'selected' : '' }}>{{ $cat->nama_kategori }}</option>
+            @endforeach
+        </select>
+    </div>
+
+    <!-- Stock Status Filter -->
+    <div class="flex items-center gap-x-2 px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg">
+        <span class="material-symbols-outlined text-secondary" data-icon="inventory">inventory</span>
+        <select name="stock_status" onchange="this.form.submit()" class="bg-transparent border-none focus:ring-0 font-label-md text-on-surface-variant text-xs font-bold cursor-pointer">
+            <option value="">Semua Status Stok</option>
+            <option value="in_stock" {{ request('stock_status') == 'in_stock' ? 'selected' : '' }}>Stok Tersedia (>=10)</option>
+            <option value="low_stock" {{ request('stock_status') == 'low_stock' ? 'selected' : '' }}>Stok Menipis (1-9)</option>
+            <option value="out_of_stock" {{ request('stock_status') == 'out_of_stock' ? 'selected' : '' }}>Stok Habis (0)</option>
+        </select>
+    </div>
+
+    <!-- Sort By Filter -->
+    <div class="flex items-center gap-x-2 px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg">
+        <span class="material-symbols-outlined text-secondary" data-icon="sort">sort</span>
+        <select name="sort" onchange="this.form.submit()" class="bg-transparent border-none focus:ring-0 font-label-md text-on-surface-variant text-xs font-bold cursor-pointer">
+            <option value="newest" {{ request('sort', 'newest') == 'newest' ? 'selected' : '' }}>Urutkan: Terbaru</option>
+            <option value="price_low" {{ request('sort') == 'price_low' ? 'selected' : '' }}>Harga: Terendah</option>
+            <option value="price_high" {{ request('sort') == 'price_high' ? 'selected' : '' }}>Harga: Tertinggi</option>
+            <option value="stock_low" {{ request('sort') == 'stock_low' ? 'selected' : '' }}>Stok: Paling Sedikit</option>
+            <option value="stock_high" {{ request('sort') == 'stock_high' ? 'selected' : '' }}>Stok: Paling Banyak</option>
+        </select>
+    </div>
+
+    <!-- Search Input -->
+    <div class="flex items-center gap-x-2 px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg flex-1 min-w-[200px]">
+        <span class="material-symbols-outlined text-secondary">search</span>
+        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama produk..." class="bg-transparent border-none p-0 focus:ring-0 text-xs w-full text-on-surface"/>
+        @if(request()->anyFilled(['category', 'stock_status', 'sort', 'search']))
+            <a href="{{ route('inventories') }}" class="text-[10px] bg-secondary/10 hover:bg-secondary/20 text-secondary font-bold px-2 py-1 rounded">Reset</a>
+        @endif
+    </div>
+
+    <a href="{{ route('inventories.export') }}" class="ml-auto flex items-center gap-x-2 px-4 py-2 bg-emerald-600 text-white hover:bg-emerald-700 font-label-md text-xs font-bold rounded-lg transition-colors shadow-xs">
+        <span class="material-symbols-outlined text-sm" data-icon="download">download</span>
+        Export CSV
+    </a>
+</form>
+
 <!-- Inventory Data Table -->
 <div class="bg-white border border-[#EDEDED] rounded-xl overflow-hidden shadow-sm">
 <div class="overflow-x-auto custom-scrollbar">
 <table class="w-full text-left border-collapse">
 <thead class="bg-surface-container-low border-b border-surface-container">
 <tr>
-<th class="p-4 font-label-md text-secondary uppercase tracking-wider w-20">Image</th>
-<th class="p-4 font-label-md text-secondary uppercase tracking-wider">Product Details</th>
+<th class="p-4 font-label-md text-secondary uppercase tracking-wider w-20">Foto</th>
+<th class="p-4 font-label-md text-secondary uppercase tracking-wider">Detail Produk</th>
 <th class="p-4 font-label-md text-secondary uppercase tracking-wider">SKU</th>
-<th class="p-4 font-label-md text-secondary uppercase tracking-wider">Category</th>
-<th class="p-4 font-label-md text-secondary uppercase tracking-wider w-64">Stock Level</th>
-<th class="p-4 font-label-md text-secondary uppercase tracking-wider">Price</th>
-<th class="p-4 font-label-md text-secondary uppercase tracking-wider text-right">Actions</th>
+<th class="p-4 font-label-md text-secondary uppercase tracking-wider">Kategori</th>
+<th class="p-4 font-label-md text-secondary uppercase tracking-wider w-64">Tingkat Stok</th>
+<th class="p-4 font-label-md text-secondary uppercase tracking-wider">Harga</th>
+<th class="p-4 font-label-md text-secondary uppercase tracking-wider text-right">Aksi</th>
 </tr>
 </thead>
 <tbody class="divide-y divide-[#EDEDED]">
@@ -336,29 +351,33 @@
 </td>
 <td class="p-4">
 <a href="{{ route('product.detail', $product->id) }}" class="font-body-md font-bold text-on-surface hover:text-primary transition-colors">{{ $product->nama_produk }}</a>
-<div class="text-[12px] text-secondary">Ditambahkan {{ $product->created_at->format('d M Y') }}</div>
+<div class="text-[12px] text-secondary">Ditambahkan {{ $product->created_at ? $product->created_at->format('d M Y') : '-' }}</div>
 </td>
-<td class="p-4 font-body-sm text-secondary">PRD-00{{ $product->id }}</td>
+<td class="p-4 font-body-sm text-secondary font-mono">PRD-00{{ $product->id }}</td>
 <td class="p-4">
-<span class="px-2 py-1 bg-primary-fixed text-on-primary-fixed-variant rounded text-[12px] font-bold">{{ $product->category->nama_kategori ?? 'Umum' }}</span>
+<span class="px-2.5 py-1 bg-primary-fixed text-on-primary-fixed-variant rounded text-[12px] font-bold">{{ $product->category->nama_kategori ?? 'Umum' }}</span>
 </td>
 <td class="p-4">
 <div class="flex flex-col gap-y-1">
 <div class="flex justify-between items-center text-[12px]">
-@if($product->stok < 10)
+@if($product->stok <= 0)
 <span class="text-error font-bold flex items-center gap-1">
-<span class="material-symbols-outlined text-sm">warning</span> Low Stock
+<span class="material-symbols-outlined text-sm">cancel</span> Stok Habis
+</span>
+@elseif($product->stok < 10)
+<span class="text-amber-600 font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">warning</span> Stok Menipis
 </span>
 @else
 <span class="text-emerald-600 font-bold flex items-center gap-1">
-<span class="material-symbols-outlined text-sm">check_circle</span> In Stock
+<span class="material-symbols-outlined text-sm">check_circle</span> Stok Tersedia
 </span>
 @endif
-<span class="font-bold">{{ $product->stok }} pcs</span>
+<span class="font-bold text-on-surface">{{ $product->stok }} pcs</span>
 </div>
 </div>
 </td>
-<td class="p-4 font-body-md font-bold">Rp {{ number_format($product->harga, 0, ',', '.') }}</td>
+<td class="p-4 font-body-md font-bold text-primary">Rp {{ number_format($product->harga, 0, ',', '.') }}</td>
 <td class="p-4 text-right">
 <div class="flex justify-end gap-x-2">
 <a href="{{ route('edit_product', $product->id) }}" class="p-2 text-secondary hover:text-primary hover:bg-primary-fixed rounded-lg transition-all active:scale-95 inline-flex items-center justify-center" title="Edit">
@@ -385,15 +404,10 @@ Belum ada produk di inventaris Anda. <a href="{{ route('add_product') }}" class=
 </table>
 </div>
 <!-- Pagination Footer -->
-<div class="px-6 py-4 border-t border-surface-container bg-surface flex items-center justify-between">
-<p class="font-label-md text-secondary">Showing 1 to 4 of 1,284 results</p>
-<div class="flex gap-x-2">
-<button class="px-4 py-2 border border-outline-variant rounded-lg font-label-md text-on-surface hover:bg-surface-container-low transition-colors disabled:opacity-50" disabled="">
-                            Previous
-                        </button>
-<button class="px-4 py-2 bg-on-surface text-surface rounded-lg font-label-md hover:opacity-90 active:scale-95 transition-all">
-                            Next
-                        </button>
+<div class="px-6 py-4 border-t border-surface-container bg-surface flex flex-col sm:flex-row items-center justify-between gap-4">
+<p class="font-label-md text-xs text-secondary">Menampilkan {{ $products->firstItem() ?? 0 }} hingga {{ $products->lastItem() ?? 0 }} dari {{ $products->total() }} produk</p>
+<div>
+    {{ $products->links() }}
 </div>
 </div>
 </div>

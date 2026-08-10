@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductGallery;
+use App\Models\ProductVariant;
 use App\Models\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,14 +19,26 @@ class ProductController extends Controller
      */
     public function home()
     {
-        $categories = Category::all();
-        $products = Product::with(['category', 'galleries'])
-            ->where('status', 'active')
-            ->latest()
-            ->take(8)
-            ->get();
+        $categories = \Illuminate\Support\Facades\Cache::remember('categories_home', 3600, function() {
+            return Category::all();
+        });
 
-        return view('welcome', compact('categories', 'products'));
+        $settings = \Illuminate\Support\Facades\Cache::remember('site_settings', 3600, function() {
+            return \App\Models\SiteSetting::pluck('value', 'key')->toArray();
+        });
+
+        $featuredIds = isset($settings['featured_product_ids']) ? json_decode($settings['featured_product_ids'], true) : [];
+        $newIds = isset($settings['new_product_ids']) ? json_decode($settings['new_product_ids'], true) : [];
+
+        $products = !empty($featuredIds) 
+            ? Product::with(['category', 'galleries'])->whereIn('id', $featuredIds)->where('status', 'active')->get()
+            : Product::with(['category', 'galleries'])->where('status', 'active')->latest()->take(8)->get();
+
+        $newProducts = !empty($newIds)
+            ? Product::with(['category', 'galleries'])->whereIn('id', $newIds)->where('status', 'active')->get()
+            : Product::with(['category', 'galleries'])->where('status', 'active')->latest()->skip(8)->take(4)->get();
+
+        return view('welcome', compact('categories', 'products', 'newProducts', 'settings'));
     }
 
     /**
@@ -37,29 +50,57 @@ class ProductController extends Controller
         $searchType = $request->input('search_type', 'product');
         $searchTerm = trim($request->input('search', ''));
 
+        // Daftar Kota & Kabupaten di Provinsi Bali (Denpasar, Badung, Gianyar, dll)
+        $baliCities = collect([
+            'Kota Denpasar',
+            'Kabupaten Badung',
+            'Kabupaten Gianyar',
+            'Kabupaten Tabanan',
+            'Kabupaten Buleleng',
+            'Kabupaten Karangasem',
+            'Kabupaten Klungkung',
+            'Kabupaten Bangli',
+            'Kabupaten Jembrana',
+        ]);
+
+        // Ambil daftar kota dari toko terdaftar
+        $dbCities = Store::whereNotNull('kota')->where('kota', '!=', '')->distinct()->pluck('kota');
+        $cities = $dbCities->merge($baliCities)->unique()->values();
+
         $query = Product::with(['category', 'galleries', 'store'])->where('status', 'active');
 
         $matchedStores = collect();
         if ($searchTerm !== '') {
             $matchedStores = Store::where(function ($q) use ($searchTerm) {
-                $q->where('nama_toko', 'like', '%' . $searchTerm . '%')
-                  ->orWhere('deskripsi', 'like', '%' . $searchTerm . '%');
+                $q
+                    ->where('nama_toko', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('deskripsi', 'like', '%' . $searchTerm . '%');
             })->get();
 
             if ($searchType === 'store') {
                 $query->whereHas('store', function ($q) use ($searchTerm) {
-                    $q->where('nama_toko', 'like', '%' . $searchTerm . '%')
-                      ->orWhere('deskripsi', 'like', '%' . $searchTerm . '%');
+                    $q
+                        ->where('nama_toko', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('deskripsi', 'like', '%' . $searchTerm . '%');
                 });
             } else {
                 $query->where(function ($q) use ($searchTerm) {
-                    $q->where('nama_produk', 'like', '%' . $searchTerm . '%')
-                      ->orWhereHas('store', function ($sq) use ($searchTerm) {
-                          $sq->where('nama_toko', 'like', '%' . $searchTerm . '%')
-                            ->orWhere('deskripsi', 'like', '%' . $searchTerm . '%');
-                      });
+                    $q
+                        ->where('nama_produk', 'like', '%' . $searchTerm . '%')
+                        ->orWhereHas('store', function ($sq) use ($searchTerm) {
+                            $sq
+                                ->where('nama_toko', 'like', '%' . $searchTerm . '%')
+                                ->orWhere('deskripsi', 'like', '%' . $searchTerm . '%');
+                        });
                 });
             }
+        }
+
+        // Filter berdasarkan Kota / Kabupaten Toko
+        if ($request->filled('kota')) {
+            $query->whereHas('store', function ($q) use ($request) {
+                $q->where('kota', $request->kota);
+            });
         }
 
         // Filter berdasarkan Kategori
@@ -67,6 +108,11 @@ class ProductController extends Controller
             $query->whereHas('category', function ($q) use ($request) {
                 $q->where('slug', $request->category);
             });
+        }
+
+        // Filter berdasarkan Rentang Harga Maksimal
+        if ($request->filled('max_price')) {
+            $query->where('harga', '<=', $request->max_price);
         }
 
         // Urutan (Sorting)
@@ -78,9 +124,10 @@ class ProductController extends Controller
             $query->latest();
         }
 
+        $maxProductPrice = Product::max('harga') ?? 5000000;
         $products = $query->paginate(12)->withQueryString();
 
-        return view('product.all_product', compact('categories', 'products', 'matchedStores'));
+        return view('product.all_product', compact('categories', 'products', 'matchedStores', 'cities', 'maxProductPrice'));
     }
 
     /**
@@ -159,23 +206,18 @@ class ProductController extends Controller
                 'status' => 'active'
             ]);
 
-            // Proses Upload Gambar
+            // Proses Simpan Galeri Foto & Varian menggunakan ProductGalleryController & ProductVariantController
+            $galleryController = new ProductGalleryController();
+            $variantController = new ProductVariantController();
+
             if ($request->hasFile('gambar')) {
-                foreach ($request->file('gambar') as $index => $file) {
-                    $path = $file->store('produk', 'public');
-                    ProductGallery::create([
-                        'product_id' => $product->id,
-                        'foto_path' => 'storage/' . $path,
-                        'is_primary' => $index === 0,
-                    ]);
-                }
+                $galleryController->storeGalleries($product->id, $request->file('gambar'));
             } else {
-                // Gambar default jika tidak diupload
-                ProductGallery::create([
-                    'product_id' => $product->id,
-                    'foto_path' => 'https://via.placeholder.com/600x600?text=No+Image',
-                    'is_primary' => true
-                ]);
+                $galleryController->storeDefaultGallery($product->id);
+            }
+
+            if ($request->has('variants') && is_array($request->variants)) {
+                $variantController->storeVariants($product->id, $request->variants, $product->stok);
             }
 
             DB::commit();
@@ -191,7 +233,7 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
-        $product = Product::with(['galleries'])->findOrFail($id);
+        $product = Product::with(['galleries', 'variants'])->findOrFail($id);
         $categories = Category::all();
         return view('edit_product', compact('product', 'categories'));
     }
@@ -224,15 +266,15 @@ class ProductController extends Controller
             'badge' => $request->badge ?? $product->badge,
         ]);
 
+        $galleryController = new ProductGalleryController();
+        $variantController = new ProductVariantController();
+
         if ($request->hasFile('gambar')) {
-            foreach ($request->file('gambar') as $index => $file) {
-                $path = $file->store('produk', 'public');
-                ProductGallery::create([
-                    'product_id' => $product->id,
-                    'foto_path' => 'storage/' . $path,
-                    'is_primary' => false,
-                ]);
-            }
+            $galleryController->storeGalleries($product->id, $request->file('gambar'));
+        }
+
+        if ($request->has('variants') && is_array($request->variants)) {
+            $variantController->updateVariants($product->id, $request->variants, $product->stok);
         }
 
         return redirect()->route('inventories')->with('success', 'Data produk berhasil diperbarui!');
@@ -306,6 +348,6 @@ class ProductController extends Controller
         }
 
         $products = $query->get();
-        return view('seller.store', compact('store', 'products'));
+        return view('seller.store', compact('store', 'products', 'categories'));
     }
 }

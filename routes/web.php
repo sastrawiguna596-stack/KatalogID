@@ -3,7 +3,11 @@
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductGalleryController;
+use App\Http\Controllers\ProductVariantController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -27,12 +31,15 @@ Route::post('/register', [AuthController::class, 'register'])->name('register.po
 // ==========================================
 Route::middleware(['auth'])->group(function () {
 
-    // Logout
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    // Logout (supports both GET link and POST form)
+    Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])->name('logout');
 
     // Profile Smart Redirection & Update
     Route::get('/profile', function () {
         $user = Auth::user();
+        if ($user->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
         if ($user->role === 'seller') {
             return redirect()->route('account');
         }
@@ -52,47 +59,43 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
     Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('checkout.process');
 
     // Customer Dashboard
-    Route::get('/customer', function () {
-        return view('cust_account');
-    })->name('cust_account');
+    Route::get('/customer', [OrderController::class, 'customerDashboard'])->name('cust_account');
 
     Route::get('/customer/settings', function () {
         return view('account_setting_cust');
     })->name('cust_account_setting');
 
-    Route::get('/customer/orders', function () {
-        return view('recent_orders_cust');
-    })->name('cust_recent_orders');
+    Route::get('/customer/orders', [OrderController::class, 'customerOrders'])->name('cust_recent_orders');
 
     // Seller Dashboard & Management
-    Route::get('/account', function () {
-        return view('seller.my_account');
-    })->name('account');
+    Route::get('/account', [OrderController::class, 'sellerDashboard'])->name('account');
 
     Route::get('/account/settings', function () {
         return view('seller.account_setting');
     })->name('account_setting');
 
-    Route::get('/account/order', function () {
-        return view('seller.recent_orders');
-    })->name('recent_orders');
+    Route::get('/account/order', [OrderController::class, 'sellerOrders'])->name('recent_orders');
 
-    Route::get('/account/sales-analytics', function () {
-        return view('seller.sales_analytics');
-    })->name('sales_analytics');
+    Route::get('/account/sales-analytics', [InventoryController::class, 'salesAnalytics'])->name('sales_analytics');
 
     Route::get('/account/support', function () {
         return view('seller.support');
     })->name('support');
 
-    Route::get('/inventory', [ProductController::class, 'inventory'])->name('inventories');
+    Route::get('/inventory', [InventoryController::class, 'index'])->name('inventories');
+    Route::get('/inventory/export', [InventoryController::class, 'exportCsv'])->name('inventories.export');
     Route::get('/add-product', [ProductController::class, 'create'])->name('add_product');
     Route::post('/add-product', [ProductController::class, 'store'])->name('products.store');
     Route::get('/edit-product/{id}', [ProductController::class, 'edit'])->name('edit_product');
     Route::put('/edit-product/{id}', [ProductController::class, 'update'])->name('products.update');
     Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
+
+    // Gallery & Variant Management Routes
+    Route::delete('/product-galleries/{id}', [ProductGalleryController::class, 'destroy'])->name('product_galleries.destroy');
+    Route::delete('/product-variants/{id}', [ProductVariantController::class, 'destroy'])->name('product_variants.destroy');
 
     Route::get('/seller/store', [ProductController::class, 'showStore'])->name('seller.store');
 
@@ -112,4 +115,28 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard-admin-edit', function () {
         return view('dashboard_admin_edit');
     })->name('dashboard_admin_edit');
+
+    // Master Admin Back Office Routes
+    Route::prefix('admin')->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\BackOfficeController::class, 'index'])->name('admin.dashboard');
+        Route::post('/settings', [\App\Http\Controllers\BackOfficeController::class, 'updateSettings'])->name('admin.settings.update');
+        
+        Route::get('/stores', [\App\Http\Controllers\BackOfficeController::class, 'stores'])->name('admin.stores');
+        Route::post('/stores/{id}/toggle-status', [\App\Http\Controllers\BackOfficeController::class, 'toggleStoreStatus'])->name('admin.stores.toggle');
+        
+        Route::get('/welcome-settings', [\App\Http\Controllers\BackOfficeController::class, 'welcomeSettings'])->name('admin.welcome_settings');
+
+        // Categories
+        Route::get('/categories', [\App\Http\Controllers\BackOfficeController::class, 'categories'])->name('admin.categories');
+        Route::post('/categories', [\App\Http\Controllers\BackOfficeController::class, 'storeCategory'])->name('admin.categories.store');
+        Route::put('/categories/{id}', [\App\Http\Controllers\BackOfficeController::class, 'updateCategory'])->name('admin.categories.update');
+        Route::delete('/categories/{id}', [\App\Http\Controllers\BackOfficeController::class, 'destroyCategory'])->name('admin.categories.destroy');
+
+        // Inventory
+        Route::get('/inventory', [\App\Http\Controllers\BackOfficeController::class, 'inventory'])->name('admin.inventory');
+        Route::delete('/inventory/{id}', [\App\Http\Controllers\BackOfficeController::class, 'destroyProduct'])->name('admin.inventory.destroy');
+
+        // Orders
+        Route::get('/orders', [\App\Http\Controllers\BackOfficeController::class, 'orders'])->name('admin.orders');
+    });
 });

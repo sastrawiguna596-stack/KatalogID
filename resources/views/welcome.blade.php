@@ -7,6 +7,7 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Katalog IDN | Handcrafted Elegance</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
         rel="stylesheet" />
@@ -214,11 +215,54 @@
             </div>
             <div class="flex gap-gutter overflow-x-auto pb-4 no-scrollbar stagger-children">
                 @foreach($categories as $cat)
+                @php
+                    $catImg = null;
+
+                    // 1. Jika icon_path berupa path/URL gambar
+                    if (!empty($cat->icon_path)) {
+                        $path = trim($cat->icon_path);
+                        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+                            $catImg = $path;
+                        } elseif (str_starts_with($path, 'storage/')) {
+                            $catImg = asset($path);
+                        } elseif (str_contains($path, '/') || str_contains($path, '.')) {
+                            $catImg = asset('storage/' . ltrim($path, '/'));
+                        }
+                    }
+                    
+                    // 2. Ambil gambar dari produk pertama di kategori ini jika tidak ada gambar kategori
+                    if (!$catImg && isset($cat->products) && count($cat->products) > 0) {
+                        foreach ($cat->products as $p) {
+                            if (!empty($p->first_image_url)) {
+                                $catImg = $p->first_image_url;
+                                break;
+                            }
+                        }
+                    }
+
+                    // 3. Gambar estetis resolusi tinggi jika belum ada foto
+                    if (!$catImg) {
+                        $fallbackImgs = [
+                            'kebutuhan-harian' => 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=400&q=80',
+                            'peralatan-dapur'  => 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=400&q=80',
+                            'lampu-pencahayaan'=> 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=400&q=80',
+                            'mebel-furnitur'   => 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=400&q=80',
+                            'dekorasi-rumah'   => 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=400&q=80',
+                            'pakaian-aksesoris'=> 'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?auto=format&fit=crop&w=400&q=80',
+                        ];
+                        $catImg = $fallbackImgs[$cat->slug] ?? 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=400&q=80';
+                    }
+                @endphp
                 <a href="{{ route('shop', ['category' => $cat->slug]) }}" class="flex-shrink-0 group cursor-pointer text-center">
-                    <div class="w-36 h-36 md:w-44 md:h-44 rounded-full overflow-hidden mb-base border border-outline-variant group-hover:border-primary transition-colors flex items-center justify-center bg-surface-container-low mx-auto">
-                        <span class="iconify text-primary text-4xl group-hover:scale-110 transition-transform duration-500" data-icon="{{ $cat->icon_path ?? 'ph:sparkle-bold' }}"></span>
+                    <div class="w-36 h-36 md:w-44 md:h-44 rounded-full overflow-hidden mb-base border-2 border-outline-variant group-hover:border-primary transition-all duration-300 flex items-center justify-center bg-surface-container-low mx-auto shadow-xs relative">
+                        <img src="{{ $catImg }}" alt="{{ $cat->nama_kategori }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" />
+                        @if(!empty($cat->icon_path) && !str_contains($cat->icon_path, '/'))
+                        <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <span class="iconify text-white text-3xl" data-icon="{{ $cat->icon_path }}"></span>
+                        </div>
+                        @endif
                     </div>
-                    <p class="text-center font-label-md text-label-md text-on-surface group-hover:text-primary">{{ $cat->nama_kategori }}</p>
+                    <p class="text-center font-label-md text-label-md font-bold text-on-surface group-hover:text-primary transition-colors mt-2">{{ $cat->nama_kategori }}</p>
                 </a>
                 @endforeach
             </div>
@@ -243,7 +287,7 @@
                     <div>
                         <div class="aspect-square rounded-sm overflow-hidden bg-surface-container-low mb-2.5 sm:mb-4">
                             <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                src="{{ $product->galleries->first()?->foto_path ?? 'https://via.placeholder.com/400' }}"
+                                src="{{ $product->first_image_url }}"
                                 alt="{{ $product->nama_produk }}" />
                         </div>
                         <span class="font-label-md text-[9px] sm:text-[10px] text-primary uppercase tracking-widest mb-1 block">{{ $product->category->nama_kategori ?? 'Kategori' }}</span>
@@ -281,7 +325,7 @@
                     <div>
                         <div class="aspect-square rounded-sm overflow-hidden bg-surface-container-low mb-4">
                             <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                src="{{ $product->galleries->first()?->foto_path ?? 'https://via.placeholder.com/400' }}"
+                                src="{{ $product->first_image_url }}"
                                 alt="{{ $product->nama_produk }}" />
                         </div>
                         <span class="font-label-md text-[10px] text-primary uppercase tracking-widest mb-1 block">{{ $product->category->nama_kategori ?? 'Kategori' }}</span>
@@ -312,11 +356,6 @@
                     <div class="font-body-lg text-body-lg text-on-surface-variant">
                         {!! $settings['mission_desc'] ?? 'Katalog IDN adalah platform yang hadir sebagai wadah bagi pelaku Usaha Mikro, Kecil, dan Menengah (UMKM) untuk memperkenalkan serta memasarkan produk unggulan mereka kepada masyarakat luas. Kami percaya bahwa setiap produk lokal memiliki nilai, kualitas, dan potensi untuk berkembang di era digital.<br><br>Melalui Katalog IDN, kami menghubungkan pembeli dengan beragam produk UMKM terpercaya dalam satu platform yang mudah diakses, aman, dan nyaman digunakan. Dengan mendukung UMKM, setiap transaksi bukan hanya memenuhi kebutuhan, tetapi juga berkontribusi pada pertumbuhan ekonomi lokal dan kemajuan usaha Indonesia.<br><br>Misi kami adalah menjadikan produk UMKM lebih mudah ditemukan, lebih dipercaya, dan lebih dikenal oleh seluruh masyarakat Indonesia.' !!}
                     </div>
-                    <div>
-                        <button
-                            class="px-8 py-4 bg-primary text-on-primary font-label-md text-label-md rounded-lg hover:brightness-90 active:scale-95 transition-all">Learn
-                            More About Us</button>
-                    </div>
                 </div>
             </div>
         </section>
@@ -340,108 +379,152 @@
         </section>
 
         <!-- Testimonials -->
+        @if(isset($reviews) && count($reviews) > 0)
         <section class="py-stack-lg px-margin-mobile md:px-margin-desktop scroll-reveal">
             <div class="bg-surface-container p-stack-lg rounded-2xl flex flex-col items-center">
                 <span class="material-symbols-outlined text-primary text-5xl mb-stack-sm"
                     data-icon="format_quote">format_quote</span>
                 <div class="relative w-full max-w-3xl overflow-hidden">
                     <div class="flex transition-transform duration-500 ease-out" id="testimonial-track">
+                        @foreach($reviews as $review)
                         <div class="min-w-full text-center px-4">
-                            <p class="font-headline-md text-headline-md italic text-on-surface mb-stack-md">"The quality
-                                of the ceramics I purchased is unparalleled. You can feel the heart and soul put into
-                                every piece. Truly a gem for anyone seeking authenticity."</p>
+                            <p class="font-headline-md text-headline-md italic text-on-surface mb-stack-md">"{{ $review->komentar }}"</p>
                             <div class="flex flex-col items-center">
-                                <div class="w-12 h-12 rounded-full overflow-hidden mb-2">
-                                    <img class="w-full h-full object-cover"
-                                        data-alt="A professional portrait of a woman in her 30s with a warm smile, wearing a simple linen shirt. The background is a blurred art studio with soft natural light. Minimalist and clean aesthetic."
-                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4ChATodbNL2h-sMhScaDlocpx1FvZaPjsTl0fiJAqwKjW38CHPLzwex5MuTuMOVFCkGEsT3Sfbe0PTlxnii4vqwYTBpuxy891ku7KR7y-1-_olgzri2lrwUSL_DOQZd-567wFNV3Vd5AFsaMA2tZbXQrAhIj_yub5t9tQawHBai36f5CB3Hd4Vi7A4zyjZQtVW4tI9uHRnpxT-Mr5jotQdFuOCqfHCE02WgMCPTLY1sOCfG-f3GXt" />
+                                <div class="w-12 h-12 rounded-full bg-primary-container text-on-primary-fixed flex items-center justify-center font-bold text-xl mb-2 shadow-xs">
+                                    {{ strtoupper(substr($review->user->name ?? 'U', 0, 1)) }}
                                 </div>
-                                <h4 class="font-label-md text-label-md text-on-surface">Sarah Mitchell</h4>
-                                <p class="font-body-sm text-body-sm text-on-surface-variant uppercase tracking-tighter">
-                                     Interior Designer</p>
+                                <h4 class="font-label-md text-label-md text-on-surface">{{ $review->user->name ?? 'Pengguna Anonim' }}</h4>
+                                <div class="flex text-amber-500 mt-1 mb-1">
+                                    @for($s = 1; $s <= 5; $s++)
+                                        <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' {{ $s <= $review->rating ? 1 : 0 }};">star</span>
+                                    @endfor
+                                </div>
                             </div>
                         </div>
+                        @endforeach
                     </div>
                 </div>
-                <div class="flex gap-stack-sm mt-stack-md">
-                    <button class="w-2 h-2 rounded-full bg-primary"></button>
-                    <button class="w-2 h-2 rounded-full bg-outline-variant hover:bg-primary transition-colors"></button>
-                    <button class="w-2 h-2 rounded-full bg-outline-variant hover:bg-primary transition-colors"></button>
+                
+                @if(count($reviews) > 1)
+                <div class="flex gap-stack-sm mt-stack-md" id="testimonial-dots">
+                    @foreach($reviews as $index => $r)
+                    <button class="testimonial-dot w-2 h-2 rounded-full {{ $index === 0 ? 'bg-primary' : 'bg-outline-variant hover:bg-primary' }} transition-colors" onclick="goToTestimonial({{ $index }})"></button>
+                    @endforeach
                 </div>
+                @endif
             </div>
+
+            <script>
+                let currentTestimonial = 0;
+                const totalTestimonials = {{ count($reviews) }};
+                
+                function goToTestimonial(index) {
+                    currentTestimonial = index;
+                    updateTestimonialCarousel();
+                }
+                
+                function updateTestimonialCarousel() {
+                    const track = document.getElementById('testimonial-track');
+                    const dots = document.querySelectorAll('.testimonial-dot');
+                    
+                    if (track && dots.length > 0) {
+                        track.style.transform = `translateX(-${currentTestimonial * 100}%)`;
+                        dots.forEach((dot, idx) => {
+                            if (idx === currentTestimonial) {
+                                dot.classList.replace('bg-outline-variant', 'bg-primary');
+                                dot.classList.add('bg-primary');
+                                dot.classList.remove('bg-outline-variant');
+                            } else {
+                                dot.classList.replace('bg-primary', 'bg-outline-variant');
+                                dot.classList.add('bg-outline-variant');
+                                dot.classList.remove('bg-primary');
+                            }
+                        });
+                    }
+                }
+                
+                // Auto rotate every 5 seconds
+                if (totalTestimonials > 1) {
+                    setInterval(() => {
+                        currentTestimonial = (currentTestimonial + 1) % totalTestimonials;
+                        updateTestimonialCarousel();
+                    }, 5000);
+                }
+            </script>
         </section>
-        <!-- Newsletter & Footer Area -->
+        @endif
+
+        <script>
+            function setRating(rating) {
+                document.getElementById('input-rating').value = rating;
+                for (let i = 1; i <= 5; i++) {
+                    const icon = document.getElementById('star-icon-' + i);
+                    if (i <= rating) {
+                        icon.style.fontVariationSettings = "'FILL' 1";
+                    } else {
+                        icon.style.fontVariationSettings = "'FILL' 0";
+                    }
+                }
+            }
+        </script>
+        <!-- Review Input Area (Original Layout) -->
         <section class="py-stack-lg px-margin-mobile md:px-margin-desktop scroll-reveal">
-            <div
-                class="grid grid-cols-1 md:grid-cols-2 gap-stack-lg items-center border-t border-outline-variant pt-stack-lg">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-stack-lg items-center border-t border-outline-variant pt-stack-lg">
                 <div>
-                    <h2 class="font-headline-lg text-headline-lg text-on-surface mb-base">Join the Collective</h2>
-                    <p class="font-body-md text-body-md text-on-surface-variant">Stay updated on new arrivals, artisan
-                        stories, and exclusive previews of upcoming collections.</p>
+                    <h2 class="font-headline-lg text-headline-lg text-on-surface mb-base">Bagikan Pengalaman Anda</h2>
+                    <p class="font-body-md text-body-md text-on-surface-variant">Tinggalkan ulasan tentang pengalaman Anda menggunakan platform Katalog IDN.</p>
+                    @if(session('success'))
+                    <p class="mt-4 font-body-sm text-emerald-600 font-bold">{{ session('success') }}</p>
+                    @endif
                 </div>
-                <form class="flex gap-base">
-                    <input
-                        class="flex-grow px-4 py-3 rounded-lg border border-outline bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 focus:border-on-surface transition-all outline-none text-body-md"
-                        placeholder="Your email address" type="email" />
-                    <button
-                        class="px-8 py-3 bg-on-surface text-surface font-label-md text-label-md rounded-lg hover:bg-secondary transition-colors active:scale-95">Subscribe</button>
+                
+                @auth
+                <form action="{{ route('reviews.store') }}" method="POST" class="flex flex-col gap-4">
+                    @csrf
+                    <div class="flex items-center gap-1" id="star-rating-picker">
+                        @for($i = 1; $i <= 5; $i++)
+                        <button type="button" onclick="setRating({{ $i }})" class="text-amber-400 hover:scale-110 transition-transform focus:outline-none" title="{{ $i }} Bintang">
+                            <span class="material-symbols-outlined text-3xl" id="star-icon-{{ $i }}" style="font-variation-settings: 'FILL' 1;">star</span>
+                        </button>
+                        @endfor
+                        <input type="hidden" name="rating" id="input-rating" value="5" required>
+                    </div>
+                    <div class="flex gap-base">
+                        <input name="komentar" required
+                            class="flex-grow px-4 py-3 rounded-lg border border-outline bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 focus:border-on-surface transition-all outline-none text-body-md"
+                            placeholder="Tulis ulasan singkat..." type="text" />
+                        <button type="submit"
+                            class="px-8 py-3 bg-on-surface text-surface font-label-md text-label-md rounded-lg hover:bg-secondary transition-colors active:scale-95">Kirim</button>
+                    </div>
                 </form>
+                @else
+                <div class="flex flex-col items-start justify-center">
+                    <p class="font-body-md text-body-md text-on-surface-variant mb-4">Ingin membagikan ulasan atau pengalaman belanja Anda?</p>
+                    <a href="{{ route('login') }}" class="px-8 py-3 bg-on-surface text-surface font-label-md text-label-md rounded-lg hover:bg-secondary transition-colors active:scale-95 text-center inline-block w-full md:w-auto">Masuk untuk Menulis Ulasan</a>
+                </div>
+                @endauth
             </div>
+
+            <script>
+                function setRating(rating) {
+                    const inputRating = document.getElementById('input-rating');
+                    if(inputRating) inputRating.value = rating;
+
+                    for (let i = 1; i <= 5; i++) {
+                        const icon = document.getElementById('star-icon-' + i);
+                        if (icon) {
+                            if (i <= rating) {
+                                icon.style.fontVariationSettings = "'FILL' 1";
+                            } else {
+                                icon.style.fontVariationSettings = "'FILL' 0";
+                            }
+                        }
+                    }
+                }
+            </script>
         </section>
     </main>
-    <!-- Footer Shell -->
-    <footer
-        class="w-full py-stack-lg px-margin-mobile md:px-margin-desktop bg-surface-container grid grid-cols-1 md:grid-cols-4 gap-gutter border-t border-outline-variant">
-        <div class="flex flex-col gap-base">
-            <span class="font-headline-sm text-headline-sm text-on-surface font-bold">Katalog IDN</span>
-            <p class="font-body-sm text-body-sm text-on-surface-variant max-w-xs">Connecting conscious consumers with
-                world-class local artisans through curated elegance and sustainable practices.</p>
-        </div>
-        <div class="flex flex-col gap-base">
-            <h5 class="font-label-md text-label-md text-on-surface uppercase tracking-widest">Shop</h5>
-            <nav class="flex flex-col gap-2">
-                <a class="font-body-sm text-body-sm text-on-tertiary-fixed-variant hover:text-primary transition-colors"
-                    href="#">New Arrivals</a>
-                <a class="font-body-sm text-body-sm text-on-tertiary-fixed-variant hover:text-primary transition-colors"
-                    href="#">Best Sellers</a>
-                <a class="font-body-sm text-body-sm text-on-tertiary-fixed-variant hover:text-primary transition-colors"
-                    href="#">Gift Cards</a>
-            </nav>
-        </div>
-        <div class="flex flex-col gap-base">
-            <h5 class="font-label-md text-label-md text-on-surface uppercase tracking-widest">Company</h5>
-            <nav class="flex flex-col gap-2">
-                <a class="font-body-sm text-body-sm text-on-tertiary-fixed-variant hover:text-primary transition-colors"
-                    href="#">About Us</a>
-                <a class="font-body-sm text-body-sm text-on-tertiary-fixed-variant hover:text-primary transition-colors"
-                    href="#">Sustainability</a>
-                <a class="font-body-sm text-body-sm text-on-tertiary-fixed-variant hover:text-primary transition-colors"
-                    href="#">Contact</a>
-            </nav>
-        </div>
-        <div class="flex flex-col gap-base">
-            <h5 class="font-label-md text-label-md text-on-surface uppercase tracking-widest">Legal</h5>
-            <nav class="flex flex-col gap-2">
-                <a class="font-body-sm text-body-sm text-on-tertiary-fixed-variant hover:text-primary transition-colors"
-                    href="#">Shipping Policy</a>
-                <a class="font-body-sm text-body-sm text-on-tertiary-fixed-variant hover:text-primary transition-colors"
-                    href="#">Terms of Service</a>
-                <a class="font-body-sm text-body-sm text-on-tertiary-fixed-variant hover:text-primary transition-colors"
-                    href="#">Privacy</a>
-            </nav>
-        </div>
-        <div
-            class="md:col-span-4 flex flex-col md:flex-row justify-between items-center border-t border-outline-variant pt-stack-md mt-stack-md gap-stack-md">
-            <p class="font-body-sm text-body-sm text-secondary">© 2026 Katalog IDN. Harga Terjangkau, Kualitas Terjamin.</p>
-            <div class="flex gap-stack-md">
-                <span class="material-symbols-outlined text-secondary hover:text-primary cursor-pointer"
-                    data-icon="public">public</span>
-                <span class="material-symbols-outlined text-secondary hover:text-primary cursor-pointer"
-                    data-icon="shield">shield</span>
-                <span class="material-symbols-outlined text-secondary hover:text-primary cursor-pointer"
-                    data-icon="payments">payments</span>
-            </div>
-    </footer>
+    @include('layouts.footer')
 
     <script>
         // Mobile nav drawer
@@ -513,20 +596,27 @@
             });
         });
 
-        // Testimonial Scroll (Placeholder Logic)
-        let currentTestimonial = 0;
-        const track = document.getElementById('testimonial-track');
-        const dots = document.querySelectorAll('.rounded-full.bg-outline-variant');
 
-        setInterval(() => {
-            currentTestimonial = (currentTestimonial + 1) % 3;
-            // In a real app we'd translate the track
-            // track.style.transform = `translateX(-${currentTestimonial * 100}%)`;
-        }, 5000);
 
         document.addEventListener("DOMContentLoaded", () => {
     // 1. Tentukan daftar kata/frasa yang ingin diganti
-    const words = {!! $settings['hero_words'] ?? '["Produk lokal berkualitas terbaik", "Belanja aman setiap hari", "Pilihan produk lokal terbaik", "Karya & Produk Asli Indonesia"]' !!};
+    @php
+        $defaultWords = ["Produk lokal berkualitas terbaik", "Belanja aman setiap hari", "Pilihan produk lokal terbaik", "Karya & Produk Asli Indonesia"];
+        $wordsArray = $defaultWords;
+        if (!empty($settings['hero_words'])) {
+            $rawWords = $settings['hero_words'];
+            $decoded = json_decode($rawWords, true);
+            if (is_array($decoded) && !empty($decoded)) {
+                $wordsArray = array_values($decoded);
+            } else {
+                $items = array_filter(array_map('trim', explode(',', $rawWords)));
+                if (!empty($items)) {
+                    $wordsArray = array_values($items);
+                }
+            }
+        }
+    @endphp
+    const words = @json($wordsArray);
     let currentIndex = 0;
     
     const textElement = document.getElementById("changing-text");

@@ -357,40 +357,7 @@
             </aside>
         </div>
     </main>
-    <!-- Footer -->
-    <footer
-        class="w-full py-stack-lg px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-4 gap-gutter bg-surface-container border-t border-outline-variant">
-        <div class="md:col-span-2">
-            <span class="font-headline-sm text-headline-sm text-on-surface block mb-4">Katalog IDN</span>
-            <p class="text-body-sm text-on-tertiary-fixed-variant max-w-sm mb-6">Empowering small businesses through a
-                premium, accessible digital marketplace. Quality craft meets modern reliability.</p>
-            <p class="text-body-sm text-on-tertiary-fixed-variant">© 2026 Katalog IDN. Harga Terjangkau, Kualitas Terjamin.</p>
-        </div>
-        <div>
-            <h4 class="font-label-md text-label-md mb-4 text-on-surface uppercase tracking-wider">Shopping</h4>
-            <ul class="space-y-2">
-                <li><a class="text-body-sm text-on-tertiary-fixed-variant hover:text-primary transition-all"
-                        href="#">New Arrivals</a></li>
-                <li><a class="text-body-sm text-on-tertiary-fixed-variant hover:text-primary transition-all"
-                        href="#">Best Sellers</a></li>
-                <li><a class="text-body-sm text-on-tertiary-fixed-variant hover:text-primary transition-all"
-                        href="#">Categories</a></li>
-            </ul>
-        </div>
-        <div>
-            <h4 class="font-label-md text-label-md mb-4 text-on-surface uppercase tracking-wider">Resources</h4>
-            <ul class="space-y-2">
-                <li><a class="text-body-sm text-on-tertiary-fixed-variant hover:text-primary transition-all"
-                        href="#">About Us</a></li>
-                <li><a class="text-body-sm text-on-tertiary-fixed-variant hover:text-primary transition-all"
-                        href="#">Contact</a></li>
-                <li><a class="text-body-sm text-on-tertiary-fixed-variant hover:text-primary transition-all"
-                        href="#">Shipping Policy</a></li>
-                <li><a class="text-body-sm text-on-tertiary-fixed-variant hover:text-primary transition-all"
-                        href="#">Privacy</a></li>
-            </ul>
-        </div>
-    </footer>
+    @include('layouts.footer')
     <script>
         // Mobile nav drawer
         function openNavDrawer() {

@@ -433,8 +433,7 @@
 <div>
     <div class="relative w-full aspect-square bg-[#F5F5F5] rounded-sm overflow-hidden mb-2.5 sm:mb-4">
     @php
-        $img = $product->galleries->first()?->foto_path ?? 'https://via.placeholder.com/400';
-        $imgUrl = str_starts_with($img, 'http') ? $img : asset($img);
+        $imgUrl = $product->first_image_url;
     @endphp
     <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="{{ $product->nama_produk }}" src="{{ $imgUrl }}"/>
     @if($product->badge)
@@ -488,36 +487,7 @@
 </section>
 </div>
 </main>
-<!-- Footer -->
-<footer class="w-full py-stack-lg px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-4 gap-gutter bg-surface-container dark:bg-surface-dim border-t border-outline-variant mt-stack-lg">
-<div class="flex flex-col gap-4">
-<span class="font-headline-sm text-headline-sm text-on-surface font-bold">Katalog IDN</span>
-<p class="font-body-sm text-body-sm text-on-tertiary-fixed-variant max-w-xs">Selamat Datang di Katalog IDN</p>
-</div>
-<div>
-<h5 class="font-label-md text-label-md text-primary mb-4">Produk Terbaru</h5>
-<ul class="flex flex-col gap-2">
-<li><a class="font-body-sm text-body-sm text-on-tertiary-fixed-variant hover:text-primary hover:underline underline-offset-4 transition-all" href="#">Produk 1</a></li>
-<li><a class="font-body-sm text-body-sm text-on-tertiary-fixed-variant hover:text-primary hover:underline underline-offset-4 transition-all" href="#">Produk 2</a></li>
-<li><a class="font-body-sm text-body-sm text-on-tertiary-fixed-variant hover:text-primary hover:underline underline-offset-4 transition-all" href="#">Produk 3</a></li>
-</ul>
-</div>
-<div>
-<h5 class="font-label-md text-label-md text-primary mb-4">Informasi</h5>
-<ul class="flex flex-col gap-2">
-<li><a class="font-body-sm text-body-sm text-on-tertiary-fixed-variant hover:text-primary hover:underline underline-offset-4 transition-all" href="#">Tentang Kami</a></li>
-<li><a class="font-body-sm text-body-sm text-on-tertiary-fixed-variant hover:text-primary hover:underline underline-offset-4 transition-all" href="#">Kontak</a></li>
-</ul>
-</div>
-<div class="flex flex-col gap-4">
-<h5 class="font-label-md text-label-md text-primary mb-2">Kotak Surat</h5>
-<div class="flex gap-2">
-<input class="bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-primary/20" placeholder="Email Anda" type="email"/>
-<button class="bg-primary text-on-primary px-4 py-2 rounded-lg font-label-md hover:brightness-90 active:scale-95 transition-all">Daftar</button>
-</div>
-<p class="font-body-sm text-body-sm text-on-tertiary-fixed-variant">© 2026 Katalog IDN. Harga Terjangkau, Kualitas Terjamin.</p>
-</div>
-</footer>
+@include('layouts.footer')
 
 <script>
     // Mobile nav drawer

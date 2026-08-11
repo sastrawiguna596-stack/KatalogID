@@ -107,9 +107,9 @@
             <!-- Auth Buttons -->
             @auth
             <div class="flex items-center gap-2 pl-2 border-l border-outline-variant">
-                <a href="{{ Auth::user()->role === 'seller' ? route('account') : route('cust_account') }}" class="flex items-center gap-2 p-1.5 rounded-full hover:bg-surface-variant transition-colors" title="Dashboard Saya">
-                    <div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-xs border border-primary/20">
-                        <span class="material-symbols-outlined text-lg">person</span>
+                <a href="{{ Auth::user()->role === 'seller' ? route('account') : (Auth::user()->role === 'admin' ? route('admin.dashboard') : route('cust_account')) }}" class="flex items-center gap-2 p-1.5 rounded-full hover:bg-surface-variant transition-colors" title="Dashboard Saya">
+                    <div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant shadow-xs">
+                        <img src="{{ Auth::user()->avatar ? asset(Auth::user()->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) . '&background=7c5800&color=ffffff&size=128' }}" class="w-full h-full object-cover" alt="{{ Auth::user()->name }}">
                     </div>
                 </a>
                 <form action="{{ route('logout') }}" method="POST" class="inline">

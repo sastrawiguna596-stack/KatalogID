@@ -20,7 +20,7 @@ class ProductController extends Controller
     public function home()
     {
         $categories = \Illuminate\Support\Facades\Cache::remember('categories_home', 3600, function() {
-            return Category::all();
+            return Category::with(['products.galleries'])->get();
         });
 
         $settings = \Illuminate\Support\Facades\Cache::remember('site_settings', 3600, function() {
@@ -38,7 +38,9 @@ class ProductController extends Controller
             ? Product::with(['category', 'galleries'])->whereIn('id', $newIds)->where('status', 'active')->get()
             : Product::with(['category', 'galleries'])->where('status', 'active')->latest()->skip(8)->take(4)->get();
 
-        return view('welcome', compact('categories', 'products', 'newProducts', 'settings'));
+        $reviews = \App\Models\Review::with(['user', 'product'])->latest()->take(5)->get();
+
+        return view('welcome', compact('categories', 'products', 'newProducts', 'settings', 'reviews'));
     }
 
     /**

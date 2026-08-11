@@ -284,36 +284,44 @@
 <button @click="sidebarOpen = true" class="md:hidden text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center">
     <span class="material-symbols-outlined text-[28px]">menu</span>
 </button>
-<h1 class="font-headline-lg text-headline-sm md:text-headline-lg font-bold text-primary whitespace-nowrap">Luminous</h1>
+<h1 class="font-headline-lg text-headline-sm md:text-headline-lg font-bold text-primary whitespace-nowrap">Katalog IDN</h1>
 <!-- Search Bar Placeholder Left -->
 <div class="relative w-full max-w-lg hidden lg:block ml-8">
 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
-<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-surface-container rounded-lg focus:outline-none focus:border-on-surface-variant focus:ring-1 focus:ring-on-surface-variant font-body-sm text-body-sm transition-all text-on-surface placeholder:text-outline-variant" placeholder="Search for IDs, store names, or customers..." type="text"/>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-surface-container rounded-lg focus:outline-none focus:border-on-surface-variant focus:ring-1 focus:ring-on-surface-variant font-body-sm text-body-sm transition-all text-on-surface placeholder:text-outline-variant" placeholder="Cari ID, toko, atau nama pengguna..." type="text"/>
 </div>
 </div>
 <div class="flex items-center gap-stack-md">
 <nav class="hidden lg:flex items-center gap-stack-sm">
-<a class="text-on-surface-variant font-medium hover:text-primary transition-colors font-label-md text-label-md px-2 py-1" href="#">Platform Status</a>
-<a class="text-on-surface-variant font-medium hover:text-primary transition-colors font-label-md text-label-md px-2 py-1" href="#">Live View</a>
-<a class="text-on-surface-variant font-medium hover:text-primary transition-colors font-label-md text-label-md px-2 py-1" href="#">Help Center</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors font-label-md text-label-md px-2 py-1" href="{{ route('home') }}">Halaman Depan</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors font-label-md text-label-md px-2 py-1" href="{{ route('shop') }}">Katalog Produk</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors font-label-md text-label-md px-2 py-1" href="{{ route('admin.dashboard') }}">Dashboard</a>
 </nav>
 <div class="flex items-center gap-3 md:ml-4 md:border-l border-surface-container md:pl-4">
 <button class="hidden md:flex text-on-surface-variant hover:text-primary transition-colors w-10 h-10 items-center justify-center rounded-full hover:bg-surface-container-low">
 <span class="material-symbols-outlined">notifications</span>
 </button>
-<button class="text-on-surface-variant hover:text-primary transition-colors w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-low">
+<a href="{{ route('admin.dashboard') }}" class="text-on-surface-variant hover:text-primary transition-colors w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-low">
 <span class="material-symbols-outlined">account_circle</span>
-</button>
-<button class="hidden md:block bg-primary text-on-primary px-6 py-2 rounded-lg font-label-md text-label-md hover:bg-opacity-90 transition-all active:scale-95 shadow-sm ml-2">
-                        Save Changes
-                    </button>
+</a>
 </div>
 </div>
 </header>
 <!-- Page Canvas -->
-<main class="flex-1 p-margin-mobile md:p-margin-desktop bg-background max-w-container-max mx-auto w-full pb-32">
+<main class="flex-1 p-margin-mobile md:p-margin-desktop bg-background max-w-container-max mx-auto w-full pb-12">
     @yield('content')
 </main>
+<footer class="w-full py-4 px-margin-mobile md:px-margin-desktop bg-surface border-t border-surface-container flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-secondary">
+    <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary text-base">storefront</span>
+        <span class="font-bold text-on-surface">Katalog IDN</span>
+        <span>© 2026 Master Admin Control Center. All rights reserved.</span>
+    </div>
+    <div class="flex items-center gap-4">
+        <a href="{{ route('home') }}" class="hover:text-primary transition-colors">Lihat Halaman Utama</a>
+        <a href="{{ route('shop') }}" class="hover:text-primary transition-colors">Lihat Katalog Produk</a>
+    </div>
+</footer>
 </div>
 </body>
 </html>

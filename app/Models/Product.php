@@ -47,4 +47,28 @@ class Product extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
+
+    /**
+     * Accessor untuk gambar utama produk yang selalu valid & aman
+     */
+    public function getFirstImageUrlAttribute()
+    {
+        $gallery = $this->galleries ? $this->galleries->first() : null;
+        if ($gallery && !empty($gallery->foto_url)) {
+            return $gallery->foto_url;
+        }
+
+        // Fallback gambar estetis beresolusi tinggi jika belum ada galeri foto
+        $categorySlug = $this->category->slug ?? '';
+        $fallbacks = [
+            'kebutuhan-harian' => 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=600&q=80',
+            'peralatan-dapur'  => 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=600&q=80',
+            'lampu-pencahayaan'=> 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=600&q=80',
+            'mebel-furnitur'   => 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=600&q=80',
+            'dekorasi-rumah'   => 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=600&q=80',
+            'pakaian-aksesoris'=> 'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?auto=format&fit=crop&w=600&q=80',
+        ];
+
+        return $fallbacks[$categorySlug] ?? 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80';
+    }
 }

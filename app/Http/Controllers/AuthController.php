@@ -180,4 +180,59 @@ class AuthController extends Controller
         }
         return redirect()->intended(route('cust_account'));
     }
+
+    /**
+     * Redirect User ke Google OAuth
+     */
+    public function redirectToGoogle()
+    {
+        $clientId = config('services.google.client_id');
+        $clientSecret = config('services.google.client_secret');
+
+        if (empty($clientId) || empty($clientSecret)) {
+            return redirect()->route('login')->with('error', 'Login Google belum aktif karena Kunci OAuth (GOOGLE_CLIENT_ID & GOOGLE_CLIENT_SECRET) belum diisi di file .env.');
+        }
+
+        try {
+            return \Laravel\Socialite\Facades\Socialite::driver('google')->redirect();
+        } catch (\Exception $e) {
+            return redirect()->route('login')->with('error', 'Gagal terhubung ke Google: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Callback dari Google OAuth
+     */
+    public function handleGoogleCallback()
+    {
+        try {
+            $googleUser = \Laravel\Socialite\Facades\Socialite::driver('google')->user();
+
+            $user = User::where('google_id', $googleUser->id)
+                ->orWhere('email', $googleUser->email)
+                ->first();
+
+            if ($user) {
+                $user->update([
+                    'google_id' => $googleUser->id,
+                    'avatar' => $googleUser->avatar ?? $user->avatar,
+                ]);
+            } else {
+                $user = User::create([
+                    'name' => $googleUser->name ?? $googleUser->nickname ?? 'Pengguna Google',
+                    'email' => $googleUser->email,
+                    'google_id' => $googleUser->id,
+                    'avatar' => $googleUser->avatar,
+                    'password' => Hash::make(Str::random(16)),
+                    'role' => 'customer',
+                ]);
+            }
+
+            Auth::login($user, true);
+
+            return $this->redirectUserBasedOnRole($user)->with('success', 'Selamat datang, ' . $user->name . '! Anda berhasil masuk dengan Google.');
+        } catch (\Exception $e) {
+            return redirect()->route('login')->with('error', 'Gagal masuk dengan Google: ' . $e->getMessage());
+        }
+    }
 }

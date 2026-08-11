@@ -367,7 +367,6 @@
 <div class="flex gap-gutter border-b border-outline-variant overflow-x-auto no-scrollbar">
 <button class="pb-4 font-label-md text-label-md uppercase tracking-widest tab-active whitespace-nowrap">Deskripsi Produk</button>
 <button class="pb-4 font-label-md text-label-md uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors whitespace-nowrap">Spesifikasi</button>
-<button class="pb-4 font-label-md text-label-md uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors whitespace-nowrap">Pengiriman &amp; Retur</button>
 <button class="pb-4 font-label-md text-label-md uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors whitespace-nowrap">Ulasan ({{ $product['reviews_count'] }})</button>
 </div>
 <div class="py-stack-md max-w-3xl">
@@ -461,44 +460,7 @@
 </div>
 </section>
 </main>
-<!-- Footer -->
-<footer class="w-full py-stack-lg px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-4 gap-gutter bg-surface-container dark:bg-surface-dim border-t border-outline-variant dark:border-outline">
-<div class="flex flex-col gap-4">
-<h2 class="font-headline-sm text-headline-sm text-on-surface">Katalog IDN</h2>
-<p class="font-body-sm text-body-sm text-on-tertiary-fixed-variant dark:text-on-tertiary-fixed">
-                Empowering small businesses with premium quality products and world-class design.
-            </p>
-</div>
-<div class="flex flex-col gap-4">
-<h3 class="font-label-md text-label-md uppercase tracking-wider text-on-surface">Customer Care</h3>
-<ul class="flex flex-col gap-2 font-body-sm text-body-sm text-on-tertiary-fixed-variant dark:text-on-tertiary-fixed">
-<li><a class="hover:text-primary underline underline-offset-4 transition-all" href="#">Shipping Policy</a></li>
-<li><a class="hover:text-primary underline underline-offset-4 transition-all" href="#">Returns & Exchanges</a></li>
-<li><a class="hover:text-primary underline underline-offset-4 transition-all" href="#">Support Center</a></li>
-<li><a class="hover:text-primary underline underline-offset-4 transition-all" href="#">Contact Us</a></li>
-</ul>
-</div>
-<div class="flex flex-col gap-4">
-<h3 class="font-label-md text-label-md uppercase tracking-wider text-on-surface">About</h3>
-<ul class="flex flex-col gap-2 font-body-sm text-body-sm text-on-tertiary-fixed-variant dark:text-on-tertiary-fixed">
-<li><a class="hover:text-primary underline underline-offset-4 transition-all" href="#">Our Story</a></li>
-<li><a class="hover:text-primary underline underline-offset-4 transition-all" href="#">Sustainability</a></li>
-<li><a class="hover:text-primary underline underline-offset-4 transition-all" href="#">Terms of Service</a></li>
-<li><a class="hover:text-primary underline underline-offset-4 transition-all" href="#">Privacy</a></li>
-</ul>
-</div>
-<div class="flex flex-col gap-4">
-<h3 class="font-label-md text-label-md uppercase tracking-wider text-on-surface">Newsletter</h3>
-<p class="font-body-sm text-body-sm text-on-tertiary-fixed-variant">Join our list for exclusive releases and updates.</p>
-<div class="flex">
-<input class="bg-surface border border-outline-variant px-4 py-2 w-full rounded-l-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Email address" type="email"/>
-<button class="bg-on-surface text-surface px-4 py-2 rounded-r-lg hover:bg-primary transition-colors">Join</button>
-</div>
-</div>
-<div class="col-span-1 md:col-span-4 border-t border-outline-variant pt-8 text-center">
-<p class="font-body-sm text-body-sm text-on-tertiary-fixed-variant">© 2026 Katalog IDN. Harga Terjangkau, Kualitas Terjamin.</p>
-</div>
-</footer>
+@include('layouts.footer')
 <!-- Mobile Bottom NavBar (Visible on mobile only) -->
 <script>
         // Interactive Gallery Image Switcher

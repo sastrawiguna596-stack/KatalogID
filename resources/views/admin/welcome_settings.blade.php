@@ -24,9 +24,14 @@
             <input name="hero_title_base" class="w-full px-4 py-3 bg-surface-container-lowest border border-surface-variant rounded-lg focus:outline-none focus:border-on-surface-variant focus:ring-2 focus:ring-primary-container focus:ring-opacity-50 font-body-md text-body-md text-on-surface transition-all" type="text" value="{{ $settings['hero_title_base'] ?? 'Nikmati' }}"/>
         </div>
         
+        @php
+            $hwRaw = $settings['hero_words'] ?? '';
+            $hwDecoded = json_decode($hwRaw, true);
+            $hwDisplay = is_array($hwDecoded) ? implode(', ', $hwDecoded) : $hwRaw;
+        @endphp
         <div class="space-y-1">
-            <label class="font-label-md text-label-md text-on-surface-variant">Kata Berganti (Gunakan Format JSON Array)</label>
-            <input name="hero_words" class="w-full px-4 py-3 bg-surface-container-lowest border border-surface-variant rounded-lg focus:outline-none focus:border-on-surface-variant focus:ring-2 focus:ring-primary-container focus:ring-opacity-50 font-body-md text-body-md text-on-surface transition-all" type="text" value="{{ $settings['hero_words'] ?? '[\"Produk lokal berkualitas terbaik\", \"Belanja aman setiap hari\", \"Pilihan produk lokal terbaik\", \"Karya & Produk Asli Indonesia\"]' }}"/>
+            <label class="font-label-md text-label-md text-on-surface-variant">Kata Berganti (Pisahkan dengan Koma)</label>
+            <input name="hero_words" class="w-full px-4 py-3 bg-surface-container-lowest border border-surface-variant rounded-lg focus:outline-none focus:border-on-surface-variant focus:ring-2 focus:ring-primary-container focus:ring-opacity-50 font-body-md text-body-md text-on-surface transition-all" type="text" value="{{ $hwDisplay ?: 'Produk lokal berkualitas terbaik, Belanja aman setiap hari, Pilihan produk lokal terbaik, Karya & Produk Asli Indonesia' }}"/>
         </div>
 
         <div class="space-y-1">
@@ -103,6 +108,8 @@
             </select>
         </div>
     </div>
+
+
 
     <div class="bg-surface border border-surface-variant rounded-xl p-stack-md flex flex-col gap-stack-md">
         <h2 class="font-headline-md text-headline-md text-on-surface">Our Mission</h2>

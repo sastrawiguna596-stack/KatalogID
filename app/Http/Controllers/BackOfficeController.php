@@ -9,7 +9,19 @@ class BackOfficeController extends Controller
     public function index()
     {
         $settings = \App\Models\SiteSetting::pluck('value', 'key')->toArray();
-        return view('back_office', compact('settings'));
+
+        $stats = [
+            'total_stores' => \App\Models\Store::count(),
+            'total_products' => \App\Models\Product::count(),
+            'total_users' => \App\Models\User::count(),
+            'total_orders' => \App\Models\Order::count(),
+            'total_revenue' => \App\Models\Order::where('status_pembayaran', 'paid')->sum('total_harga') ?: \App\Models\Order::sum('total_harga'),
+        ];
+
+        $recentStores = \App\Models\Store::with('user')->latest()->take(5)->get();
+        $recentProducts = \App\Models\Product::with(['category', 'store'])->latest()->take(5)->get();
+
+        return view('back_office', compact('settings', 'stats', 'recentStores', 'recentProducts'));
     }
 
     public function stores()
@@ -40,6 +52,14 @@ class BackOfficeController extends Controller
     {
         // Loop through all inputs (except _token) and update or create settings
         foreach ($request->except('_token') as $key => $value) {
+            if ($key === 'hero_words' && !empty($value) && !is_array($value)) {
+                $decoded = json_decode($value, true);
+                if (!is_array($decoded)) {
+                    $items = array_filter(array_map('trim', explode(',', $value)));
+                    $value = json_encode(array_values($items));
+                }
+            }
+
             \App\Models\SiteSetting::updateOrCreate(
                 ['key' => $key],
                 ['value' => is_array($value) ? json_encode($value) : $value]
@@ -64,10 +84,22 @@ class BackOfficeController extends Controller
     {
         $request->validate([
             'nama_kategori' => 'required|string|max:255',
-            'icon' => 'nullable|string',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'icon_path' => 'nullable|string',
         ]);
         
-        \App\Models\Category::create($request->all());
+        $iconPath = $request->icon_path;
+        if ($request->hasFile('foto')) {
+            $path = $request->file('foto')->store('kategori', 'public');
+            $iconPath = 'storage/' . $path;
+        }
+
+        \App\Models\Category::create([
+            'nama_kategori' => $request->nama_kategori,
+            'slug' => \Illuminate\Support\Str::slug($request->nama_kategori),
+            'icon_path' => $iconPath ?: 'ph:sparkle-bold',
+        ]);
+
         \Illuminate\Support\Facades\Cache::forget('categories_home');
 
         return redirect()->back()->with('success', 'Kategori berhasil ditambahkan.');
@@ -77,11 +109,26 @@ class BackOfficeController extends Controller
     {
         $request->validate([
             'nama_kategori' => 'required|string|max:255',
-            'icon' => 'nullable|string',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'icon_path' => 'nullable|string',
         ]);
         
         $category = \App\Models\Category::findOrFail($id);
-        $category->update($request->all());
+
+        $iconPath = $category->icon_path;
+        if ($request->hasFile('foto')) {
+            $path = $request->file('foto')->store('kategori', 'public');
+            $iconPath = 'storage/' . $path;
+        } elseif ($request->filled('icon_path')) {
+            $iconPath = $request->icon_path;
+        }
+
+        $category->update([
+            'nama_kategori' => $request->nama_kategori,
+            'slug' => \Illuminate\Support\Str::slug($request->nama_kategori),
+            'icon_path' => $iconPath,
+        ]);
+
         \Illuminate\Support\Facades\Cache::forget('categories_home');
 
         return redirect()->back()->with('success', 'Kategori berhasil diubah.');

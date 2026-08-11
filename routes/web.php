@@ -26,6 +26,10 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 
+// Google OAuth Login
+Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
+
 // ==========================================
 // Rute Terproteksi (Wajib Login / Auth Middleware)
 // ==========================================
@@ -33,6 +37,9 @@ Route::middleware(['auth'])->group(function () {
 
     // Logout (supports both GET link and POST form)
     Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])->name('logout');
+
+    // Simpan Ulasan Pembeli
+    Route::post('/reviews', [App\Http\Controllers\ReviewController::class, 'store'])->name('reviews.store');
 
     // Profile Smart Redirection & Update
     Route::get('/profile', function () {

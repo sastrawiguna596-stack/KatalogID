@@ -357,23 +357,7 @@
     </section>
 </main>
 
-<!-- Footer -->
-<footer class="w-full border-t border-surface-container-highest py-10 bg-white">
-    <div class="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12 flex flex-col md:flex-row justify-between items-center gap-6">
-        <div class="text-center md:text-left space-y-1">
-            <div class="font-headline-sm font-bold text-primary flex items-center justify-center md:justify-start gap-1.5">
-                <span class="material-symbols-outlined text-xl">storefront</span>
-                <span>Katalog IDN</span>
-            </div>
-            <p class="text-body-sm text-secondary">© 2026 Katalog IDN. Platform E-Commerce UMKM Indonesia.</p>
-        </div>
-        <div class="flex flex-wrap justify-center gap-6 text-label-md text-secondary font-semibold">
-            <a class="hover:text-primary transition-colors" href="{{ route('home') }}">Beranda</a>
-            <a class="hover:text-primary transition-colors" href="{{ route('shop') }}">Semua Produk</a>
-            <a class="hover:text-primary transition-colors" href="{{ route('cart') }}">Keranjang</a>
-        </div>
-    </div>
-</footer>
+@include('layouts.footer')
 
 <script>
     function toggleSidebar() {

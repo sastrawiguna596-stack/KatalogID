@@ -2,11 +2,20 @@
 
 @section('content')
 <div class="mb-stack-lg">
-    <div class="flex justify-between items-center mb-6">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
             <h1 class="font-headline-lg text-headline-lg font-bold text-on-surface">Inventory Keseluruhan</h1>
             <p class="font-body-md text-body-md text-on-surface-variant mt-1">Pantau seluruh produk dari semua toko di platform Luminous.</p>
         </div>
+        <form action="{{ route('admin.inventory') }}" method="GET" class="relative w-full md:w-80">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama produk, toko, kategori..." class="w-full pl-10 pr-10 py-2 bg-surface-container-lowest border border-surface-variant rounded-lg text-sm focus:outline-none focus:border-primary transition-all text-on-surface"/>
+            @if(request('search'))
+            <a href="{{ route('admin.inventory') }}" class="absolute right-3 top-1/2 -translate-y-1/2 text-secondary hover:text-primary">
+                <span class="material-symbols-outlined text-sm">close</span>
+            </a>
+            @endif
+        </form>
     </div>
 
     @if(session('success'))

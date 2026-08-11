@@ -84,9 +84,6 @@
             <a href="{{ route('seller.store') }}" class="font-label-md text-label-md font-bold transition-all py-1 {{ $activeTab === 'store' ? 'text-primary border-b-2 border-primary' : 'text-secondary hover:text-primary' }}">
                 Toko
             </a>
-            <a href="{{ Auth::check() && Auth::user()->role === 'seller' ? route('account') : route('cust_account') }}" class="font-label-md text-label-md font-bold transition-all py-1 {{ $activeTab === 'profile' ? 'text-primary border-b-2 border-primary' : 'text-secondary hover:text-primary' }}">
-                Akun Saya
-            </a>
         </nav>
 
         <!-- Right: Search, Cart & User Action Controls -->

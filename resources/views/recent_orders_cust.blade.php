@@ -129,18 +129,38 @@
 
 <!-- Top Navigation Bar -->
 <nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-4 md:px-margin-desktop py-4 bg-surface border-b border-outline-variant">
-<div class="flex items-center gap-3">
-    <button class="lg:hidden p-1 rounded-lg text-on-surface-variant hover:bg-surface-variant transition-colors" onclick="toggleSidebar()">
+<div class="flex items-center gap-4">
+    <!-- Hamburger button (mobile) -->
+    <button id="hamburger-btn" class="lg:hidden p-1 rounded-lg text-on-surface-variant hover:bg-surface-variant transition-colors" onclick="toggleSidebar()">
         <span class="material-symbols-outlined">menu</span>
     </button>
-    <span class="font-headline-md text-headline-md font-bold text-primary">Katalog IDN</span>
+    <a href="{{ route('home') }}" class="font-headline-md text-headline-md font-bold text-primary hover:opacity-90 transition-opacity">Katalog IDN</a>
 </div>
-<div class="flex items-center gap-3 md:gap-gutter">
-<button class="material-symbols-outlined text-on-surface-variant scale-95 active:scale-90 transition-transform">shopping_cart</button>
-<button class="material-symbols-outlined text-on-surface-variant scale-95 active:scale-90 transition-transform">notifications</button>
-<div class="w-8 h-8 rounded-full overflow-hidden border border-outline">
-<img class="w-full h-full object-cover" src="{{ Auth::user()->avatar ? asset(Auth::user()->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name ?? 'User') . '&background=7c5800&color=ffffff&size=128' }}" alt="{{ Auth::user()->name ?? 'User' }}"/>
-</div>
+
+<div class="flex items-center gap-3">
+    <!-- Keranjang Belanja -->
+    @php
+        $cartCount = count(session('cart', []));
+    @endphp
+    <a href="{{ route('cart') }}" class="relative p-1.5 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-variant/60 transition-all flex items-center justify-center" title="Keranjang Belanja">
+        <span class="material-symbols-outlined text-2xl">shopping_cart</span>
+        @if($cartCount > 0)
+            <span class="absolute -top-1 -right-1 bg-primary text-on-primary font-bold text-[10px] w-5 h-5 rounded-full flex items-center justify-center shadow-xs animate-pulse">
+                {{ $cartCount }}
+            </span>
+        @endif
+    </a>
+
+    <!-- Notifikasi -->
+    <button type="button" onclick="alert('Belum ada notifikasi baru.')" class="relative p-1.5 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-variant/60 transition-all flex items-center justify-center" title="Notifikasi">
+        <span class="material-symbols-outlined text-2xl">notifications</span>
+        <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary ring-2 ring-surface"></span>
+    </button>
+
+    <!-- Avatar Profil -->
+    <a href="{{ route('cust_account') }}" class="w-8 h-8 rounded-full overflow-hidden border border-outline hover:ring-2 hover:ring-primary/40 transition-all ml-1" title="Profil Akun">
+        <img class="w-full h-full object-cover" src="{{ Auth::user()->avatar ? asset(Auth::user()->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name ?? 'User') . '&background=7c5800&color=ffffff&size=128' }}" alt="{{ Auth::user()->name ?? 'User' }}"/>
+    </a>
 </div>
 </nav>
 
@@ -161,18 +181,20 @@
 </div>
 <nav class="flex-1 flex flex-col gap-1">
 <a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('cust_account') }}" onclick="closeSidebar()">
-<span class="material-symbols-outlined">dashboard</span> Dashboard
-    </a>
-<!-- Active State: Orders -->
-<a class="flex items-center gap-3 px-3 py-2.5 text-on-primary-container bg-primary-container rounded-lg font-bold transition-all font-label-md text-label-md" href="{{ route('cust_recent_orders') }}" onclick="closeSidebar()">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">receipt_long</span> Pesanan Saya
-    </a>
-<a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('cust_account_setting') }}" onclick="closeSidebar()">
-<span class="material-symbols-outlined">settings</span> Pengaturan
-    </a>
+<span class="material-symbols-outlined">dashboard</span> Dashboard Profil
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('home') }}" onclick="closeSidebar()">
+<span class="material-symbols-outlined">home</span> Halaman Utama
+</a>
 <a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('shop') }}" onclick="closeSidebar()">
-<span class="material-symbols-outlined">storefront</span> Katalog Belanja
-    </a>
+<span class="material-symbols-outlined">storefront</span> Katalog Produk
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-on-primary-container bg-primary-container rounded-lg font-bold transition-all font-label-md text-label-md" href="{{ route('cust_recent_orders') }}" onclick="closeSidebar()">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">receipt_long</span> Daftar Pesanan Saya
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('cust_account_setting') }}" onclick="closeSidebar()">
+<span class="material-symbols-outlined">settings</span> Pengaturan Akun
+</a>
 </nav>
 <div class="mt-auto border-t border-outline-variant pt-4 flex flex-col gap-1">
 <a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('support') }}" onclick="closeSidebar()">
@@ -261,16 +283,40 @@
                                 $img = $product?->galleries->first()?->foto_path ?? 'https://via.placeholder.com/150';
                                 $imgUrl = str_starts_with($img, 'http') ? $img : asset($img);
                             @endphp
-                            <div class="flex items-center gap-4">
-                                <div class="w-16 h-16 rounded-xl bg-surface-container-low overflow-hidden border border-outline-variant/30 flex-shrink-0">
-                                    <img class="w-full h-full object-cover" src="{{ $imgUrl }}" alt="{{ $product->nama_produk ?? 'Produk' }}"/>
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-3 bg-surface-container-lowest border border-surface-container-low rounded-xl">
+                                <div class="flex items-center gap-4 flex-1 min-w-0">
+                                    <div class="w-16 h-16 rounded-xl bg-surface-container-low overflow-hidden border border-outline-variant/30 flex-shrink-0">
+                                        <img class="w-full h-full object-cover" src="{{ $imgUrl }}" alt="{{ $product->nama_produk ?? 'Produk' }}"/>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <h4 class="font-bold text-sm text-on-surface truncate">{{ $product->nama_produk ?? 'Produk Pesanan' }}</h4>
+                                        <p class="text-xs text-secondary mt-0.5">{{ $item->jumlah }} unit x Rp {{ number_format($item->harga, 0, ',', '.') }}</p>
+                                    </div>
                                 </div>
-                                <div class="flex-1 min-w-0">
-                                    <h4 class="font-bold text-sm text-on-surface truncate">{{ $product->nama_produk ?? 'Produk Pesanan' }}</h4>
-                                    <p class="text-xs text-secondary mt-0.5">{{ $item->jumlah }} unit x Rp {{ number_format($item->harga, 0, ',', '.') }}</p>
-                                </div>
-                                <div class="text-right flex-shrink-0">
+                                <div class="flex sm:flex-col items-end justify-between gap-2 flex-shrink-0">
                                     <p class="font-bold text-sm text-on-surface">Rp {{ number_format($item->harga * $item->jumlah, 0, ',', '.') }}</p>
+                                    @if($product)
+                                        @php
+                                            $existingReview = \App\Models\Review::where('user_id', Auth::id())
+                                                ->where('product_id', $product->id)
+                                                ->first();
+                                        @endphp
+                                        @if($existingReview)
+                                            <button type="button" 
+                                                    onclick="openReviewModal({{ $product->id }}, '{{ addslashes($product->nama_produk) }}', '{{ $imgUrl }}', {{ $existingReview->rating }}, '{{ addslashes($existingReview->komentar) }}')" 
+                                                    class="px-3 py-1 bg-amber-50 text-amber-800 border border-amber-300 rounded-lg text-xs font-bold flex items-center gap-1 hover:bg-amber-100 transition-all">
+                                                <span class="material-symbols-outlined text-sm text-amber-500" style="font-variation-settings: 'FILL' 1;">star</span> 
+                                                Ulasan Terkirim ({{ $existingReview->rating }}/5)
+                                            </button>
+                                        @else
+                                            <button type="button" 
+                                                    onclick="openReviewModal({{ $product->id }}, '{{ addslashes($product->nama_produk) }}', '{{ $imgUrl }}', 5, '')" 
+                                                    class="px-3 py-1 bg-primary text-on-primary rounded-lg text-xs font-bold flex items-center gap-1 hover:brightness-110 transition-all shadow-xs">
+                                                <span class="material-symbols-outlined text-sm">rate_review</span> 
+                                                Beri Rating & Ulasan
+                                            </button>
+                                        @endif
+                                    @endif
                                 </div>
                             </div>
                         @endforeach
@@ -285,14 +331,23 @@
                         <span class="text-xs text-secondary block">Total Pembayaran</span>
                         <span class="font-headline-sm text-lg font-bold text-primary">Rp {{ number_format($order->total_harga, 0, ',', '.') }}</span>
                     </div>
-                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <div class="flex items-center gap-2 w-full sm:w-auto flex-wrap">
+                        @if($order->status !== 'selesai')
+                            <form action="{{ route('order.confirm_receipt', $order->id) }}" method="POST" class="inline">
+                                @csrf
+                                <button type="submit" onclick="return confirm('Apakah pesanan ini telah sampai dan sesuai? Klik OK untuk mengonfirmasi selesai.')" class="px-4 py-2 bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all shadow-sm">
+                                    <span class="material-symbols-outlined text-base">verified</span>
+                                    Pesanan Diterima & Selesai
+                                </button>
+                            </form>
+                        @endif
                         @if($order->items->first() && $order->items->first()->product)
-                            <a href="{{ route('product.detail', $order->items->first()->product->id) }}" class="flex-1 sm:flex-initial px-4 py-2 border border-outline-variant text-on-surface hover:bg-surface-container-low rounded-xl font-bold text-xs text-center transition-all">
+                            <a href="{{ route('product.detail', $order->items->first()->product->id) }}" class="px-4 py-2 border border-outline-variant text-on-surface hover:bg-surface-container-low rounded-xl font-bold text-xs text-center transition-all">
                                 Lihat Produk
                             </a>
                         @endif
                         @if($order->store)
-                            <a href="{{ route('store_product', ['id' => $order->store->id, 'view' => 'all']) }}" class="flex-1 sm:flex-initial px-4 py-2 bg-primary text-on-primary rounded-xl font-bold text-xs text-center hover:brightness-110 transition-all">
+                            <a href="{{ route('store_product', ['id' => $order->store->id, 'view' => 'all']) }}" class="px-4 py-2 bg-primary text-on-primary rounded-xl font-bold text-xs text-center hover:brightness-110 transition-all">
                                 Kunjungi Toko
                             </a>
                         @endif
@@ -334,6 +389,63 @@
 </div>
 </footer>
 
+<!-- Modal Rating & Ulasan Produk -->
+<div id="review-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs hidden p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 relative">
+        <button type="button" onclick="closeReviewModal()" class="absolute top-4 right-4 text-secondary hover:text-on-surface">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+
+        <div class="flex items-center gap-3 pb-3 border-b border-surface-container">
+            <span class="material-symbols-outlined text-primary text-2xl">rate_review</span>
+            <div>
+                <h3 class="font-bold text-lg text-on-surface">Beri Ulasan & Rating Produk</h3>
+                <p class="text-xs text-secondary">Bagikan ulasan jujur Anda untuk membantu pembeli lain!</p>
+            </div>
+        </div>
+
+        <!-- Preview Product -->
+        <div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-xl border border-outline-variant/30">
+            <img id="modal-product-img" src="" class="w-12 h-12 object-cover rounded-lg flex-shrink-0" alt="Product Preview"/>
+            <h4 id="modal-product-title" class="font-bold text-sm text-on-surface line-clamp-2"></h4>
+        </div>
+
+        <form action="{{ route('reviews.store') }}" method="POST" class="space-y-4">
+            @csrf
+            <input type="hidden" name="product_id" id="modal-product-id" value="">
+            <input type="hidden" name="rating" id="modal-rating-input" value="5">
+
+            <!-- Star Rating Picker -->
+            <div class="space-y-1 text-center py-2">
+                <label class="text-xs font-bold text-secondary uppercase tracking-wider block">Pilih Rating Bintang</label>
+                <div class="flex items-center justify-center gap-2" id="star-picker">
+                    @for($s = 1; $s <= 5; $s++)
+                    <button type="button" onclick="setRating({{ $s }})" class="p-1 text-amber-400 hover:scale-125 transition-transform focus:outline-none">
+                        <span class="material-symbols-outlined text-3xl pointer-events-none" id="star-icon-{{ $s }}" style="font-variation-settings: 'FILL' 1;">star</span>
+                    </button>
+                    @endfor
+                </div>
+                <p class="text-xs font-bold text-primary mt-1" id="rating-label">Sangat Puas (5 Bintang)</p>
+            </div>
+
+            <!-- Comment Textarea -->
+            <div class="space-y-1">
+                <label class="text-xs font-bold text-on-surface">Ulasan Pengalaman Produk</label>
+                <textarea name="komentar" id="modal-komentar-input" required rows="3" class="w-full p-3 bg-surface border border-outline-variant rounded-xl text-sm font-body-sm focus:outline-none focus:border-primary transition-all" placeholder="Bagikan ulasan Anda mengenai kualitas barang, kesesuaian produk, dan pengiriman..."></textarea>
+            </div>
+
+            <div class="flex items-center justify-end gap-3 pt-2">
+                <button type="button" onclick="closeReviewModal()" class="px-4 py-2 border border-outline-variant text-on-surface hover:bg-surface-container-low rounded-xl text-xs font-bold">
+                    Batal
+                </button>
+                <button type="submit" class="px-6 py-2 bg-primary text-on-primary rounded-xl text-xs font-bold hover:brightness-110 transition-all shadow-sm">
+                    Kirim Ulasan & Rating
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
     function toggleSidebar() {
         const sidebar = document.getElementById('main-sidebar');
@@ -346,6 +458,46 @@
         const overlay = document.getElementById('sidebar-overlay');
         if (sidebar) sidebar.classList.remove('open');
         if (overlay) overlay.classList.remove('active');
+    }
+
+    function openReviewModal(productId, productTitle, productImg, currentRating, currentKomentar) {
+        document.getElementById('modal-product-id').value = productId;
+        document.getElementById('modal-product-title').innerText = productTitle;
+        document.getElementById('modal-product-img').src = productImg;
+        document.getElementById('modal-komentar-input').value = currentKomentar || '';
+        setRating(currentRating || 5);
+        document.getElementById('review-modal').classList.remove('hidden');
+    }
+
+    function closeReviewModal() {
+        document.getElementById('review-modal').classList.add('hidden');
+    }
+
+    function setRating(val) {
+        document.getElementById('modal-rating-input').value = val;
+        const labels = {
+            1: 'Kecewa (1 Bintang)',
+            2: 'Kurang Puas (2 Bintang)',
+            3: 'Cukup Baik (3 Bintang)',
+            4: 'Puas / Bagus (4 Bintang)',
+            5: 'Sangat Puas / Sempurna (5 Bintang)'
+        };
+        document.getElementById('rating-label').innerText = labels[val] || (val + ' Bintang');
+
+        for (let i = 1; i <= 5; i++) {
+            const icon = document.getElementById('star-icon-' + i);
+            if (icon) {
+                if (i <= val) {
+                    icon.style.fontVariationSettings = "'FILL' 1";
+                    icon.classList.remove('text-secondary');
+                    icon.classList.add('text-amber-400');
+                } else {
+                    icon.style.fontVariationSettings = "'FILL' 0";
+                    icon.classList.remove('text-amber-400');
+                    icon.classList.add('text-secondary');
+                }
+            }
+        }
     }
 </script>
 </body>

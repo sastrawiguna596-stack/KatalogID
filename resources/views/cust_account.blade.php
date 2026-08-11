@@ -159,19 +159,38 @@
 
 <!-- Top Navigation Bar -->
 <nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-4 md:px-margin-desktop py-4 bg-surface border-b border-outline-variant">
-<div class="flex items-center gap-3">
+<div class="flex items-center gap-4">
     <!-- Hamburger button (mobile) -->
     <button id="hamburger-btn" class="lg:hidden p-1 rounded-lg text-on-surface-variant hover:bg-surface-variant transition-colors" onclick="toggleSidebar()">
         <span class="material-symbols-outlined">menu</span>
     </button>
-    <span class="font-headline-md text-headline-md font-bold text-primary">Katalog IDN</span>
+    <a href="{{ route('home') }}" class="font-headline-md text-headline-md font-bold text-primary hover:opacity-90 transition-opacity">Katalog IDN</a>
 </div>
-<div class="flex items-center gap-3 md:gap-gutter">
-<button class="material-symbols-outlined text-on-surface-variant scale-95 active:scale-90 transition-transform">shopping_cart</button>
-<button class="material-symbols-outlined text-on-surface-variant scale-95 active:scale-90 transition-transform">notifications</button>
-<div class="w-8 h-8 rounded-full overflow-hidden border border-outline">
-<img class="w-full h-full object-cover" src="{{ Auth::user()->avatar ? asset(Auth::user()->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name ?? 'User') . '&background=7c5800&color=ffffff&size=128' }}" alt="{{ Auth::user()->name ?? 'User avatar' }}"/>
-</div>
+
+<div class="flex items-center gap-3">
+    <!-- Keranjang Belanja -->
+    @php
+        $cartCount = count(session('cart', []));
+    @endphp
+    <a href="{{ route('cart') }}" class="relative p-1.5 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-variant/60 transition-all flex items-center justify-center" title="Keranjang Belanja">
+        <span class="material-symbols-outlined text-2xl">shopping_cart</span>
+        @if($cartCount > 0)
+            <span class="absolute -top-1 -right-1 bg-primary text-on-primary font-bold text-[10px] w-5 h-5 rounded-full flex items-center justify-center shadow-xs animate-pulse">
+                {{ $cartCount }}
+            </span>
+        @endif
+    </a>
+
+    <!-- Notifikasi -->
+    <button type="button" onclick="alert('Belum ada notifikasi baru.')" class="relative p-1.5 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-variant/60 transition-all flex items-center justify-center" title="Notifikasi">
+        <span class="material-symbols-outlined text-2xl">notifications</span>
+        <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary ring-2 ring-surface"></span>
+    </button>
+
+    <!-- Avatar Profil -->
+    <a href="{{ route('cust_account') }}" class="w-8 h-8 rounded-full overflow-hidden border border-outline hover:ring-2 hover:ring-primary/40 transition-all ml-1" title="Profil Akun">
+        <img class="w-full h-full object-cover" src="{{ Auth::user()->avatar ? asset(Auth::user()->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name ?? 'User') . '&background=7c5800&color=ffffff&size=128' }}" alt="{{ Auth::user()->name ?? 'User avatar' }}"/>
+    </a>
 </div>
 </nav>
 
@@ -193,17 +212,20 @@
 </div>
 <nav class="flex-1 flex flex-col gap-1">
 <a class="flex items-center gap-3 px-3 py-2.5 text-on-primary-container bg-primary-container rounded-lg font-bold transition-all font-label-md text-label-md" href="{{ route('cust_account') }}" onclick="closeSidebar()">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span> Dashboard
-    </a>
-<a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('cust_recent_orders') }}" onclick="closeSidebar()">
-<span class="material-symbols-outlined">receipt_long</span> Orders
-    </a>
-<a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('cust_account_setting') }}" onclick="closeSidebar()">
-<span class="material-symbols-outlined">settings</span> Settings
-    </a>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span> Dashboard Profil
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('home') }}" onclick="closeSidebar()">
+<span class="material-symbols-outlined">home</span> Halaman Utama
+</a>
 <a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('shop') }}" onclick="closeSidebar()">
-<span class="material-symbols-outlined">storefront</span> Shop
-    </a>
+<span class="material-symbols-outlined">storefront</span> Katalog Produk
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('cust_recent_orders') }}" onclick="closeSidebar()">
+<span class="material-symbols-outlined">receipt_long</span> Daftar Pesanan Saya
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('cust_account_setting') }}" onclick="closeSidebar()">
+<span class="material-symbols-outlined">settings</span> Pengaturan Akun
+</a>
 </nav>
 <div class="mt-auto border-t border-outline-variant pt-4 flex flex-col gap-1">
 <a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('support') }}" onclick="closeSidebar()">

@@ -76,6 +76,7 @@ Route::middleware(['auth'])->group(function () {
     })->name('cust_account_setting');
 
     Route::get('/customer/orders', [OrderController::class, 'customerOrders'])->name('cust_recent_orders');
+    Route::post('/customer/orders/{id}/confirm', [OrderController::class, 'confirmReceipt'])->name('order.confirm_receipt');
 
     // Seller Dashboard & Management
     Route::get('/account', [OrderController::class, 'sellerDashboard'])->name('account');

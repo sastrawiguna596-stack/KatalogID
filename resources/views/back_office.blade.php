@@ -16,6 +16,18 @@
 </div>
 @endif
 
+@if(!empty($search))
+<div class="mb-stack-lg p-4 bg-primary-container/20 border border-primary/30 rounded-xl flex items-center justify-between gap-4">
+    <div class="flex items-center gap-2 text-on-surface font-bold text-sm">
+        <span class="material-symbols-outlined text-primary text-xl">search</span>
+        <span>Hasil Pencarian Admin untuk: <strong class="text-primary text-base font-bold">"{{ $search }}"</strong></span>
+    </div>
+    <a href="{{ route('admin.dashboard') }}" class="px-4 py-1.5 bg-surface border border-outline-variant rounded-lg text-xs font-bold text-on-surface hover:bg-surface-container-high transition-colors flex items-center gap-1">
+        <span class="material-symbols-outlined text-sm">close</span> Clear Search
+    </a>
+</div>
+@endif
+
 <!-- Platform Stat Cards Row -->
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-stack-lg">
     <div class="bg-surface border border-surface-variant rounded-xl p-4 flex items-center gap-4">

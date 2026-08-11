@@ -197,12 +197,30 @@
     </button>
     <span class="font-headline-md text-headline-md font-bold text-primary">Katalog IDN</span>
 </div>
-<div class="flex items-center gap-3 md:gap-gutter">
-<button class="material-symbols-outlined text-on-surface-variant scale-95 active:scale-90 transition-transform">shopping_cart</button>
-<button class="material-symbols-outlined text-on-surface-variant scale-95 active:scale-90 transition-transform">notifications</button>
-<div class="w-8 h-8 rounded-full overflow-hidden border border-outline">
-<img class="w-full h-full object-cover" src="{{ Auth::user()->avatar ? asset(Auth::user()->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name ?? 'User') . '&background=7c5800&color=ffffff&size=128' }}" alt="{{ Auth::user()->name ?? 'User avatar' }}"/>
-</div>
+<div class="flex items-center gap-3">
+    <!-- Keranjang Belanja -->
+    @php
+        $cartCount = count(session('cart', []));
+    @endphp
+    <a href="{{ route('cart') }}" class="relative p-1.5 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-variant/60 transition-all flex items-center justify-center" title="Keranjang Belanja">
+        <span class="material-symbols-outlined text-2xl">shopping_cart</span>
+        @if($cartCount > 0)
+            <span class="absolute -top-1 -right-1 bg-primary text-on-primary font-bold text-[10px] w-5 h-5 rounded-full flex items-center justify-center shadow-xs animate-pulse">
+                {{ $cartCount }}
+            </span>
+        @endif
+    </a>
+
+    <!-- Notifikasi -->
+    <button type="button" onclick="alert('Belum ada notifikasi baru.')" class="relative p-1.5 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-variant/60 transition-all flex items-center justify-center" title="Notifikasi">
+        <span class="material-symbols-outlined text-2xl">notifications</span>
+        <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary ring-2 ring-surface"></span>
+    </button>
+
+    <!-- Avatar Profil -->
+    <a href="{{ route('account') }}" class="w-8 h-8 rounded-full overflow-hidden border border-outline hover:ring-2 hover:ring-primary/40 transition-all ml-1" title="Profil Akun Toko">
+        <img class="w-full h-full object-cover" src="{{ Auth::user()->avatar ? asset(Auth::user()->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name ?? 'User') . '&background=7c5800&color=ffffff&size=128' }}" alt="{{ Auth::user()->name ?? 'User avatar' }}"/>
+    </a>
 </div>
 </nav>
 
@@ -224,32 +242,39 @@
 </div>
 <nav class="flex-1 flex flex-col gap-1">
 <a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('account') }}" onclick="closeSidebar()">
-<span class="material-symbols-outlined">dashboard</span> Dashboard
-    </a>
+<span class="material-symbols-outlined">dashboard</span> Dashboard Toko
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('home') }}" onclick="closeSidebar()">
+<span class="material-symbols-outlined">home</span> Halaman Utama
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('shop') }}" onclick="closeSidebar()">
+<span class="material-symbols-outlined">storefront</span> Katalog Produk
+</a>
 <a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('recent_orders') }}" onclick="closeSidebar()">
-<span class="material-symbols-outlined">receipt_long</span> Orders
-    </a>
+<span class="material-symbols-outlined">receipt_long</span> Orders Toko
+</a>
 <a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('inventories') }}" onclick="closeSidebar()">
-<span class="material-symbols-outlined">inventory</span> Inventory
-    </a>
+<span class="material-symbols-outlined">inventory</span> Inventory Produk
+</a>
 <a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md font-bold" href="{{ route('seller.store') }}" onclick="closeSidebar()">
-<span class="material-symbols-outlined">storefront</span> My Store
-    </a>
+<span class="material-symbols-outlined">storefront</span> Halaman Toko Saya
+</a>
+<!-- Active State: Sales Analytics -->
 <a class="flex items-center gap-3 px-3 py-2.5 text-on-primary-container bg-primary-container rounded-lg font-bold transition-all font-label-md text-label-md" href="{{ route('sales_analytics') }}" onclick="closeSidebar()">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">analytics</span> Sales Analytic
-    </a>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">analytics</span> Analisis Penjualan
+</a>
 <a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('account_setting') }}" onclick="closeSidebar()">
-<span class="material-symbols-outlined">settings</span> Settings
-    </a>
+<span class="material-symbols-outlined">settings</span> Pengaturan Toko
+</a>
 </nav>
 <div class="mt-auto border-t border-outline-variant pt-4 flex flex-col gap-1">
 <a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all font-label-md text-label-md" href="{{ route('support') }}" onclick="closeSidebar()">
-<span class="material-symbols-outlined">help_outline</span> Support
-    </a>
+<span class="material-symbols-outlined">help_outline</span> Bantuan
+</a>
 <form action="{{ route('logout') }}" method="POST" class="w-full">
     @csrf
     <button type="submit" class="w-full flex items-center gap-3 px-3 py-2.5 text-error hover:bg-error-container rounded-lg transition-all font-label-md text-label-md font-bold">
-        <span class="material-symbols-outlined">logout</span> Sign Out
+        <span class="material-symbols-outlined">logout</span> Keluar Akun
     </button>
 </form>
 </div>

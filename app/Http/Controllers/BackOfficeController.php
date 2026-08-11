@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 class BackOfficeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $settings = \App\Models\SiteSetting::pluck('value', 'key')->toArray();
 
@@ -18,16 +18,69 @@ class BackOfficeController extends Controller
             'total_revenue' => \App\Models\Order::where('status_pembayaran', 'paid')->sum('total_harga') ?: \App\Models\Order::sum('total_harga'),
         ];
 
-        $recentStores = \App\Models\Store::with('user')->latest()->take(5)->get();
-        $recentProducts = \App\Models\Product::with(['category', 'store'])->latest()->take(5)->get();
+        $search = trim($request->input('search', ''));
 
-        return view('back_office', compact('settings', 'stats', 'recentStores', 'recentProducts'));
+        $recentStoresQuery = \App\Models\Store::with('user');
+        $recentProductsQuery = \App\Models\Product::with(['category', 'store']);
+        $matchingUsers = collect();
+        $matchingCategories = collect();
+
+        if (!empty($search)) {
+            $term = '%' . $search . '%';
+
+            $recentStoresQuery->where(function($q) use ($term, $search) {
+                $q->where('id', $search)
+                  ->orWhere('nama_toko', 'like', $term)
+                  ->orWhereHas('user', function($uQ) use ($term) {
+                      $uQ->where('name', 'like', $term)->orWhere('email', 'like', $term);
+                  });
+            });
+
+            $recentProductsQuery->where(function($q) use ($term, $search) {
+                $q->where('id', $search)
+                  ->orWhere('nama_produk', 'like', $term)
+                  ->orWhereHas('category', function($cQ) use ($term) {
+                      $cQ->where('nama_kategori', 'like', $term);
+                  })
+                  ->orWhereHas('store', function($sQ) use ($term) {
+                      $sQ->where('nama_toko', 'like', $term);
+                  });
+            });
+
+            $matchingUsers = \App\Models\User::where('id', $search)
+                ->orWhere('name', 'like', $term)
+                ->orWhere('email', 'like', $term)
+                ->latest()->take(10)->get();
+
+            $matchingCategories = \App\Models\Category::where('id', $search)
+                ->orWhere('nama_kategori', 'like', $term)
+                ->get();
+        }
+
+        $recentStores = $recentStoresQuery->latest()->take(10)->get();
+        $recentProducts = $recentProductsQuery->latest()->take(10)->get();
+
+        return view('back_office', compact('settings', 'stats', 'recentStores', 'recentProducts', 'matchingUsers', 'matchingCategories', 'search'));
     }
 
-    public function stores()
+    public function stores(Request $request)
     {
-        $stores = \App\Models\Store::with('user')->paginate(15);
-        return view('admin.stores', compact('stores'));
+        $search = trim($request->input('search', ''));
+        $query = \App\Models\Store::with('user');
+
+        if (!empty($search)) {
+            $term = '%' . $search . '%';
+            $query->where(function($q) use ($term, $search) {
+                $q->where('id', $search)
+                  ->orWhere('nama_toko', 'like', $term)
+                  ->orWhereHas('user', function($uQ) use ($term) {
+                      $uQ->where('name', 'like', $term)->orWhere('email', 'like', $term);
+                  });
+            });
+        }
+
+        $stores = $query->paginate(15)->appends(['search' => $search]);
+        return view('admin.stores', compact('stores', 'search'));
     }
 
     public function toggleStoreStatus($id)
@@ -144,10 +197,27 @@ class BackOfficeController extends Controller
     }
 
     // --- INVENTORY ---
-    public function inventory()
+    public function inventory(Request $request)
     {
-        $products = \App\Models\Product::with('store', 'category')->paginate(20);
-        return view('admin.inventory', compact('products'));
+        $search = trim($request->input('search', ''));
+        $query = \App\Models\Product::with('store', 'category');
+
+        if (!empty($search)) {
+            $term = '%' . $search . '%';
+            $query->where(function($q) use ($term, $search) {
+                $q->where('id', $search)
+                  ->orWhere('nama_produk', 'like', $term)
+                  ->orWhereHas('category', function($cQ) use ($term) {
+                      $cQ->where('nama_kategori', 'like', $term);
+                  })
+                  ->orWhereHas('store', function($sQ) use ($term) {
+                      $sQ->where('nama_toko', 'like', $term);
+                  });
+            });
+        }
+
+        $products = $query->paginate(20)->appends(['search' => $search]);
+        return view('admin.inventory', compact('products', 'search'));
     }
 
     public function destroyProduct($id)
@@ -158,9 +228,27 @@ class BackOfficeController extends Controller
     }
 
     // --- ORDERS ---
-    public function orders()
+    public function orders(Request $request)
     {
-        $orders = \App\Models\Order::with('user', 'store')->orderBy('created_at', 'desc')->paginate(20);
-        return view('admin.orders', compact('orders'));
+        $search = trim($request->input('search', ''));
+        $query = \App\Models\Order::with('user', 'store');
+
+        if (!empty($search)) {
+            $term = '%' . $search . '%';
+            $query->where(function($q) use ($term, $search) {
+                $q->where('id', $search)
+                  ->orWhere('status_pembayaran', 'like', $term)
+                  ->orWhere('status_pengiriman', 'like', $term)
+                  ->orWhereHas('user', function($uQ) use ($term) {
+                      $uQ->where('name', 'like', $term)->orWhere('email', 'like', $term);
+                  })
+                  ->orWhereHas('store', function($sQ) use ($term) {
+                      $sQ->where('nama_toko', 'like', $term);
+                  });
+            });
+        }
+
+        $orders = $query->orderBy('created_at', 'desc')->paginate(20)->appends(['search' => $search]);
+        return view('admin.orders', compact('orders', 'search'));
     }
 }

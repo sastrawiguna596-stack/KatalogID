@@ -20,16 +20,20 @@ class ReviewController extends Controller
         $request->validate([
             'rating' => 'required|integer|min:1|max:5',
             'komentar' => 'required|string|max:1000',
-            'product_id' => 'nullable|exists:products,id',
+            'product_id' => 'required|exists:products,id',
         ]);
 
-        Review::create([
-            'user_id' => Auth::id(),
-            'product_id' => $request->filled('product_id') ? $request->product_id : null,
-            'rating' => (int) $request->rating,
-            'komentar' => $request->komentar,
-        ]);
+        Review::updateOrCreate(
+            [
+                'user_id' => Auth::id(),
+                'product_id' => $request->product_id,
+            ],
+            [
+                'rating' => (int) $request->rating,
+                'komentar' => $request->komentar,
+            ]
+        );
 
-        return back()->with('success', 'Terima kasih! Ulasan Anda berhasil dikirim.');
+        return back()->with('success', 'Terima kasih! Ulasan & rating produk Anda telah berhasil disimpan.');
     }
 }

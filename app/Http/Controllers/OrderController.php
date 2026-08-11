@@ -101,4 +101,17 @@ class OrderController extends Controller
 
         return view('recent_orders_cust', compact('orders'));
     }
+
+    /**
+     * Konfirmasi Pesanan Diterima oleh Customer
+     */
+    public function confirmReceipt($id)
+    {
+        $order = Order::where('user_id', Auth::id())->findOrFail($id);
+        $order->status_pembayaran = 'paid';
+        $order->status = 'selesai';
+        $order->save();
+
+        return redirect()->back()->with('success', 'Pesanan #ORD-' . $order->id . ' telah dikonfirmasi selesai! Silakan berikan ulasan & rating produk di bawah.');
+    }
 }

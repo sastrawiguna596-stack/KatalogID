@@ -3,195 +3,9 @@
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Luminous Commerce - Master Admin</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+@vite(['resources/css/app.css', 'resources/js/app.js'])
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Plus+Jakarta+Sans:wght@400;600&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-        tailwind.config = {
-          darkMode: "class",
-          theme: {
-            extend: {
-              "colors": {
-                      "primary-fixed-dim": "#ffba20",
-                      "on-secondary-fixed-variant": "#474646",
-                      "surface-container": "#efeded",
-                      "surface-tint": "#7c5800",
-                      "on-tertiary-fixed": "#1a1c1b",
-                      "surface-dim": "#dbdad9",
-                      "on-primary-fixed": "#271900",
-                      "surface-container-high": "#e9e8e7",
-                      "on-primary-fixed-variant": "#5e4200",
-                      "on-secondary": "#ffffff",
-                      "on-tertiary": "#ffffff",
-                      "surface": "#fbf9f8",
-                      "on-secondary-fixed": "#1c1b1b",
-                      "tertiary-fixed": "#e2e3e1",
-                      "surface-variant": "#e4e2e2",
-                      "outline-variant": "#d5c4ab",
-                      "secondary-container": "#e5e2e1",
-                      "background": "#fbf9f8",
-                      "primary-container": "#ffb800",
-                      "on-secondary-container": "#656464",
-                      "on-error-container": "#93000a",
-                      "on-primary": "#ffffff",
-                      "inverse-surface": "#303031",
-                      "surface-container-lowest": "#ffffff",
-                      "error-container": "#ffdad6",
-                      "on-primary-container": "#6b4c00",
-                      "on-tertiary-container": "#505250",
-                      "surface-bright": "#fbf9f8",
-                      "primary-fixed": "#ffdea8",
-                      "on-surface-variant": "#514532",
-                      "surface-container-low": "#f5f3f3",
-                      "on-background": "#1b1c1c",
-                      "surface-container-highest": "#e4e2e2",
-                      "secondary": "#5f5e5e",
-                      "tertiary-container": "#c4c5c3",
-                      "error": "#ba1a1a",
-                      "secondary-fixed": "#e5e2e1",
-                      "on-tertiary-fixed-variant": "#454746",
-                      "primary": "#7c5800",
-                      "tertiary": "#5d5f5d",
-                      "outline": "#837560",
-                      "tertiary-fixed-dim": "#c6c7c5",
-                      "on-surface": "#1b1c1c",
-                      "inverse-primary": "#ffba20",
-                      "secondary-fixed-dim": "#c8c6c5",
-                      "inverse-on-surface": "#f2f0f0",
-                      "on-error": "#ffffff"
-              },
-              "borderRadius": {
-                      "DEFAULT": "0.25rem",
-                      "lg": "0.5rem",
-                      "xl": "0.75rem",
-                      "full": "9999px"
-              },
-              "spacing": {
-                      "stack-md": "24px",
-                      "margin-mobile": "16px",
-                      "base": "8px",
-                      "margin-desktop": "40px",
-                      "stack-sm": "12px",
-                      "container-max": "1280px",
-                      "stack-lg": "48px",
-                      "gutter": "24px"
-              },
-              "fontFamily": {
-                      "body-sm": [
-                              "Plus Jakarta Sans"
-                      ],
-                      "headline-md": [
-                              "Hanken Grotesk"
-                      ],
-                      "headline-xl-mobile": [
-                              "Hanken Grotesk"
-                      ],
-                      "body-lg": [
-                              "Plus Jakarta Sans"
-                      ],
-                      "body-md": [
-                              "Plus Jakarta Sans"
-                      ],
-                      "headline-sm": [
-                              "Hanken Grotesk"
-                      ],
-                      "label-md": [
-                              "Hanken Grotesk"
-                      ],
-                      "headline-xl": [
-                              "Hanken Grotesk"
-                      ],
-                      "headline-lg": [
-                              "Hanken Grotesk"
-                      ],
-                      "headline-lg-mobile": [
-                              "Hanken Grotesk"
-                      ]
-              },
-              "fontSize": {
-                      "body-sm": [
-                              "14px",
-                              {
-                                      "lineHeight": "20px",
-                                      "fontWeight": "400"
-                              }
-                      ],
-                      "headline-md": [
-                              "24px",
-                              {
-                                      "lineHeight": "32px",
-                                      "fontWeight": "600"
-                              }
-                      ],
-                      "headline-xl-mobile": [
-                              "32px",
-                              {
-                                      "lineHeight": "40px",
-                                      "fontWeight": "700"
-                              }
-                      ],
-                      "body-lg": [
-                              "18px",
-                              {
-                                      "lineHeight": "28px",
-                                      "fontWeight": "400"
-                              }
-                      ],
-                      "body-md": [
-                              "16px",
-                              {
-                                      "lineHeight": "24px",
-                                      "fontWeight": "400"
-                              }
-                      ],
-                      "headline-sm": [
-                              "20px",
-                              {
-                                      "lineHeight": "28px",
-                                      "fontWeight": "600"
-                              }
-                      ],
-                      "label-md": [
-                              "14px",
-                              {
-                                      "lineHeight": "16px",
-                                      "letterSpacing": "0.05em",
-                                      "fontWeight": "600"
-                              }
-                      ],
-                      "headline-xl": [
-                              "48px",
-                              {
-                                      "lineHeight": "56px",
-                                      "letterSpacing": "-0.02em",
-                                      "fontWeight": "700"
-                              }
-                      ],
-                      "headline-lg": [
-                              "32px",
-                              {
-                                      "lineHeight": "40px",
-                                      "letterSpacing": "-0.01em",
-                                      "fontWeight": "700"
-                              }
-                      ],
-                      "headline-lg-mobile": [
-                              "28px",
-                              {
-                                      "lineHeight": "36px",
-                                      "fontWeight": "700"
-                              }
-                      ]
-              }
-            }
-          }
-        }
-    </script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Plus+Jakarta+Sans:wght@400;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <style>
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
@@ -285,23 +99,14 @@
     <span class="material-symbols-outlined text-[28px]">menu</span>
 </button>
 <h1 class="font-headline-lg text-headline-sm md:text-headline-lg font-bold text-primary whitespace-nowrap">Katalog IDN</h1>
-<!-- Search Bar Placeholder Left -->
-<div class="relative w-full max-w-lg hidden lg:block ml-8">
-<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
-<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-surface-container rounded-lg focus:outline-none focus:border-on-surface-variant focus:ring-1 focus:ring-on-surface-variant font-body-sm text-body-sm transition-all text-on-surface placeholder:text-outline-variant" placeholder="Cari ID, toko, atau nama pengguna..." type="text"/>
-</div>
 </div>
 <div class="flex items-center gap-stack-md">
 <nav class="hidden lg:flex items-center gap-stack-sm">
 <a class="text-on-surface-variant font-medium hover:text-primary transition-colors font-label-md text-label-md px-2 py-1" href="{{ route('home') }}">Halaman Depan</a>
 <a class="text-on-surface-variant font-medium hover:text-primary transition-colors font-label-md text-label-md px-2 py-1" href="{{ route('shop') }}">Katalog Produk</a>
-<a class="text-on-surface-variant font-medium hover:text-primary transition-colors font-label-md text-label-md px-2 py-1" href="{{ route('admin.dashboard') }}">Dashboard</a>
 </nav>
 <div class="flex items-center gap-3 md:ml-4 md:border-l border-surface-container md:pl-4">
-<button class="hidden md:flex text-on-surface-variant hover:text-primary transition-colors w-10 h-10 items-center justify-center rounded-full hover:bg-surface-container-low">
-<span class="material-symbols-outlined">notifications</span>
-</button>
-<a href="{{ route('admin.dashboard') }}" class="text-on-surface-variant hover:text-primary transition-colors w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-low">
+<a href="{{ route('admin.dashboard') }}" class="text-on-surface-variant hover:text-primary transition-colors w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-low" title="Profil Admin">
 <span class="material-symbols-outlined">account_circle</span>
 </a>
 </div>

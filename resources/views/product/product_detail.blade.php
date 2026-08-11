@@ -200,15 +200,19 @@
             <a class="hover:text-primary transition-colors" href="{{ route('shop') }}">{{ is_array($product) ? ($product['category'] ?? '') : ($product->category->nama_kategori ?? 'Umum') }}</a>
         </nav>
         <h2 class="font-headline-xl text-headline-xl text-on-surface">{{ is_array($product) ? ($product['title'] ?? '') : $product->nama_produk }}</h2>
-        <div class="flex items-center gap-4">
+        @php
+            $prodModel = is_object($product) ? $product : null;
+            $reviewsList = $prodModel && isset($prodModel->reviews) ? $prodModel->reviews : collect();
+            $reviewsCount = $reviewsList->count();
+            $avgRating = $reviewsCount > 0 ? round($reviewsList->avg('rating'), 1) : 5.0;
+        @endphp
+        <div class="flex items-center gap-2">
             <div class="flex text-amber-500">
-                <span class="material-symbols-outlined filled-icon">star</span>
-                <span class="material-symbols-outlined filled-icon">star</span>
-                <span class="material-symbols-outlined filled-icon">star</span>
-                <span class="material-symbols-outlined filled-icon">star</span>
-                <span class="material-symbols-outlined">star_half</span>
+                @for($s = 1; $s <= 5; $s++)
+                    <span class="material-symbols-outlined text-base" style="font-variation-settings: 'FILL' {{ $s <= round($avgRating) ? 1 : 0 }};">star</span>
+                @endfor
             </div>
-            <span class="font-body-sm text-body-sm text-on-secondary-container">4.8 (124 ulasan)</span>
+            <span class="font-body-sm text-body-sm text-on-secondary-container font-bold">{{ number_format($avgRating, 1) }} ({{ $reviewsCount }} ulasan)</span>
         </div>
     </div>
     <div class="flex items-baseline gap-4">
@@ -365,15 +369,14 @@
 <!-- Detail Tabs Section -->
 <section class="mt-stack-lg border-t border-outline-variant pt-stack-lg">
 <div class="flex gap-gutter border-b border-outline-variant overflow-x-auto no-scrollbar">
-<button class="pb-4 font-label-md text-label-md uppercase tracking-widest tab-active whitespace-nowrap">Deskripsi Produk</button>
-<button class="pb-4 font-label-md text-label-md uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors whitespace-nowrap">Spesifikasi</button>
-<button class="pb-4 font-label-md text-label-md uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors whitespace-nowrap">Ulasan ({{ $product['reviews_count'] }})</button>
+<button class="pb-4 font-label-md text-label-md uppercase tracking-widest tab-active whitespace-nowrap">Deskripsi & Ulasan</button>
+<button class="pb-4 font-label-md text-label-md uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors whitespace-nowrap">Ulasan ({{ $reviewsCount }})</button>
 </div>
-<div class="py-stack-md max-w-3xl">
+<div class="py-stack-md max-w-3xl space-y-6">
 <div class="flex flex-col gap-stack-sm">
-<h3 class="font-headline-md text-headline-md">{{ $product['title'] }}</h3>
+<h3 class="font-headline-md text-headline-md">{{ is_array($product) ? ($product['title'] ?? '') : $product->nama_produk }}</h3>
 <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
-    {{ $product['description'] }}
+    {{ is_array($product) ? ($product['description'] ?? '') : ($product->deskripsi ?? 'Produk lokal unggulan dari UMKM Indonesia.') }}
 </p>
 <ul class="list-disc pl-5 font-body-md text-body-md text-on-surface-variant flex flex-col gap-2 pt-2">
 <li>Bahan kualitas terbaik buatan pengrajin lokal</li>
@@ -381,6 +384,43 @@
 <li>Desain modern cocok untuk penggunaan sehari-hari</li>
 <li>Garansi kualitas Katalog IDN</li>
 </ul>
+</div>
+
+<!-- Customer Reviews List -->
+<div class="pt-6 border-t border-surface-container space-y-4">
+    <h3 class="font-headline-md text-xl font-bold text-on-surface flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary">rate_review</span>
+        Ulasan & Rating Pembeli ({{ $reviewsCount }})
+    </h3>
+    @if($reviewsCount > 0)
+        <div class="space-y-4">
+            @foreach($reviewsList as $rev)
+                <div class="p-4 bg-white rounded-xl border border-surface-container-low shadow-xs space-y-2">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <img src="{{ $rev->user->avatar ? asset($rev->user->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode($rev->user->name ?? 'User') . '&background=7c5800&color=ffffff&size=128' }}" class="w-8 h-8 rounded-full object-cover border border-outline-variant" alt="Avatar"/>
+                            <div>
+                                <h4 class="font-bold text-xs text-on-surface">{{ $rev->user->name ?? 'Pembeli Katalog IDN' }}</h4>
+                                <span class="text-[11px] text-secondary">{{ $rev->created_at ? $rev->created_at->format('d M Y') : '-' }}</span>
+                            </div>
+                        </div>
+                        <div class="flex text-amber-400">
+                            @for($s = 1; $s <= 5; $s++)
+                                <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' {{ $s <= $rev->rating ? 1 : 0 }};">star</span>
+                            @endfor
+                        </div>
+                    </div>
+                    <p class="text-sm font-body-sm text-on-surface leading-relaxed pt-1">
+                        "{{ $rev->komentar }}"
+                    </p>
+                </div>
+            @endforeach
+        </div>
+    @else
+        <div class="p-6 bg-surface-container-low rounded-xl text-center text-xs text-secondary italic">
+            Belum ada ulasan untuk produk ini. Pembeli yang telah mengonfirmasi pesanan selesai dapat memberikan rating & ulasan pertama!
+        </div>
+    @endif
 </div>
 </div>
 </section>

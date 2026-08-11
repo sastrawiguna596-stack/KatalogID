@@ -181,10 +181,6 @@
 <!-- Top Navigation Shell (from JSON) -->
 <header class="fixed top-0 right-0 left-64 h-16 bg-surface border-b border-outline-variant flex items-center justify-between px-margin-desktop z-40">
 <div class="flex items-center flex-1 max-w-xl">
-<div class="relative w-full group">
-<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary group-focus-within:text-primary transition-colors">search</span>
-<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-full text-body-sm focus:ring-2 focus:ring-primary-container transition-all" placeholder="Search resources..." type="text"/>
-</div>
 </div>
 <div class="flex items-center gap-stack-md">
 <button class="p-2 text-secondary hover:bg-surface-container-low rounded-full transition-colors relative">

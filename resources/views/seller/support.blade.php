@@ -151,10 +151,7 @@
     </a>
 
     <!-- Notifikasi -->
-    <button type="button" onclick="alert('Belum ada notifikasi baru.')" class="relative p-1.5 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-variant/60 transition-all flex items-center justify-center" title="Notifikasi">
-        <span class="material-symbols-outlined text-2xl">notifications</span>
-        <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary ring-2 ring-surface"></span>
-    </button>
+    @include('partials.notification_bell')
 
     <!-- Avatar Profil -->
     <a href="{{ route('account') }}" class="w-8 h-8 rounded-full overflow-hidden border border-outline hover:ring-2 hover:ring-primary/40 transition-all ml-1" title="Profil Akun Toko">
@@ -438,18 +435,40 @@
         if (overlay) overlay.classList.remove('active');
     }
 
-    function handleSupportSubmit(e) {
+    async function handleSupportSubmit(e) {
         e.preventDefault();
         const alertBox = document.getElementById('ticket-success-alert');
         const form = document.getElementById('support-ticket-form');
-        
-        if (alertBox) {
-            alertBox.classList.remove('hidden');
+        const subjek = document.getElementById('ticket-subject').value;
+        const kategori = document.getElementById('ticket-category').value;
+        const pesan = document.getElementById('ticket-message').value;
+
+        try {
+            const response = await fetch('{{ route('support.ticket.store') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ subjek, kategori, pesan })
+            });
+            const data = await response.json();
+            if (data.success) {
+                if (alertBox) {
+                    alertBox.classList.remove('hidden');
+                }
+                if (form) {
+                    form.reset();
+                }
+                window.scrollTo({ top: alertBox.offsetTop - 100, behavior: 'smooth' });
+            } else {
+                alert('Gagal mengirim tiket bantuan. Silakan coba lagi.');
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Terjadi kesalahan saat mengirim pesan.');
         }
-        if (form) {
-            form.reset();
-        }
-        window.scrollTo({ top: alertBox.offsetTop - 100, behavior: 'smooth' });
     }
 </script>
 </body>

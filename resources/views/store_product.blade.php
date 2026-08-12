@@ -239,13 +239,19 @@
                     <input name="search" value="{{ request('search') }}" class="w-full pl-10 pr-4 py-2.5 bg-surface-container-low border border-outline-variant rounded-xl text-body-sm focus:outline-none focus:border-primary transition-all" placeholder="Cari produk di {{ $store->nama_toko }}..." type="text"/>
                 </div>
 
-                <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
-                    <span class="text-xs font-bold text-secondary uppercase tracking-wider whitespace-nowrap">Urutkan:</span>
-                    <select name="sort" onchange="this.form.submit()" class="bg-surface-container-low border border-outline-variant rounded-xl px-4 py-2 text-xs font-bold text-on-surface focus:ring-primary focus:border-primary">
-                        <option value="" {{ !request('sort') ? 'selected' : '' }}>Terbaru</option>
-                        <option value="price_low" {{ request('sort') == 'price_low' ? 'selected' : '' }}>Harga: Terendah</option>
-                        <option value="price_high" {{ request('sort') == 'price_high' ? 'selected' : '' }}>Harga: Tertinggi</option>
-                    </select>
+                <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                    <button type="button" onclick="toggleSidebar()" class="lg:hidden flex items-center justify-center gap-2 bg-surface-container-low border border-outline-variant text-on-surface px-3 py-2 rounded-xl font-bold text-xs hover:bg-surface-variant transition-all flex-shrink-0">
+                        <span class="material-symbols-outlined text-lg">menu</span>
+                        <span>Kategori Toko</span>
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-secondary uppercase tracking-wider whitespace-nowrap">Urutkan:</span>
+                        <select name="sort" onchange="this.form.submit()" class="bg-surface-container-low border border-outline-variant rounded-xl px-4 py-2 text-xs font-bold text-on-surface focus:ring-primary focus:border-primary">
+                            <option value="" {{ !request('sort') ? 'selected' : '' }}>Terbaru</option>
+                            <option value="price_low" {{ request('sort') == 'price_low' ? 'selected' : '' }}>Harga: Terendah</option>
+                            <option value="price_high" {{ request('sort') == 'price_high' ? 'selected' : '' }}>Harga: Tertinggi</option>
+                        </select>
+                    </div>
                 </div>
             </form>
 

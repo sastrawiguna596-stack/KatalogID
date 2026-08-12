@@ -33,9 +33,11 @@
                 <span class="ml-auto bg-primary text-white text-xs font-bold px-2 py-0.5 rounded-full">{{ $cartCount }}</span>
             @endif
         </a>
+        @if(Auth::check() && Auth::user()->role === 'seller')
         <a href="{{ route('seller.store') }}" class="flex items-center gap-3 px-3.5 py-3 rounded-xl font-label-md text-label-md transition-all {{ $activeTab === 'store' ? 'text-on-primary-container bg-primary-container font-bold' : 'text-on-surface-variant hover:bg-surface-variant' }}" onclick="closeNavDrawer()">
             <span class="material-symbols-outlined" style="{{ $activeTab === 'store' ? 'font-variation-settings:\'FILL\' 1' : '' }}">store</span> Toko Saya
         </a>
+        @endif
         <a href="{{ Auth::check() && Auth::user()->role === 'seller' ? route('account') : route('cust_account') }}" class="flex items-center gap-3 px-3.5 py-3 rounded-xl font-label-md text-label-md transition-all {{ $activeTab === 'profile' ? 'text-on-primary-container bg-primary-container font-bold' : 'text-on-surface-variant hover:bg-surface-variant' }}" onclick="closeNavDrawer()">
             <span class="material-symbols-outlined" style="{{ $activeTab === 'profile' ? 'font-variation-settings:\'FILL\' 1' : '' }}">person</span> Akun Saya
         </a>
@@ -81,43 +83,49 @@
             <a href="{{ route('shop') }}" class="font-label-md text-label-md font-bold transition-all py-1 {{ $activeTab === 'shop' ? 'text-primary border-b-2 border-primary' : 'text-secondary hover:text-primary' }}">
                 Katalog Produk
             </a>
+            @if(Auth::check() && Auth::user()->role === 'seller')
             <a href="{{ route('seller.store') }}" class="font-label-md text-label-md font-bold transition-all py-1 {{ $activeTab === 'store' ? 'text-primary border-b-2 border-primary' : 'text-secondary hover:text-primary' }}">
                 Toko
             </a>
+            @endif
         </nav>
 
         <!-- Right: Search, Cart & User Action Controls -->
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2">
+            
             <!-- Search Button -->
-            <a href="{{ route('shop') }}" class="p-2 text-secondary hover:text-primary hover:bg-surface-variant rounded-full transition-all" title="Cari Produk">
-                <span class="material-symbols-outlined text-xl">search</span>
+            <a href="{{ route('shop') }}" class="p-1.5 text-secondary hover:text-primary hover:bg-surface-variant rounded-full transition-all" title="Cari Produk">
+                <span class="material-symbols-outlined text-[20px]">search</span>
             </a>
 
             <!-- Cart Icon & Badge -->
-            <a href="{{ route('cart') }}" class="relative p-2 text-secondary hover:text-primary hover:bg-surface-variant rounded-full transition-all" title="Keranjang Belanja">
-                <span class="material-symbols-outlined text-xl">shopping_cart</span>
+            <a href="{{ route('cart') }}" class="relative p-1.5 text-secondary hover:text-primary hover:bg-surface-variant rounded-full transition-all" title="Keranjang Belanja">
+                <span class="material-symbols-outlined text-[20px]">shopping_cart</span>
                 @if($cartCount > 0)
-                    <span class="absolute top-0 right-0 bg-primary text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full shadow-xs">{{ $cartCount }}</span>
+                    <span class="absolute top-0 right-0 bg-primary text-white text-[9px] font-bold w-3.5 h-3.5 flex items-center justify-center rounded-full shadow-xs">{{ $cartCount }}</span>
                 @endif
             </a>
 
+            <!-- Notification Bell Icon -->
+            @include('partials.notification_bell')
+
             <!-- Auth Buttons -->
             @auth
-            <div class="flex items-center gap-2 pl-2 border-l border-outline-variant">
-                <a href="{{ Auth::user()->role === 'seller' ? route('account') : (Auth::user()->role === 'admin' ? route('admin.dashboard') : route('cust_account')) }}" class="flex items-center gap-2 p-1.5 rounded-full hover:bg-surface-variant transition-colors" title="Dashboard Saya">
-                    <div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant shadow-xs">
+            <div class="flex items-center gap-2 pl-2 ml-1 border-l border-outline-variant">
+                <a href="{{ Auth::user()->role === 'seller' ? route('account') : (Auth::user()->role === 'admin' ? route('admin.dashboard') : route('cust_account')) }}" class="flex items-center gap-2 p-1 rounded-full hover:bg-surface-variant transition-colors" title="Dashboard Saya">
+                    <div class="w-7 h-7 rounded-full overflow-hidden border border-outline-variant shadow-xs">
                         <img src="{{ Auth::user()->avatar ? asset(Auth::user()->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) . '&background=7c5800&color=ffffff&size=128' }}" class="w-full h-full object-cover" alt="{{ Auth::user()->name }}">
                     </div>
                 </a>
                 <form action="{{ route('logout') }}" method="POST" class="inline">
                     @csrf
-                    <button type="submit" class="p-2 text-error hover:bg-error-container/40 rounded-full transition-colors" title="Keluar Akun">
-                        <span class="material-symbols-outlined text-xl">logout</span>
+                    <button type="submit" class="p-1.5 text-error hover:bg-error-container/40 rounded-full transition-colors" title="Keluar Akun">
+                        <span class="material-symbols-outlined text-[20px]">logout</span>
                     </button>
                 </form>
             </div>
             @else
-            <a href="{{ route('login') }}" class="font-label-md text-xs font-bold text-primary border-2 border-primary px-4 py-1.5 rounded-full hover:bg-primary hover:text-white transition-all shadow-xs">
+            <a href="{{ route('login') }}" class="font-label-md text-[11px] font-bold text-primary border-2 border-primary px-3 py-1 rounded-full hover:bg-primary hover:text-white transition-all shadow-xs ml-1">
                 Masuk
             </a>
             @endauth
@@ -126,6 +134,22 @@
     </div>
 </header>
 
+<style>
+    #nav-overlay {
+        display: none;
+    }
+    #nav-overlay.active {
+        display: block;
+    }
+    #mobile-nav-drawer {
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    #mobile-nav-drawer.open {
+        transform: translateX(0);
+    }
+</style>
+
 <script>
     if (typeof openNavDrawer !== 'function') {
         function openNavDrawer() {
@@ -133,12 +157,14 @@
             const overlay = document.getElementById('nav-overlay');
             if (drawer) drawer.classList.add('open');
             if (overlay) overlay.classList.add('active');
+            document.body.classList.add('overflow-hidden');
         }
         function closeNavDrawer() {
             const drawer = document.getElementById('mobile-nav-drawer');
             const overlay = document.getElementById('nav-overlay');
             if (drawer) drawer.classList.remove('open');
             if (overlay) overlay.classList.remove('active');
+            document.body.classList.remove('overflow-hidden');
         }
     }
 </script>

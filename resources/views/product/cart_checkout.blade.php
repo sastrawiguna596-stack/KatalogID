@@ -159,7 +159,9 @@
 @include('layouts.navbar', ['active' => 'cart'])
     <main class="w-full px-4 md:px-margin-desktop py-6 md:py-8 overflow-hidden">
         <h1 class="font-headline-xl text-xl md:text-headline-xl mb-stack-md">Your Checkout</h1>
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+        <form action="{{ route('checkout.process') }}" method="POST" id="checkout_form">
+            @csrf
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
             <!-- Left Column: Cart & Details -->
             <div class="lg:col-span-8 space-y-stack-md">
                 <!-- Section: Cart Items -->
@@ -248,20 +250,49 @@
                 <!-- Section: Shipping & Delivery -->
                 <section class="bg-surface-container-lowest border border-[#EDEDED] rounded-xl p-6">
                     <h2 class="font-headline-sm text-headline-sm mb-6">Shipping &amp; Delivery</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter mb-8">
-                        <div class="space-y-4">
-                            <label class="block text-label-md text-secondary">Contact Information</label>
-                            <input
-                                class="w-full h-12 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface"
-                                value="{{ Auth::user()->email ?? '' }}" placeholder="Email Address" type="email" />
-                            <input
-                                class="w-full h-12 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface"
-                                value="{{ Auth::user()->phone ?? '' }}" placeholder="Phone Number" type="tel" />
+                    <div class="space-y-4 mb-8">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+                            <div class="space-y-4">
+                                <label class="block text-label-md text-secondary">Contact Information</label>
+                                <input name="email"
+                                    class="w-full h-12 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface"
+                                    value="{{ Auth::user()->email ?? '' }}" placeholder="Email Address" type="email" />
+                                <input name="phone"
+                                    class="w-full h-12 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface"
+                                    value="{{ Auth::user()->phone ?? '' }}" placeholder="Phone Number" type="tel" />
+                            </div>
+                            <div class="space-y-4">
+                                <label class="block text-label-md text-secondary">Shipping Address</label>
+                                <input id="address_input" name="address"
+                                    class="w-full h-12 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface"
+                                    value="{{ Auth::user()->address ?? '' }}" placeholder="Full Address (Street, No)" type="text" />
+                                
+                                <!-- Area Search -->
+                                <div class="relative">
+                                    <input id="area_search" type="text" 
+                                        class="w-full h-12 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface"
+                                        placeholder="Ketik Kecamatan / Kota Tujuan..." autocomplete="off">
+                                    <input type="hidden" name="destination_area_id" id="destination_area_id" value="">
+                                    
+                                    <!-- Search Results Dropdown -->
+                                    <ul id="area_results" class="absolute z-10 w-full bg-white border border-outline-variant rounded-lg mt-1 max-h-48 overflow-y-auto hidden shadow-lg">
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
-                        <div class="space-y-4">
-                            <label class="block text-label-md text-secondary">Shipping Address</label>
-                            <input
-                                class="w-full h-12 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface"
+
+                        <!-- Courier Selection (Loaded via AJAX) -->
+                        <div id="courier_selection_container" class="hidden mt-6 pt-6 border-t border-[#EDEDED]">
+                            <label class="block text-label-md text-secondary mb-3">Pilih Layanan Pengiriman</label>
+                            <div id="courier_list" class="space-y-3">
+                                <!-- Courier options will be injected here -->
+                            </div>
+                            <!-- Hidden inputs to store selected shipping info for form submission -->
+                            <input type="hidden" name="courier_company" id="courier_company" value="">
+                            <input type="hidden" name="courier_type" id="courier_type" value="">
+                            <input type="hidden" name="shipping_cost" id="shipping_cost" value="0">
+                        </div>
+                    </div>
                 <section class="bg-surface-container-lowest border border-[#EDEDED] rounded-xl p-6">
                     <h2 class="font-headline-sm text-headline-sm mb-6">Payment Method</h2>
                     <div class="space-y-4">
@@ -306,19 +337,19 @@
                     <div class="space-y-4 mb-6">
                         <div class="flex justify-between text-body-md text-secondary">
                             <span>Subtotal Produk</span>
-                            <span class="font-semibold text-on-surface">Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
+                            <span id="summary_subtotal" class="font-semibold text-on-surface" data-value="{{ $subtotal }}">Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
                         </div>
                         <div class="flex justify-between text-body-md text-secondary">
                             <span>Estimasi Pengiriman</span>
-                            <span class="font-semibold text-on-surface">Rp {{ number_format($shipping, 0, ',', '.') }}</span>
+                            <span id="summary_shipping" class="font-semibold text-on-surface" data-value="0">Rp 0</span>
                         </div>
                         <div class="flex justify-between text-body-md text-secondary pb-4 border-b border-[#EDEDED]">
                             <span>Biaya Operasional</span>
-                            <span class="font-semibold text-on-surface">Rp {{ number_format($biayaOperasional, 0, ',', '.') }}</span>
+                            <span id="summary_fees" class="font-semibold text-on-surface" data-value="{{ $biayaOperasional }}">Rp {{ number_format($biayaOperasional, 0, ',', '.') }}</span>
                         </div>
                         <div class="flex justify-between text-headline-sm font-bold pt-2">
                             <span>Total Pembayaran</span>
-                            <span class="text-primary text-xl font-extrabold">Rp {{ number_format($total, 0, ',', '.') }}</span>
+                            <span id="summary_total" class="text-primary text-xl font-extrabold" data-value="{{ $subtotal + $biayaOperasional }}">Rp {{ number_format($subtotal + $biayaOperasional, 0, ',', '.') }}</span>
                         </div>
                     </div>
                     <div class="mb-6">
@@ -331,14 +362,11 @@
                                 class="px-4 py-2 bg-secondary text-white text-label-md rounded-lg hover:bg-on-surface transition-colors">Apply</button>
                         </div>
                     </div>
-                    <form action="{{ route('checkout.process') }}" method="POST">
-                        @csrf
-                        <button type="submit"
+                        <button type="submit" id="btn_checkout"
                             class="w-full py-4 bg-primary text-on-secondary font-bold rounded-xl text-headline-sm shadow-lg hover:brightness-90 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
                             Buat Pesanan Sekarang
                             <span class="material-symbols-outlined">arrow_forward</span>
                         </button>
-                    </form>
                     <div class="mt-6 flex items-center justify-center gap-4 opacity-50 grayscale">
                         <span class="material-symbols-outlined">verified_user</span>
                         <p class="text-[10px] text-center uppercase tracking-widest font-bold">Secure SSL Checkout</p>
@@ -355,7 +383,8 @@
                     </div>
                 </div>
             </aside>
-        </div>
+            </div>
+        </form>
     </main>
     @include('layouts.footer')
     <script>
@@ -429,6 +458,180 @@
                 if (text) {
                     text.classList.add('font-semibold', 'text-primary');
                     text.classList.remove('text-on-surface');
+                }
+            });
+        });
+
+        // Biteship Integration Logic
+        document.addEventListener('DOMContentLoaded', function() {
+            const areaSearchInput = document.getElementById('area_search');
+            if(!areaSearchInput) return; // if cart is empty
+
+            const areaResults = document.getElementById('area_results');
+            const destinationAreaIdInput = document.getElementById('destination_area_id');
+            const courierSelectionContainer = document.getElementById('courier_selection_container');
+            const courierList = document.getElementById('courier_list');
+            
+            const courierCompanyInput = document.getElementById('courier_company');
+            const courierTypeInput = document.getElementById('courier_type');
+            const shippingCostInput = document.getElementById('shipping_cost');
+
+            const summaryShipping = document.getElementById('summary_shipping');
+            const summaryTotal = document.getElementById('summary_total');
+            const summarySubtotal = document.getElementById('summary_subtotal');
+            const summaryFees = document.getElementById('summary_fees');
+
+            let searchTimeout;
+
+            // Handle Area Search with Debounce
+            areaSearchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                const query = this.value;
+
+                if (query.length < 3) {
+                    areaResults.classList.add('hidden');
+                    return;
+                }
+
+                searchTimeout = setTimeout(() => {
+                    fetch(`/api/biteship/search-area?query=${encodeURIComponent(query)}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            areaResults.innerHTML = '';
+                            if (data.length > 0) {
+                                data.forEach(area => {
+                                    const li = document.createElement('li');
+                                    li.className = 'px-4 py-3 hover:bg-surface-container cursor-pointer border-b border-[#EDEDED] last:border-0';
+                                    li.innerHTML = `<p class="font-bold text-body-sm">${area.name}</p>`;
+                                    li.addEventListener('click', () => {
+                                        areaSearchInput.value = area.name;
+                                        destinationAreaIdInput.value = area.id;
+                                        areaResults.classList.add('hidden');
+                                        
+                                        // Once area is selected, fetch rates
+                                        fetchRates(area.id);
+                                    });
+                                    areaResults.appendChild(li);
+                                });
+                                areaResults.classList.remove('hidden');
+                            } else {
+                                areaResults.innerHTML = '<li class="px-4 py-3 text-secondary text-body-sm">Area tidak ditemukan</li>';
+                                areaResults.classList.remove('hidden');
+                            }
+                        })
+                        .catch(err => console.error('Error searching area:', err));
+                }, 500);
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!areaSearchInput.contains(e.target) && !areaResults.contains(e.target)) {
+                    areaResults.classList.add('hidden');
+                }
+            });
+
+            // Fetch Rates
+            function fetchRates(destinationId) {
+                courierList.innerHTML = '<div class="text-secondary text-body-sm animate-pulse">Menghitung ongkos kirim...</div>';
+                courierSelectionContainer.classList.remove('hidden');
+                
+                const storeId = {{ !empty($cart) ? collect($cart)->first()['store_id'] : 1 }};
+
+                fetch('/api/biteship/check-rates', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        destination_area_id: destinationId,
+                        store_id: storeId,
+                        couriers: 'jne,sicepat,jnt,anteraja'
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    courierList.innerHTML = '';
+                    if (data.error) {
+                        courierList.innerHTML = `<div class="text-error text-body-sm">${data.error}</div>`;
+                        return;
+                    }
+
+                    if (data.length > 0) {
+                        data.forEach((rate, index) => {
+                            const option = document.createElement('div');
+                            option.className = 'flex items-center justify-between p-3 border border-outline-variant rounded-lg hover:border-primary cursor-pointer courier-option';
+                            option.dataset.company = rate.company;
+                            option.dataset.type = rate.type;
+                            option.dataset.price = rate.price;
+                            
+                            option.innerHTML = `
+                                <div class="flex items-center gap-3">
+                                    <input type="radio" name="courier_selection" class="w-4 h-4 text-primary bg-surface-container border-outline focus:ring-primary">
+                                    <div>
+                                        <p class="font-bold text-body-sm uppercase">${rate.company} - ${rate.type}</p>
+                                        <p class="text-xs text-secondary">Estimasi: ${rate.duration}</p>
+                                    </div>
+                                </div>
+                                <div class="font-bold text-primary">Rp ${rate.price.toLocaleString('id-ID')}</div>
+                            `;
+
+                            option.addEventListener('click', function() {
+                                // Select Radio
+                                const radio = this.querySelector('input[type="radio"]');
+                                radio.checked = true;
+
+                                // UI update
+                                document.querySelectorAll('.courier-option').forEach(opt => {
+                                    opt.classList.remove('border-primary', 'bg-primary/5');
+                                });
+                                this.classList.add('border-primary', 'bg-primary/5');
+
+                                // Set values
+                                courierCompanyInput.value = this.dataset.company;
+                                courierTypeInput.value = this.dataset.type;
+                                shippingCostInput.value = this.dataset.price;
+
+                                updateSummary(parseInt(this.dataset.price));
+                            });
+
+                            courierList.appendChild(option);
+                        });
+                    } else {
+                        courierList.innerHTML = '<div class="text-secondary text-body-sm">Kurir tidak tersedia untuk rute ini.</div>';
+                    }
+                })
+                .catch(err => {
+                    console.error('Error fetching rates:', err);
+                    courierList.innerHTML = '<div class="text-error text-body-sm">Terjadi kesalahan saat memuat kurir.</div>';
+                });
+            }
+
+            // Update Order Summary
+            function updateSummary(shippingCost) {
+                summaryShipping.innerText = `Rp ${shippingCost.toLocaleString('id-ID')}`;
+                
+                const subtotal = parseInt(summarySubtotal.dataset.value);
+                const fees = parseInt(summaryFees.dataset.value);
+                const total = subtotal + fees + shippingCost;
+                
+                summaryTotal.innerText = `Rp ${total.toLocaleString('id-ID')}`;
+                summaryTotal.dataset.value = total;
+            }
+
+            // Form Validation before submit
+            document.getElementById('checkout_form').addEventListener('submit', function(e) {
+                if (!destinationAreaIdInput.value) {
+                    e.preventDefault();
+                    alert('Silakan pilih Area Tujuan Pengiriman terlebih dahulu!');
+                    document.getElementById('area_search').focus();
+                    return;
+                }
+                
+                if (!courierCompanyInput.value || !courierTypeInput.value) {
+                    e.preventDefault();
+                    alert('Silakan pilih Layanan Pengiriman (Kurir) terlebih dahulu!');
+                    return;
                 }
             });
         });

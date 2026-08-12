@@ -66,6 +66,18 @@
 <span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">shopping_cart</span>
 <span class="font-label-md text-label-md">Orders</span>
 </a>
+@php
+    $pendingTicketsNav = \App\Models\SupportTicket::where('status', 'pending')->count();
+@endphp
+<a class="flex items-center justify-between px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 rounded-lg group" href="{{ route('admin.tickets') }}">
+    <div class="flex items-center gap-3">
+        <span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">mail</span>
+        <span class="font-label-md text-label-md">Kotak Surat / Bantuan</span>
+    </div>
+    @if($pendingTicketsNav > 0)
+        <span class="bg-amber-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-xs">{{ $pendingTicketsNav }}</span>
+    @endif
+</a>
 <!-- Content Management Section -->
 <div class="px-4 py-2 mt-4 mb-2 border-t border-surface-container pt-4">
 <h3 class="font-label-md text-label-md text-on-surface-variant tracking-wider uppercase text-xs">Manajemen Konten</h3>
@@ -81,13 +93,13 @@
 </div>
 <!-- Footer / CTA -->
 <div class="mt-auto pt-4 border-t border-surface-container space-y-2">
-<button class="w-full py-2 px-4 bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:bg-primary-fixed-dim hover:text-on-primary-fixed transition-colors flex items-center justify-center gap-2">
-<span class="material-symbols-outlined text-[18px]">support_agent</span> Support Ticket
-            </button>
-<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 rounded-lg group" href="#">
-<span class="material-symbols-outlined text-outline group-hover:text-error transition-colors">logout</span>
-<span class="font-label-md text-label-md group-hover:text-error transition-colors">Log Out</span>
-</a>
+<form action="{{ route('logout') }}" method="POST" class="w-full">
+    @csrf
+    <button type="submit" class="w-full flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-error-container/40 rounded-lg group transition-colors duration-200">
+        <span class="material-symbols-outlined text-outline group-hover:text-error transition-colors">logout</span>
+        <span class="font-label-md text-label-md group-hover:text-error font-bold transition-colors">Log Out</span>
+    </button>
+</form>
 </div>
 </nav>
 <!-- Main Content Area -->

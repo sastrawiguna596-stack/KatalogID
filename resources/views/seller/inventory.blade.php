@@ -196,10 +196,7 @@
     </a>
 
     <!-- Notifikasi -->
-    <button type="button" onclick="alert('Belum ada notifikasi baru.')" class="relative p-1.5 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-variant/60 transition-all flex items-center justify-center" title="Notifikasi">
-        <span class="material-symbols-outlined text-2xl">notifications</span>
-        <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary ring-2 ring-surface"></span>
-    </button>
+    @include('partials.notification_bell')
 
     <!-- Avatar Profil -->
     <a href="{{ route('account') }}" class="w-8 h-8 rounded-full overflow-hidden border border-outline hover:ring-2 hover:ring-primary/40 transition-all ml-1" title="Profil Akun Toko">
@@ -434,28 +431,6 @@ Belum ada produk di inventaris Anda. <a href="{{ route('add_product') }}" class=
 <p class="font-label-md text-xs text-secondary">Menampilkan {{ $products->firstItem() ?? 0 }} hingga {{ $products->lastItem() ?? 0 }} dari {{ $products->total() }} produk</p>
 <div>
     {{ $products->links() }}
-</div>
-</div>
-</div>
-<!-- Contextual Help / Tips (Asymmetric Component) -->
-<div class="mt-stack-lg grid grid-cols-1 md:grid-cols-3 gap-gutter">
-<div class="md:col-span-2 bg-[#F2F0F0] rounded-2xl p-gutter flex items-center gap-x-6 relative overflow-hidden group">
-<div class="z-10 relative">
-<h4 class="font-headline-sm text-on-surface mb-2">Smart Inventory Tips</h4>
-<p class="font-body-md text-on-surface-variant max-w-md">Based on your recent sales, we recommend restocking the <strong>Minimalist Amber Vase</strong> soon. Sales increased by 24% this week.</p>
-<button class="mt-4 px-6 py-2 bg-primary text-on-primary rounded-lg font-label-md hover:brightness-110 transition-all">Optimize Stock</button>
-</div>
-<div class="absolute right-0 top-0 h-full opacity-10 pointer-events-none group-hover:scale-110 transition-transform duration-700">
-<span class="material-symbols-outlined text-[120px]" data-icon="auto_awesome">auto_awesome</span>
-</div>
-</div>
-<div class="bg-primary-container p-gutter rounded-2xl flex flex-col justify-between">
-<span class="material-symbols-outlined text-on-primary-container text-4xl" data-icon="rocket_launch">rocket_launch</span>
-<div>
-<h4 class="font-headline-sm text-on-primary-container mb-1">New Feature</h4>
-<p class="font-body-sm text-on-primary-container/80">Bulk edit inventory images with our new AI scaling tool.</p>
-</div>
-<a class="font-label-md text-on-primary-container underline underline-offset-4 mt-2" href="#">Learn more</a>
 </div>
 </div>
 </div>

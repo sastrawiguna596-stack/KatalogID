@@ -8,9 +8,17 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use App\Services\BiteshipService;
 
 class CartController extends Controller
 {
+    protected $biteship;
+
+    public function __construct(BiteshipService $biteship)
+    {
+        $this->biteship = $biteship;
+    }
+
     /**
      * Tampilkan Halaman Cart & Checkout
      */
@@ -153,6 +161,11 @@ class CartController extends Controller
         $user = Auth::user();
         $alamat = $request->input('address', 'Jl. Utama No. 123, Denpasar, Bali');
 
+        $destinationAreaId = $request->input('destination_area_id');
+        $courierCompany = $request->input('courier_company');
+        $courierType = $request->input('courier_type');
+        $shippingCost = $request->input('shipping_cost', 0);
+
         // Kelompokkan item berdasarkan store_id
         $itemsByStore = [];
         foreach ($cart as $item) {
@@ -166,9 +179,8 @@ class CartController extends Controller
                 $storeSubtotal += $item['harga'] * $item['jumlah'];
             }
 
-            $shipping = 15000;
             $biayaOperasional = 1000;
-            $totalHarga = $storeSubtotal + $shipping + $biayaOperasional;
+            $totalHarga = $storeSubtotal + $shippingCost + $biayaOperasional;
 
             $order = Order::create([
                 'user_id' => $user ? $user->id : 1,
@@ -178,6 +190,10 @@ class CartController extends Controller
                 'status_pembayaran' => 'paid',
                 'status_pengiriman' => 'pending',
                 'alamat_pengiriman' => $alamat,
+                'destination_area_id' => $destinationAreaId,
+                'courier_company' => $courierCompany,
+                'courier_type' => $courierType,
+                'shipping_cost' => $shippingCost,
             ]);
 
             foreach ($items as $item) {
@@ -194,5 +210,58 @@ class CartController extends Controller
         session()->forget('cart');
 
         return redirect()->route('cust_recent_orders')->with('success', 'Pesanan Anda berhasil dibuat dan dikonfirmasi! Terima kasih telah berbelanja.');
+    }
+
+    /**
+     * Cari Area pengiriman berdasarkan keyword via Biteship
+     */
+    public function searchArea(Request $request)
+    {
+        $query = $request->input('query');
+        if (empty($query) || strlen($query) < 3) {
+            return response()->json([]);
+        }
+
+        $areas = $this->biteship->searchArea($query);
+        return response()->json($areas);
+    }
+
+    /**
+     * Hitung ongkos kirim berdasarkan origin, destination dan items
+     */
+    public function checkRates(Request $request)
+    {
+        $destinationAreaId = $request->input('destination_area_id');
+        $storeId = $request->input('store_id');
+        $couriers = $request->input('couriers', 'jne,sicepat,jnt,anteraja');
+
+        if (!$destinationAreaId || !$storeId) {
+            return response()->json(['error' => 'Data origin atau destination tidak lengkap'], 400);
+        }
+
+        $store = \App\Models\Store::find($storeId);
+        $originAreaId = $store->biteship_area_id ?? 'IDNP1IDNC110IDND261IDZ80111'; // Fallback Denpasar
+
+        // Ambil item dari keranjang untuk store tersebut
+        $cart = session()->get('cart', []);
+        $itemsForBiteship = [];
+        
+        foreach ($cart as $item) {
+            if ($item['store_id'] == $storeId) {
+                $itemsForBiteship[] = [
+                    'name' => $item['nama_produk'],
+                    'value' => $item['harga'],
+                    'weight' => $item['berat_gram'] ?? 500,
+                    'quantity' => $item['jumlah']
+                ];
+            }
+        }
+
+        if (empty($itemsForBiteship)) {
+            return response()->json(['error' => 'Tidak ada item untuk toko ini di keranjang'], 400);
+        }
+
+        $rates = $this->biteship->getRates($originAreaId, $destinationAreaId, $itemsForBiteship, $couriers);
+        return response()->json($rates);
     }
 }

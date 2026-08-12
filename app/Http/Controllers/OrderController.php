@@ -114,4 +114,89 @@ class OrderController extends Controller
 
         return redirect()->back()->with('success', 'Pesanan #ORD-' . $order->id . ' telah dikonfirmasi selesai! Silakan berikan ulasan & rating produk di bawah.');
     }
+
+    /**
+     * Meminta penjemputan (Pickup) dari kurir via Biteship
+     */
+    public function requestPickup(Request $request, $id, \App\Services\BiteshipService $biteshipService)
+    {
+        $store = Auth::check() && Auth::user()->store ? Auth::user()->store : Store::first();
+        $order = Order::with('items.product')->where('store_id', $store->id)->findOrFail($id);
+
+        if (!$order->destination_area_id || !$order->courier_company || !$order->courier_type) {
+            return redirect()->back()->with('error', 'Pesanan ini tidak memiliki data logistik yang lengkap.');
+        }
+
+        $originAreaId = $store->biteship_area_id ?? 'IDNP1IDNC110IDND261IDZ80111'; // Fallback
+
+        $biteshipItems = [];
+        foreach ($order->items as $item) {
+            $biteshipItems[] = [
+                'name' => $item->product->nama_produk,
+                'value' => $item->harga_satuan,
+                'weight' => $item->product->berat_gram ?? 500,
+                'quantity' => $item->jumlah
+            ];
+        }
+
+        $payload = [
+            'shipper_contact_name' => $store->nama_toko,
+            'shipper_contact_phone' => Auth::user()->phone ?? '08123456789',
+            'shipper_contact_email' => Auth::user()->email,
+            'shipper_organization' => $store->nama_toko,
+            'origin_contact_name' => $store->nama_toko,
+            'origin_contact_phone' => Auth::user()->phone ?? '08123456789',
+            'origin_address' => $store->kota,
+            'origin_area_id' => $originAreaId,
+            'destination_contact_name' => $order->user->name ?? 'Pembeli',
+            'destination_contact_phone' => $order->user->phone ?? '08123456789',
+            'destination_contact_email' => $order->user->email ?? 'pembeli@example.com',
+            'destination_address' => $order->alamat_pengiriman,
+            'destination_area_id' => $order->destination_area_id,
+            'courier_company' => $order->courier_company,
+            'courier_type' => $order->courier_type,
+            'delivery_type' => 'now',
+            'order_note' => 'Mohon hati-hati',
+            'items' => $biteshipItems
+        ];
+
+        $response = $biteshipService->createOrder($payload);
+
+        if (isset($response['error'])) {
+            return redirect()->back()->with('error', 'Gagal memanggil kurir: ' . $response['error']);
+        }
+
+        // Simpan data dari Biteship
+        $order->biteship_order_id = $response['id'] ?? null;
+        $order->biteship_tracking_id = $response['courier']['tracking_id'] ?? null;
+        $order->nomor_resi = $response['courier']['waybill_id'] ?? null;
+        $order->biteship_status = $response['status'] ?? 'placed';
+        $order->status_pengiriman = 'processing';
+        $order->save();
+
+        return redirect()->back()->with('success', 'Pickup kurir berhasil diminta! Nomor Resi: ' . ($order->nomor_resi ?? 'Sedang diproses'));
+    }
+
+    /**
+     * Melacak status pengiriman via Biteship (Customer)
+     */
+    public function trackOrder($id, \App\Services\BiteshipService $biteshipService)
+    {
+        $order = Order::where('user_id', Auth::id())->findOrFail($id);
+        
+        if (!$order->biteship_tracking_id) {
+            return response()->json(['error' => 'Pesanan ini belum memiliki ID pelacakan.'], 404);
+        }
+
+        $trackingData = $biteshipService->trackOrder($order->biteship_tracking_id);
+        
+        // Auto-update status di DB jika sukses
+        if (isset($trackingData['status']) && $trackingData['status'] === 'delivered') {
+            $order->biteship_status = 'delivered';
+            $order->status_pengiriman = 'delivered';
+            $order->save();
+        }
+
+        return response()->json($trackingData);
+    }
 }

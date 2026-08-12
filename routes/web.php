@@ -66,6 +66,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
     Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+    
+    // Biteship API AJAX Routes
+    Route::get('/api/biteship/search-area', [CartController::class, 'searchArea'])->name('biteship.search_area');
+    Route::post('/api/biteship/check-rates', [CartController::class, 'checkRates'])->name('biteship.check_rates');
+    
     Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('checkout.process');
 
     // Customer Dashboard
@@ -77,6 +82,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/customer/orders', [OrderController::class, 'customerOrders'])->name('cust_recent_orders');
     Route::post('/customer/orders/{id}/confirm', [OrderController::class, 'confirmReceipt'])->name('order.confirm_receipt');
+    Route::get('/customer/orders/{id}/track', [OrderController::class, 'trackOrder'])->name('order.track');
 
     // Seller Dashboard & Management
     Route::get('/account', [OrderController::class, 'sellerDashboard'])->name('account');
@@ -86,6 +92,7 @@ Route::middleware(['auth'])->group(function () {
     })->name('account_setting');
 
     Route::get('/account/order', [OrderController::class, 'sellerOrders'])->name('recent_orders');
+    Route::post('/account/order/{id}/pickup', [OrderController::class, 'requestPickup'])->name('order.request_pickup');
 
     Route::get('/account/sales-analytics', [InventoryController::class, 'salesAnalytics'])->name('sales_analytics');
 
@@ -124,6 +131,11 @@ Route::middleware(['auth'])->group(function () {
         return view('dashboard_admin_edit');
     })->name('dashboard_admin_edit');
 
+    // Support Ticket Routes (User)
+    Route::post('/support/ticket', [\App\Http\Controllers\SupportTicketController::class, 'store'])->name('support.ticket.store');
+    Route::post('/notifications/{id}/read', [\App\Http\Controllers\SupportTicketController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [\App\Http\Controllers\SupportTicketController::class, 'markAllAsRead'])->name('notifications.read_all');
+
     // Master Admin Back Office Routes
     Route::prefix('admin')->group(function () {
         Route::get('/dashboard', [\App\Http\Controllers\BackOfficeController::class, 'index'])->name('admin.dashboard');
@@ -133,6 +145,10 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/stores/{id}/toggle-status', [\App\Http\Controllers\BackOfficeController::class, 'toggleStoreStatus'])->name('admin.stores.toggle');
         
         Route::get('/welcome-settings', [\App\Http\Controllers\BackOfficeController::class, 'welcomeSettings'])->name('admin.welcome_settings');
+
+        // Support Tickets / Kotak Surat Admin
+        Route::get('/tickets', [\App\Http\Controllers\SupportTicketController::class, 'adminTickets'])->name('admin.tickets');
+        Route::post('/tickets/{id}/reply', [\App\Http\Controllers\SupportTicketController::class, 'adminReply'])->name('admin.tickets.reply');
 
         // Categories
         Route::get('/categories', [\App\Http\Controllers\BackOfficeController::class, 'categories'])->name('admin.categories');

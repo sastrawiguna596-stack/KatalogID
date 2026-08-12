@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "animate.css";
 @config "../../tailwind.config.js";
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';

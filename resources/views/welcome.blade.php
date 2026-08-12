@@ -67,7 +67,7 @@
         <!-- Background Video Container -->
         <div class="absolute inset-0 z-0 overflow-hidden">
             <video autoplay loop muted playsinline class="absolute inset-0 z-10 w-full h-full object-cover">
-                <source src="{{ asset('videos/hero-bg.mp4') }}" type="video/mp4">
+                <source src="{{ asset('videos/hero-bg.webm') }}" type="video/webm">
             </video>
             <!-- Gradient Overlay -->
             <div class="absolute inset-0 bg-gradient-to-r from-surface/40 to-transparent z-20"></div>
@@ -172,7 +172,7 @@
             </div>
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 stagger-children">
                 @foreach($products as $product)
-                <div class="bg-surface rounded-sm border border-[#EDEDED] p-2.5 sm:p-4 product-card-hover group relative flex flex-col justify-between">
+                <div onclick="window.location.href='{{ route('product.detail', $product->id) }}'" class="bg-surface rounded-sm border border-[#EDEDED] p-2.5 sm:p-4 product-card-hover group relative flex flex-col justify-between cursor-pointer">
                     @if($product->badge)
                     <div class="absolute top-4 left-4 z-10">
                         <span class="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-primary text-on-primary text-[9px] sm:text-[10px] font-bold rounded-sm">{{ $product->badge }}</span>
@@ -190,10 +190,7 @@
                     </div>
                     <div class="flex justify-between items-center pt-2 border-t border-surface-container-low mt-2">
                         <p class="text-xs sm:text-base font-bold text-on-surface">Rp {{ number_format($product->harga, 0, ',', '.') }}</p>
-                        <a href="{{ route('product.detail', $product->id) }}"
-                            class="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-primary text-primary flex items-center justify-center hover:bg-primary hover:text-on-primary transition-all flex-shrink-0">
-                            <span class="material-symbols-outlined text-[16px] sm:text-[18px]">add</span>
-                        </a>
+                        <span class="text-[10px] sm:text-xs text-on-surface-variant font-medium whitespace-nowrap">{{ $product->total_sold }} Terjual</span>
                     </div>
                 </div>
                 @endforeach
@@ -212,7 +209,7 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
                 @foreach($newProducts as $product)
-                <div class="bg-surface rounded-sm border border-[#EDEDED] p-4 product-card-hover group relative flex flex-col justify-between">
+                <div onclick="window.location.href='{{ route('product.detail', $product->id) }}'" class="bg-surface rounded-sm border border-[#EDEDED] p-4 product-card-hover group relative flex flex-col justify-between cursor-pointer">
                     <div class="absolute top-6 left-6 z-10">
                         <span class="px-2 py-1 bg-primary-container text-on-primary-container text-[10px] font-bold rounded-sm">BARU</span>
                     </div>
@@ -229,9 +226,7 @@
                     </div>
                     <div class="flex justify-between items-center mt-2">
                         <p class="font-body-md text-body-md font-bold text-on-surface">Rp {{ number_format($product->harga, 0, ',', '.') }}</p>
-                        <a href="{{ route('product.detail', $product->id) }}" class="w-8 h-8 rounded-full border border-primary text-primary flex items-center justify-center hover:bg-primary hover:text-on-primary transition-all">
-                            <span class="material-symbols-outlined text-[18px]">add</span>
-                        </a>
+                        <span class="text-[10px] sm:text-xs text-on-surface-variant font-medium whitespace-nowrap">{{ $product->total_sold }} Terjual</span>
                     </div>
                 </div>
                 @endforeach
@@ -254,23 +249,7 @@
             </div>
         </section>
         <!-- Newsletter -->
-        <section class="py-stack-lg px-margin-mobile md:px-margin-desktop bg-primary-container/10 scroll-reveal">
-            <div class="max-w-3xl mx-auto text-center py-stack-md">
-                <h2 class="font-headline-lg text-headline-lg text-on-surface mb-base">Join the Collective</h2>
-                <p class="font-body-md text-body-md text-on-surface-variant mb-stack-md">Sign up for our newsletter to
-                    receive early access to new collections, artisan interviews, and exclusive community events.</p>
-                <form class="flex flex-col sm:flex-row gap-base max-w-xl mx-auto">
-                    <input
-                        class="flex-grow px-4 py-4 rounded-lg border border-outline-variant bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-body-md"
-                        placeholder="Enter your email address" type="email" />
-                    <button
-                        class="px-8 py-4 bg-primary text-on-primary font-label-md text-label-md rounded-lg hover:brightness-90 active:scale-95 transition-all whitespace-nowrap">Subscribe
-                        Now</button>
-                </form>
-                <p class="font-body-sm text-body-sm text-secondary mt-stack-sm italic">Be part of a community that
-                    values quality and conscious living.</p>
-            </div>
-        </section>
+
 
         <!-- Testimonials -->
         @if(isset($reviews) && count($reviews) > 0)

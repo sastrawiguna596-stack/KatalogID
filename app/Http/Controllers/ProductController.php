@@ -19,18 +19,18 @@ class ProductController extends Controller
      */
     public function home()
     {
-        $categories = \Illuminate\Support\Facades\Cache::remember('categories_home', 3600, function() {
+        $categories = \Illuminate\Support\Facades\Cache::remember('categories_home', 3600, function () {
             return Category::with(['products.galleries'])->get();
         });
 
-        $settings = \Illuminate\Support\Facades\Cache::remember('site_settings', 3600, function() {
+        $settings = \Illuminate\Support\Facades\Cache::remember('site_settings', 3600, function () {
             return \App\Models\SiteSetting::pluck('value', 'key')->toArray();
         });
 
         $featuredIds = isset($settings['featured_product_ids']) ? json_decode($settings['featured_product_ids'], true) : [];
         $newIds = isset($settings['new_product_ids']) ? json_decode($settings['new_product_ids'], true) : [];
 
-        $products = !empty($featuredIds) 
+        $products = !empty($featuredIds)
             ? Product::with(['category', 'galleries'])->whereIn('id', $featuredIds)->where('status', 'active')->get()
             : Product::with(['category', 'galleries'])->where('status', 'active')->latest()->take(8)->get();
 
@@ -127,7 +127,7 @@ class ProductController extends Controller
         }
 
         $maxProductPrice = Product::max('harga') ?? 5000000;
-        $products = $query->paginate(12)->withQueryString();
+        $products = $query->paginate(17)->withQueryString();
 
         return view('product.all_product', compact('categories', 'products', 'matchedStores', 'cities', 'maxProductPrice'));
     }

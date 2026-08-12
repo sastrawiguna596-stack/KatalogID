@@ -49,6 +49,18 @@ class Product extends Model
     }
 
     /**
+     * Accessor untuk total produk terjual berdasarkan order berstatus lunas / paid / berhasil
+     */
+    public function getTotalSoldAttribute()
+    {
+        return (int) $this->orderItems()
+            ->whereHas('order', function ($query) {
+                $query->whereIn('status_pembayaran', ['paid', 'lunas', 'berhasil', 'success', 'settlement']);
+            })
+            ->sum('jumlah');
+    }
+
+    /**
      * Accessor untuk gambar utama produk yang selalu valid & aman
      */
     public function getFirstImageUrlAttribute()

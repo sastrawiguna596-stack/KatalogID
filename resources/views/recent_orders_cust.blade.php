@@ -341,6 +341,14 @@
                                 </button>
                             </form>
                         @endif
+                        
+                        <!-- Lacak Resi Button -->
+                        @if($order->status_pengiriman === 'processing' || $order->status_pengiriman === 'shipped')
+                            <button type="button" onclick="openTrackModal('{{ $order->id }}', '{{ $order->nomor_resi }}')" class="px-4 py-2 bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all shadow-sm">
+                                <span class="material-symbols-outlined text-base">local_shipping</span>
+                                Lacak Resi
+                            </button>
+                        @endif
                         @if($order->items->first() && $order->items->first()->product)
                             <a href="{{ route('product.detail', $order->items->first()->product->id) }}" class="px-4 py-2 border border-outline-variant text-on-surface hover:bg-surface-container-low rounded-xl font-bold text-xs text-center transition-all">
                                 Lihat Produk
@@ -388,6 +396,33 @@
 <a class="font-body-sm text-body-sm text-on-surface-variant hover:underline transition-all" href="#">Contact Us</a>
 </div>
 </footer>
+
+<!-- Modal Tracking -->
+<div id="track-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs hidden p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 relative">
+        <button type="button" onclick="closeTrackModal()" class="absolute top-4 right-4 text-secondary hover:text-on-surface">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+
+        <div class="flex items-center gap-3 pb-3 border-b border-surface-container">
+            <span class="material-symbols-outlined text-blue-600 text-2xl">local_shipping</span>
+            <div>
+                <h3 class="font-bold text-lg text-on-surface">Pelacakan Pesanan</h3>
+                <p class="text-xs text-secondary" id="track-modal-subtitle">Mengambil data pelacakan...</p>
+            </div>
+        </div>
+
+        <div id="track-content" class="min-h-[100px] flex items-center justify-center">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+
+        <div class="flex items-center justify-end pt-2">
+            <button type="button" onclick="closeTrackModal()" class="px-6 py-2 bg-surface-container-high text-on-surface rounded-xl text-xs font-bold hover:bg-surface-variant transition-all">
+                Tutup
+            </button>
+        </div>
+    </div>
+</div>
 
 <!-- Modal Rating & Ulasan Produk -->
 <div id="review-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs hidden p-4">
@@ -498,6 +533,63 @@
                 }
             }
         }
+    }
+
+    async function openTrackModal(orderId, resi) {
+        document.getElementById('track-modal-subtitle').innerText = 'Resi: ' + (resi ? resi : 'Sedang mengambil data...');
+        document.getElementById('track-content').innerHTML = '<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>';
+        document.getElementById('track-modal').classList.remove('hidden');
+
+        try {
+            const response = await fetch(`/customer/orders/${orderId}/track`);
+            const data = await response.json();
+
+            if (data.error) {
+                document.getElementById('track-content').innerHTML = `<p class="text-sm text-error">${data.error}</p>`;
+                return;
+            }
+
+            if (!data.history || data.history.length === 0) {
+                document.getElementById('track-content').innerHTML = `<p class="text-sm text-secondary">Belum ada riwayat pelacakan. Pesanan mungkin baru saja diproses kurir.</p>`;
+                return;
+            }
+
+            let html = '<div class="w-full space-y-4 relative">';
+            // Garis vertikal timeline
+            html += '<div class="absolute left-2 top-2 bottom-2 w-0.5 bg-surface-variant z-0"></div>';
+
+            data.history.forEach((historyItem, index) => {
+                const isLatest = index === 0;
+                const dotColor = isLatest ? 'bg-primary ring-4 ring-primary/20' : 'bg-outline-variant';
+                const textColor = isLatest ? 'text-on-surface font-bold' : 'text-secondary';
+                
+                // Format waktu manual untuk mengurangi dependensi eksternal
+                let timeStr = historyItem.updated_at;
+                try {
+                    const dateObj = new Date(historyItem.updated_at);
+                    if(!isNaN(dateObj)) {
+                        timeStr = dateObj.toLocaleString('id-ID', {day: 'numeric', month: 'short', year:'numeric', hour: '2-digit', minute:'2-digit'});
+                    }
+                } catch(e) {}
+
+                html += `
+                <div class="relative z-10 pl-8 pb-4">
+                    <div class="absolute left-1 top-1.5 w-2.5 h-2.5 rounded-full ${dotColor}"></div>
+                    <p class="text-xs text-secondary mb-0.5">${timeStr}</p>
+                    <p class="text-sm ${textColor}">${historyItem.note}</p>
+                </div>
+                `;
+            });
+            html += '</div>';
+
+            document.getElementById('track-content').innerHTML = html;
+        } catch (error) {
+            document.getElementById('track-content').innerHTML = `<p class="text-sm text-error">Terjadi kesalahan saat memuat data pelacakan.</p>`;
+        }
+    }
+
+    function closeTrackModal() {
+        document.getElementById('track-modal').classList.add('hidden');
     }
 </script>
 </body>

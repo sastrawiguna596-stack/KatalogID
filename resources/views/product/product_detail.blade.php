@@ -441,62 +441,29 @@
 </div>
 <!-- Bento-style Suggestion Grid -->
 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
-<!-- Product Card 1 -->
-<div class="flex flex-col gap-3 group cursor-pointer">
-<div class="aspect-[4/5] bg-surface-container-high rounded-xl overflow-hidden border border-[#EDEDED] relative">
-<div class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-500" data-alt="A studio shot of a minimalist leather wallet in desert tan, matching the aesthetic of the main tote. The wallet is shown partially open on a crisp white surface with sharp shadows, highlighting its slim profile and card slots. The photography style is modern, bright, and high-end e-commerce compliant." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCTjCLeIuUigsN0j-ULh6AGAXqHcg2EbWn_KSfLx3yGCQtwzuaAYiLSTN6OFQJY9NHA2Gudo0CszXrlUnFIBXhLyiNJk6W8jyPaNMDlh1hHVKs6dYjWa83lF7qm-V9X5mCcF-ObnZMPWZ4K0WB9XUXPdBcOxc9Esv8qBazVhOPWRLCqyyIYmwV-lWZIDfXrKzq7D7vFqXq1ULqQBwaK0Df9DSO8vOwDYNTOceYcxaeuZF6lv6dlNsa-')"></div>
-<button class="absolute bottom-4 right-4 w-10 h-10 bg-surface rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
-<span class="material-symbols-outlined text-primary">shopping_cart</span>
-</button>
-</div>
-<div>
-<h4 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Small Leather Goods</h4>
-<h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">Slimline Card Holder</h3>
-<p class="font-body-md text-body-md font-bold text-on-surface">$55.00</p>
-</div>
-</div>
-<!-- Product Card 2 -->
-<div class="flex flex-col gap-3 group cursor-pointer">
-<div class="aspect-[4/5] bg-surface-container-high rounded-xl overflow-hidden border border-[#EDEDED] relative">
-<div class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-500" data-alt="A professional product image of a premium leather laptop sleeve in midnight black. The sleeve is sleek and minimalist, positioned at a slight angle on a soft grey background. The lighting is cool and sophisticated, showcasing the high-quality stitching and rich texture of the black leather." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDq8savLwlbJ1uP6jC8IWfkGJGaa-vhhKpwB0UrNlQbYmglWCzd3H7gOOhAPbyNLZSfYDxHZUBhkkyQNoA9lq44j4vCwAJhgH4jGeXUOiLgvsx7rhuav_6vwUhYEVeXtQC_V9_SlBWMhLfvRE2keozBosCcUTk1gPD4BuJR2Or8DU7xAHn4OLsE2cRvNukLPysQDw8q-YiuA2H3L8mPFhewaXMlpv-cIKumrdOHgmY2eHrpL-dcvH4_')"></div>
-<button class="absolute bottom-4 right-4 w-10 h-10 bg-surface rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
-<span class="material-symbols-outlined text-primary">shopping_cart</span>
-</button>
-</div>
-<div>
-<h4 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Accessories</h4>
-<h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">Padded Laptop Sleeve</h3>
-<p class="font-body-md text-body-md font-bold text-on-surface">$95.00</p>
-</div>
-</div>
-<!-- Product Card 3 -->
-<div class="flex flex-col gap-3 group cursor-pointer">
-<div class="aspect-[4/5] bg-surface-container-high rounded-xl overflow-hidden border border-[#EDEDED] relative">
-<div class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-500" data-alt="A luxury leather travel pouch in ebony brown leather, featuring a gold-toned zipper and a minimalist handle. The pouch is displayed in a lifestyle-inspired studio setting with warm lighting and a soft-focus background of travel essentials. The overall mood is aspirational and organized, fitting the brand's premium identity." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBzooYS1e5TFW2T4UzwvrbP0HMIuG0E4Zp_vqTBHoKII7kBE3-T0pFG9ft3Zdp6WpXKtmzG7GgZFVbf8KWkkAbIE0J-_BeJDiiwsKiEEN7Wb5jeQ2Ox89NRtGI9pRBeOEtZAdEKnwudh6OtFNQudNWvxGjZgJj6w6EPF-pHeL4zZn0T8nFoOv_vkfAtf3GTHWiviLKMjKJ-KjKmsRb2oXfRhtLzd8oOpWxa8DesjdykqD0EvjFFMYPy')"></div>
-<button class="absolute bottom-4 right-4 w-10 h-10 bg-surface rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
-<span class="material-symbols-outlined text-primary">shopping_cart</span>
-</button>
-</div>
-<div>
-<h4 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Travel</h4>
-<h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">Essentials Travel Pouch</h3>
-<p class="font-body-md text-body-md font-bold text-on-surface">$120.00</p>
-</div>
-</div>
-<!-- Product Card 4 -->
-<div class="flex flex-col gap-3 group cursor-pointer">
-<div class="aspect-[4/5] bg-surface-container-high rounded-xl overflow-hidden border border-[#EDEDED] relative">
-<div class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-500" data-alt="A minimalist adjustable leather bag strap in contrasting cream and tan leather with heavy-duty solid brass hardware. The strap is artistically coiled on a neutral background, with lighting that emphasizes the quality of the hardware and the suppleness of the leather. The visual style is clean and focused." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBjZnEq313kCuAsKMuElt6fpAWYMqO0fnhISK-HrQo6tD6qYHaHd8zTBhBARhsK60raGXL4D53e4SAs4M1QqsnSTYhXXWETF0RT8A9LeU6wXFTKlzcz3DorYtqZuW3DvoDVoHn_RQWueUUQMbhDLLBDIAyqTZuTqEbY0opfRmgLHZURGzcrhtbqbSsnAkzj0tLibZXw65rQ98sGb3XxDCuRHEGlqC7di2DCwu_x5kVlrdGQOZ9TqpWm')"></div>
-<button class="absolute bottom-4 right-4 w-10 h-10 bg-surface rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
-<span class="material-symbols-outlined text-primary">shopping_cart</span>
-</button>
-</div>
-<div>
-<h4 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Customization</h4>
-<h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">Braided Leather Strap</h3>
-<p class="font-body-md text-body-md font-bold text-on-surface">$45.00</p>
-</div>
-</div>
+    @forelse($relatedProducts as $rel)
+        @php
+            $relImg = $rel->galleries->first()?->foto_path ?? 'https://via.placeholder.com/300x400';
+            $relImgUrl = str_starts_with($relImg, 'http') ? $relImg : asset($relImg);
+        @endphp
+        <a href="{{ route('product.detail', $rel->id) }}" class="flex flex-col gap-3 group cursor-pointer">
+            <div class="aspect-[4/5] bg-surface-container-high rounded-xl overflow-hidden border border-[#EDEDED] relative">
+                <div class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-500" style="background-image: url('{{ $relImgUrl }}')"></div>
+                <!-- <button type="button" class="absolute bottom-4 right-4 w-10 h-10 bg-surface rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span class="material-symbols-outlined text-primary">shopping_cart</span>
+                </button> -->
+            </div>
+            <div>
+                <h4 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider line-clamp-1">{{ $rel->category->nama_kategori ?? 'Kategori' }}</h4>
+                <h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors line-clamp-1">{{ $rel->nama_produk }}</h3>
+                <p class="font-body-md text-body-md font-bold text-on-surface">Rp {{ number_format($rel->harga, 0, ',', '.') }}</p>
+            </div>
+        </a>
+    @empty
+        <div class="col-span-full py-8 text-center text-secondary italic">
+            Belum ada produk terkait yang tersedia saat ini.
+        </div>
+    @endforelse
 </div>
 </section>
 </main>

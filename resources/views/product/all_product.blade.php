@@ -24,14 +24,6 @@
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #d5c4ab; border-radius: 10px; }
-        /* Mobile Nav Drawer */
-        #nav-overlay { display: none; }
-        #nav-overlay.active { display: block; }
-        #mobile-nav-drawer {
-            transform: translateX(-100%);
-            transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
-        }
-        #mobile-nav-drawer.open { transform: translateX(0); }
         /* Filter drawer mobile */
         #filter-overlay { display: none; }
         #filter-overlay.active { display: block; }
@@ -43,46 +35,6 @@
     </style>
 </head>
 <body class="font-body-md text-body-md selection:bg-primary-container selection:text-on-primary-fixed-variant">
-
-<!-- Mobile Nav Overlay -->
-<div id="nav-overlay" class="fixed inset-0 bg-black/40 z-40 md:hidden" onclick="closeNavDrawer()"></div>
-<!-- Mobile Nav Drawer -->
-<div id="mobile-nav-drawer" class="fixed left-0 top-0 h-full w-72 z-50 bg-surface border-r border-outline-variant flex flex-col p-6 md:hidden">
-    <div class="flex items-center justify-between mb-8">
-        <span class="font-headline-md text-headline-md font-bold text-on-surface">Katalog IDN</span>
-        <button onclick="closeNavDrawer()" class="p-1 rounded-lg text-on-surface-variant hover:bg-surface-variant">
-            <span class="material-symbols-outlined">close</span>
-        </button>
-    </div>
-    <nav class="flex flex-col gap-1">
-        <a href="{{ route('home') }}" class="flex items-center gap-3 px-3 py-3 text-on-surface-variant hover:bg-surface-variant rounded-lg font-label-md text-label-md transition-all" onclick="closeNavDrawer()">
-            <span class="material-symbols-outlined">home</span> Home
-        </a>
-        <a href="{{ route('shop') }}" class="flex items-center gap-3 px-3 py-3 text-on-primary-container bg-primary-container rounded-lg font-bold font-label-md text-label-md transition-all" onclick="closeNavDrawer()">
-            <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">storefront</span> Shop
-        </a>
-        <a href="{{ route('cart') }}" class="flex items-center gap-3 px-3 py-3 text-on-surface-variant hover:bg-surface-variant rounded-lg font-label-md text-label-md transition-all" onclick="closeNavDrawer()">
-            <span class="material-symbols-outlined">shopping_cart</span> Cart
-        </a>
-        <a href="{{ route('account') }}" class="flex items-center gap-3 px-3 py-3 text-on-surface-variant hover:bg-surface-variant rounded-lg font-label-md text-label-md transition-all" onclick="closeNavDrawer()">
-            <span class="material-symbols-outlined">person</span> Profile
-        </a>
-    </nav>
-    <div class="mt-auto border-t border-outline-variant pt-4">
-        @auth
-        <form action="{{ route('logout') }}" method="POST" class="w-full">
-            @csrf
-            <button type="submit" class="w-full flex items-center gap-3 px-3 py-3 text-error hover:bg-error-container rounded-lg font-label-md text-label-md font-bold transition-all">
-                <span class="material-symbols-outlined">logout</span> Sign Out
-            </button>
-        </form>
-        @else
-        <a href="{{ route('login') }}" class="flex items-center justify-center gap-2 w-full py-3 bg-primary text-white rounded-lg font-label-md text-label-md font-bold hover:brightness-110 transition-all">
-            <span class="material-symbols-outlined">login</span> Masuk / Daftar
-        </a>
-        @endauth
-    </div>
-</div>
 
 <!-- Filter Overlay (mobile) -->
 <div id="filter-overlay" class="fixed inset-0 bg-black/40 z-40 md:hidden" onclick="closeFilterDrawer()"></div>
@@ -329,49 +281,36 @@
 <p class="font-body-sm text-body-sm text-secondary mt-1">Coba sesuaikan filter atau kata kunci pencarian Anda.</p>
 </div>
 
-<div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
+<div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
 @forelse($products as $product)
-<div onclick="window.location.href='{{ route('product.detail', $product->id) }}'" class="product-card-item product-card-hover group bg-surface-container-lowest border border-[#EDEDED] rounded-sm p-2.5 sm:p-4 flex flex-col justify-between cursor-pointer transition-all duration-300" data-id="{{ $product->id }}" data-title="{{ $product->nama_produk }}" data-category="{{ $product->category->nama_kategori ?? 'Umum' }}" data-store="{{ strtolower($product->store->nama_toko ?? '') }}" data-price="{{ $product->harga }}" data-rating="4.8">
-<div>
-    <div class="relative w-full aspect-square bg-[#F5F5F5] rounded-sm overflow-hidden mb-2.5 sm:mb-4">
-    @php
-        $imgUrl = $product->first_image_url;
-    @endphp
-    <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="{{ $product->nama_produk }}" src="{{ $imgUrl }}"/>
+@php
+    $storeCity = !empty($product->store->kota) ? $product->store->kota : 'Kota Denpasar';
+@endphp
+<div onclick="window.location.href='{{ route('product.detail', $product->id) }}'" class="product-card-item bg-surface rounded-sm border border-[#EDEDED] p-2.5 sm:p-4 product-card-hover group relative flex flex-col justify-between cursor-pointer transition-all duration-300" data-id="{{ $product->id }}" data-title="{{ $product->nama_produk }}" data-category="{{ $product->category->nama_kategori ?? 'Umum' }}" data-store="{{ strtolower($product->store->nama_toko ?? '') }}" data-price="{{ $product->harga }}">
     @if($product->badge)
-    <span class="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 bg-primary-container text-on-primary-container font-label-md text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full uppercase">{{ $product->badge }}</span>
+    <div class="absolute top-4 left-4 z-10">
+        <span class="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-primary text-on-primary text-[9px] sm:text-[10px] font-bold rounded-sm uppercase">{{ $product->badge }}</span>
+    </div>
     @endif
-    </div>
-    <div class="flex items-center justify-between mb-1 text-[10px] sm:text-xs">
-    <span class="text-secondary truncate max-w-[90px] sm:max-w-none">{{ $product->category->nama_kategori ?? 'Umum' }}</span>
-    <div class="flex items-center gap-0.5 text-amber-500 flex-shrink-0">
-    <span class="material-symbols-outlined text-[13px] sm:text-[15px]" style="font-variation-settings: 'FILL' 1;">star</span>
-    <span class="font-semibold text-on-surface text-[10px] sm:text-xs">4.8</span>
-    </div>
-    </div>
-    <h4 class="text-xs sm:text-sm font-bold text-on-surface group-hover:text-primary transition-colors line-clamp-2 min-h-[32px] sm:min-h-[40px] leading-snug mb-1">{{ $product->nama_produk }}</h4>
-    <div class="text-[10px] sm:text-[11px] text-primary font-bold flex items-center justify-between gap-1 mb-2">
-        <div class="flex items-center gap-1 min-w-0">
-            <span class="material-symbols-outlined text-xs">store</span>
-            <span class="truncate">{{ $product->store->nama_toko ?? 'Toko' }}</span>
+    <div>
+        <div class="aspect-square rounded-sm overflow-hidden bg-surface-container-low mb-2.5 sm:mb-4">
+            <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                src="{{ $product->first_image_url }}"
+                alt="{{ $product->nama_produk }}" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80';" />
         </div>
-        @if(!empty($product->store->kota))
-        <span class="text-[9px] sm:text-[10px] text-secondary font-medium flex items-center gap-0.5 flex-shrink-0" title="Lokasi Toko">
-            <span class="material-symbols-outlined text-[11px]">location_on</span>
-            <span class="truncate max-w-[70px] sm:max-w-[90px]">{{ $product->store->kota }}</span>
+        <!-- Bagian Kategori diubah menjadi Daerah Toko -->
+        <span class="font-label-md text-[9px] sm:text-[10px] text-primary uppercase tracking-widest mb-1 block font-bold truncate flex items-center gap-0.5">
+            <span class="material-symbols-outlined text-[12px]">location_on</span>
+            <span>{{ $storeCity }}</span>
         </span>
-        @endif
+        <h3 class="font-headline-sm text-headline-sm text-on-surface mb-1">
+            <a href="{{ route('product.detail', $product->id) }}" class="text-xs sm:text-sm font-bold text-on-surface hover:text-primary transition-colors block line-clamp-2 min-h-[32px] sm:min-h-[40px] leading-snug">{{ $product->nama_produk }}</a>
+        </h3>
     </div>
-</div>
-<div class="pt-2 border-t border-surface-container-low flex items-center justify-between">
-<div class="flex flex-col">
-<span class="text-xs sm:text-base font-bold text-primary">Rp {{ number_format($product->harga, 0, ',', '.') }}</span>
-@if($product->harga_diskon)
-<span class="text-[10px] sm:text-xs text-on-secondary-container line-through">Rp {{ number_format($product->harga_diskon, 0, ',', '.') }}</span>
-@endif
-</div>
-<button class="material-symbols-outlined p-1 sm:p-2 text-secondary hover:text-primary transition-colors text-lg sm:text-2xl">add_shopping_cart</button>
-</div>
+    <div class="flex justify-between items-center pt-2 border-t border-surface-container-low mt-2">
+        <p class="text-xs sm:text-base font-bold text-on-surface whitespace-nowrap">Rp {{ number_format($product->harga, 0, ',', '.') }}</p>
+        <span class="text-[10px] sm:text-xs text-on-surface-variant font-medium whitespace-nowrap">{{ $product->total_sold }} Terjual</span>
+    </div>
 </div>
 @empty
 <div class="col-span-full text-center py-12 bg-surface-container-lowest border border-dashed border-outline-variant rounded-xl my-4">

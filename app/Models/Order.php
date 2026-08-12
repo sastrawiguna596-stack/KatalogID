@@ -10,7 +10,23 @@ class Order extends Model
 {
     use HasFactory;
 
-    protected $guarded = ['id'];
+    protected $fillable = [
+        'user_id',
+        'store_id',
+        'kode_transaksi',
+        'total_harga',
+        'status_pembayaran',
+        'status_pengiriman',
+        'alamat_pengiriman',
+        'destination_area_id',
+        'nomor_resi',
+        'biteship_order_id',
+        'biteship_tracking_id',
+        'biteship_status',
+        'courier_company',
+        'courier_type',
+        'shipping_cost',
+    ];
 
     // Relasi: Order milik 1 User (Pembeli)
     public function user()

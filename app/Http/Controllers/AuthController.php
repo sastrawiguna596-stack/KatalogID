@@ -69,6 +69,7 @@ class AuthController extends Controller
         ]);
 
         // Jika pendaftar adalah Penjual (Seller), otomatis buatkan Toko
+        // is_active = false: toko harus diverifikasi oleh Master Admin sebelum aktif
         if ($user->role === 'seller') {
             $namaToko = $request->nama_toko ?: $user->name . ' Store';
             Store::create([
@@ -76,7 +77,7 @@ class AuthController extends Controller
                 'nama_toko' => $namaToko,
                 'slug' => Str::slug($namaToko . '-' . time()),
                 'deskripsi' => 'Toko resmi ' . $user->name,
-                'is_active' => true,
+                'is_active' => false,
             ]);
         }
 
@@ -147,7 +148,8 @@ class AuthController extends Controller
                     'slug' => Str::slug(($request->nama_toko ?: $user->name . ' Store') . '-' . time()),
                     'deskripsi' => $request->deskripsi_toko ?: 'Toko resmi ' . $user->name,
                     'kota' => $request->kota ?: 'Kota Denpasar',
-                    'is_active' => true,
+                    // is_active = false: toko perlu diverifikasi admin jika baru dibuat
+                    'is_active' => false,
                 ]
             );
 

@@ -218,7 +218,9 @@
 </div>
 <div>
 <h3 class="font-headline-sm text-headline-sm font-bold text-on-surface leading-tight">{{ Auth::user()->store->nama_toko ?? Auth::user()->name . ' Store' }}</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant">Verified Seller</p>
+<p class="font-body-sm text-body-sm {{ Auth::user()->store?->is_active ? 'text-emerald-600 font-bold' : 'text-amber-600 font-bold' }}">
+    {{ Auth::user()->store?->is_active ? '✓ Verified Seller' : '⏳ Menunggu Verifikasi' }}
+</p>
 </div>
 </div>
 <nav class="flex-1 flex flex-col gap-1">
@@ -264,6 +266,22 @@
 <!-- Main Content Canvas -->
 <main class="lg:pl-64 pt-20 min-h-screen px-4 md:px-margin-desktop py-6">
 <div class="max-w-container-max mx-auto">
+
+{{-- Banner: Toko Belum Diverifikasi --}}
+@php $sellerStore = Auth::user()->store; @endphp
+@if($sellerStore && !$sellerStore->is_active)
+<div class="mb-6 flex items-start gap-4 bg-amber-50 border border-amber-300 rounded-xl px-5 py-4 shadow-sm">
+    <span class="material-symbols-outlined text-amber-500 text-3xl mt-0.5 flex-shrink-0">pending_actions</span>
+    <div>
+        <p class="font-bold text-amber-800 text-sm">Toko Anda Sedang Menunggu Verifikasi</p>
+        <p class="text-amber-700 text-xs mt-1">
+            Toko <strong>{{ $sellerStore->nama_toko }}</strong> belum diaktifkan karena perlu diverifikasi oleh Master Admin terlebih dahulu.
+            Setelah diverifikasi, toko dan produk Anda akan otomatis tampil di katalog. Anda tetap bisa mengelola produk dan inventaris sembari menunggu.
+        </p>
+    </div>
+</div>
+@endif
+
 <!-- Page Header & Action -->
 <div class="flex flex-col md:flex-row md:items-end justify-between gap-y-4 mb-stack-lg">
 <div>

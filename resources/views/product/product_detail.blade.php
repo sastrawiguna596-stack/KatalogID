@@ -212,7 +212,9 @@
                     <span class="material-symbols-outlined text-base" style="font-variation-settings: 'FILL' {{ $s <= round($avgRating) ? 1 : 0 }};">star</span>
                 @endfor
             </div>
-            <span class="font-body-sm text-body-sm text-on-secondary-container font-bold">{{ number_format($avgRating, 1) }} ({{ $reviewsCount }} ulasan)</span>
+            <button type="button" onclick="switchDetailTab('reviews')" class="font-body-sm text-body-sm text-on-secondary-container font-bold hover:text-primary hover:underline cursor-pointer">
+                {{ number_format($avgRating, 1) }} ({{ $reviewsCount }} ulasan)
+            </button>
         </div>
     </div>
     <div class="flex items-baseline gap-4">
@@ -232,9 +234,7 @@
         <span class="font-body-md text-body-md text-secondary line-through">{{ $product['original_price'] }}</span>
         @endif
     </div>
-    <p class="font-body-md text-on-surface-variant">
-        {{ is_array($product) ? ($product['description'] ?? '') : $product->deskripsi_lengkap }}
-    </p>
+
 
     <!-- Toko Penjual Produk -->
     @if(is_object($product) && $product->store)
@@ -367,27 +367,22 @@
 </div>
 </div>
 <!-- Detail Tabs Section -->
-<section class="mt-stack-lg border-t border-outline-variant pt-stack-lg">
+<section id="detail-tabs-section" class="mt-stack-lg border-t border-outline-variant pt-stack-lg">
 <div class="flex gap-gutter border-b border-outline-variant overflow-x-auto no-scrollbar">
-<button class="pb-4 font-label-md text-label-md uppercase tracking-widest tab-active whitespace-nowrap">Deskripsi & Ulasan</button>
-<button class="pb-4 font-label-md text-label-md uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors whitespace-nowrap">Ulasan ({{ $reviewsCount }})</button>
+<button type="button" id="tab-btn-desc" onclick="switchDetailTab('desc')" class="pb-4 font-label-md text-label-md uppercase tracking-widest tab-active whitespace-nowrap cursor-pointer">Deskripsi</button>
+<button type="button" id="tab-btn-reviews" onclick="switchDetailTab('reviews')" class="pb-4 font-label-md text-label-md uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors whitespace-nowrap cursor-pointer">Ulasan ({{ $reviewsCount }})</button>
 </div>
 <div class="py-stack-md max-w-3xl space-y-6">
-<div class="flex flex-col gap-stack-sm">
+<!-- Tab Content: Deskripsi -->
+<div id="tab-content-desc" class="flex flex-col gap-stack-sm">
 <h3 class="font-headline-md text-headline-md">{{ is_array($product) ? ($product['title'] ?? '') : $product->nama_produk }}</h3>
-<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
-    {{ is_array($product) ? ($product['description'] ?? '') : ($product->deskripsi ?? 'Produk lokal unggulan dari UMKM Indonesia.') }}
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed whitespace-pre-line break-words break-all">
+    {{ is_array($product) ? ($product['description'] ?? '') : ($product->deskripsi_lengkap ?? $product->deskripsi ?? 'Produk lokal unggulan dari UMKM Indonesia.') }}
 </p>
-<ul class="list-disc pl-5 font-body-md text-body-md text-on-surface-variant flex flex-col gap-2 pt-2">
-<li>Bahan kualitas terbaik buatan pengrajin lokal</li>
-<li>Tahan lama dan ramah lingkungan</li>
-<li>Desain modern cocok untuk penggunaan sehari-hari</li>
-<li>Garansi kualitas Katalog IDN</li>
-</ul>
 </div>
 
-<!-- Customer Reviews List -->
-<div class="pt-6 border-t border-surface-container space-y-4">
+<!-- Tab Content: Ulasan -->
+<div id="tab-content-reviews" class="hidden space-y-4">
     <h3 class="font-headline-md text-xl font-bold text-on-surface flex items-center gap-2">
         <span class="material-symbols-outlined text-primary">rate_review</span>
         Ulasan & Rating Pembeli ({{ $reviewsCount }})
@@ -517,18 +512,36 @@
             }
         }
 
-        // Tab Switching Simulation
-        const tabButtons = document.querySelectorAll('button.whitespace-nowrap');
-        tabButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                tabButtons.forEach(b => {
-                    b.classList.remove('tab-active');
-                    b.classList.add('text-on-surface-variant');
-                });
-                btn.classList.add('tab-active');
-                btn.classList.remove('text-on-surface-variant');
-            });
-        });
+        // Tab Switching Handler
+        function switchDetailTab(tabName) {
+            const btnDesc = document.getElementById('tab-btn-desc');
+            const btnReviews = document.getElementById('tab-btn-reviews');
+            const contentDesc = document.getElementById('tab-content-desc');
+            const contentReviews = document.getElementById('tab-content-reviews');
+
+            if (!btnDesc || !btnReviews || !contentDesc || !contentReviews) return;
+
+            if (tabName === 'desc') {
+                btnDesc.classList.add('tab-active');
+                btnDesc.classList.remove('text-on-surface-variant');
+                btnReviews.classList.remove('tab-active');
+                btnReviews.classList.add('text-on-surface-variant');
+
+                contentDesc.classList.remove('hidden');
+                contentReviews.classList.add('hidden');
+            } else {
+                btnReviews.classList.add('tab-active');
+                btnReviews.classList.remove('text-on-surface-variant');
+                btnDesc.classList.remove('tab-active');
+                btnDesc.classList.add('text-on-surface-variant');
+
+                contentReviews.classList.remove('hidden');
+                contentDesc.classList.add('hidden');
+
+                const tabsSec = document.getElementById('detail-tabs-section');
+                if (tabsSec) tabsSec.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
 
         // Mobile Navigation Drawer handlers
         function openNavDrawer() {

@@ -8,6 +8,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductGalleryController;
 use App\Http\Controllers\ProductVariantController;
+use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +19,10 @@ Route::get('/', [ProductController::class, 'home'])->name('home');
 Route::get('/shop', [ProductController::class, 'index'])->name('shop');
 Route::get('/product/{id?}', [ProductController::class, 'show'])->name('product.detail');
 Route::get('/store/{id?}', [ProductController::class, 'showStore'])->name('store_product');
+
+// Webhook Callback Payment Gateway (Publik & Tanpa CSRF)
+Route::post('/api/payment/webhook/{gateway?}', [PaymentController::class, 'handleWebhook'])->name('payment.webhook');
+Route::match(['get', 'post'], '/payment/webhook/{gateway?}', [PaymentController::class, 'handleWebhook']);
 
 // ==========================================
 // Rute Autentikasi (Guest / Belum Login)
@@ -72,6 +77,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/api/biteship/check-rates', [CartController::class, 'checkRates'])->name('biteship.check_rates');
     
     Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('checkout.process');
+
+    // Payment System Routes
+    Route::get('/payment/{id}', [PaymentController::class, 'showPaymentPage'])->name('payment.page');
+    Route::post('/payment/{id}/confirm-manual', [PaymentController::class, 'confirmManualPayment'])->name('payment.confirm_manual');
+    Route::get('/payment/{id}/check-status', [PaymentController::class, 'checkPaymentStatus'])->name('payment.check_status');
+
 
     // Customer Dashboard
     Route::get('/customer', [OrderController::class, 'customerDashboard'])->name('cust_account');

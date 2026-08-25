@@ -9,14 +9,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Services\BiteshipService;
+use App\Services\Payment\PaymentService;
 
 class CartController extends Controller
 {
     protected $biteship;
+    protected $paymentService;
 
-    public function __construct(BiteshipService $biteship)
+    public function __construct(BiteshipService $biteship, PaymentService $paymentService)
     {
         $this->biteship = $biteship;
+        $this->paymentService = $paymentService;
     }
 
     /**
@@ -165,6 +168,7 @@ class CartController extends Controller
         $courierCompany = $request->input('courier_company');
         $courierType = $request->input('courier_type');
         $shippingCost = $request->input('shipping_cost', 0);
+        $paymentMethod = $request->input('payment_method', 'bank_transfer');
 
         // Kelompokkan item berdasarkan store_id
         $itemsByStore = [];
@@ -172,6 +176,8 @@ class CartController extends Controller
             $storeId = $item['store_id'] ?? 1;
             $itemsByStore[$storeId][] = $item;
         }
+
+        $createdOrders = [];
 
         foreach ($itemsByStore as $storeId => $items) {
             $storeSubtotal = 0;
@@ -187,13 +193,14 @@ class CartController extends Controller
                 'store_id' => $storeId,
                 'kode_transaksi' => 'TRX-' . strtoupper(Str::random(8)),
                 'total_harga' => $totalHarga,
-                'status_pembayaran' => 'paid',
+                'status_pembayaran' => 'pending',
                 'status_pengiriman' => 'pending',
                 'alamat_pengiriman' => $alamat,
                 'destination_area_id' => $destinationAreaId,
                 'courier_company' => $courierCompany,
                 'courier_type' => $courierType,
                 'shipping_cost' => $shippingCost,
+                'payment_method' => $paymentMethod,
             ]);
 
             foreach ($items as $item) {
@@ -205,11 +212,16 @@ class CartController extends Controller
                     'subtotal' => $item['harga'] * $item['jumlah'],
                 ]);
             }
+
+            // Inisialisasi transaksi di Payment Service
+            $this->paymentService->createPayment($order, $paymentMethod);
+            $createdOrders[] = $order;
         }
 
         session()->forget('cart');
 
-        return redirect()->route('cust_recent_orders')->with('success', 'Pesanan Anda berhasil dibuat dan dikonfirmasi! Terima kasih telah berbelanja.');
+        $firstOrder = reset($createdOrders);
+        return redirect()->route('payment.page', $firstOrder->id)->with('success', 'Pesanan Anda berhasil dibuat! Silakan selesaikan pembayaran.');
     }
 
     /**

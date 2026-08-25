@@ -294,37 +294,25 @@
                         </div>
                     </div>
                 <section class="bg-surface-container-lowest border border-[#EDEDED] rounded-xl p-6">
-                    <h2 class="font-headline-sm text-headline-sm mb-6">Payment Method</h2>
+                    <h2 class="font-headline-sm text-headline-sm mb-6">Metode Pembayaran</h2>
+                    <input type="hidden" name="payment_method" id="selected_payment_method" value="bank_transfer">
                     <div class="space-y-4">
                         <div class="flex flex-wrap gap-4">
-                            <button type="button"
+                            <button type="button" data-method="bank_transfer"
                                 class="payment-option-btn flex-1 min-w-[120px] flex flex-col items-center justify-center py-4 border-2 border-primary bg-primary/5 rounded-xl gap-2 transition-all cursor-pointer">
                                 <span class="material-symbols-outlined text-primary">account_balance_wallet</span>
                                 <span class="text-label-md font-semibold text-primary">Transfer Bank</span>
                             </button>
-                            <button type="button"
+                            <button type="button" data-method="qris"
                                 class="payment-option-btn flex-1 min-w-[120px] flex flex-col items-center justify-center py-4 border border-[#EDEDED] hover:bg-surface-container-low rounded-xl gap-2 transition-all cursor-pointer">
                                 <span class="material-symbols-outlined text-secondary">qr_code_2</span>
                                 <span class="text-label-md text-on-surface">QRIS</span>
                             </button>
-                            <button type="button"
+                            <button type="button" data-method="cod"
                                 class="payment-option-btn flex-1 min-w-[120px] flex flex-col items-center justify-center py-4 border border-[#EDEDED] hover:bg-surface-container-low rounded-xl gap-2 transition-all cursor-pointer">
                                 <span class="material-symbols-outlined text-secondary">handshake</span>
                                 <span class="text-label-md text-on-surface">COD</span>
                             </button>
-                        </div>
-                        <div class="mt-6 space-y-4">
-                            <input
-                                class="w-full h-12 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface"
-                                placeholder="Card Number" type="text" />
-                            <div class="grid grid-cols-2 gap-4">
-                                <input
-                                    class="h-12 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface"
-                                    placeholder="MM/YY" type="text" />
-                                <input
-                                    class="h-12 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface"
-                                    placeholder="CVV" type="text" />
-                            </div>
                         </div>
                     </div>
                 </section>
@@ -431,8 +419,15 @@
 
         // Toggle payment option visual border state
         const paymentBtns = document.querySelectorAll('.payment-option-btn');
+        const selectedPaymentInput = document.getElementById('selected_payment_method');
+
         paymentBtns.forEach(btn => {
             btn.addEventListener('click', () => {
+                const method = btn.getAttribute('data-method') || 'bank_transfer';
+                if (selectedPaymentInput) {
+                    selectedPaymentInput.value = method;
+                }
+
                 paymentBtns.forEach(b => {
                     b.classList.remove('border-primary', 'bg-primary/5', 'border-2');
                     b.classList.add('border-[#EDEDED]', 'border');

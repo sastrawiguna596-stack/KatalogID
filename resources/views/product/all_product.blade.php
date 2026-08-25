@@ -20,7 +20,6 @@
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
         .product-card-hover { transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; }
         .product-card-hover:hover { transform: translateY(-4px); box-shadow: 0px 4px 20px rgba(0,0,0,0.04); }
-        .sticky-search { position: sticky; top: 64px; z-index: 40; }
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #d5c4ab; border-radius: 10px; }
@@ -114,13 +113,13 @@
 
 <!-- TopAppBar -->
 @include('layouts.navbar', ['active' => 'shop'])
-<main class="max-w-container-max mx-auto px-4 md:px-margin-desktop py-stack-md">
+<main class="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-stack-md">
 <!-- Breadcrumbs & Sticky Search -->
 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-stack-md">
 <nav class="flex items-center text-body-sm font-body-sm text-on-secondary-container">
 <a class="hover:text-primary" href="{{ route('home') }}">Home</a>
 <span class="material-symbols-outlined text-[16px] mx-2">chevron_right</span>
-<span class="text-primary font-semibold">New Arrivals</span>
+<span class="text-primary font-semibold">Katalog Produk</span>
 </nav>
 <form action="{{ route('shop') }}" method="GET" class="flex items-center gap-2 w-full md:w-auto">
     @if(request('category'))
@@ -132,11 +131,11 @@
     @if(request('max_price'))
         <input type="hidden" name="max_price" value="{{ request('max_price') }}"/>
     @endif
-    <div class="flex-1 sticky-search flex items-center bg-surface-container-lowest border border-outline-variant rounded-full px-3 py-1.5 w-full md:w-[460px] focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all shadow-xs">
+    <div class="flex-1 flex items-center bg-surface-container-lowest border border-outline-variant rounded-full px-3 py-1.5 w-full md:w-[460px] lg:w-[560px] xl:w-[680px] focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all shadow-xs">
         <!-- Search Type Selector (Produk vs Toko) -->
         <select id="searchTypeSelect" name="search_type" class="bg-surface-container-low text-xs font-bold text-on-surface border-none rounded-full px-2.5 py-1.5 mr-2 focus:ring-0 cursor-pointer hover:bg-surface-container-high transition-colors">
-            <option value="product" {{ request('search_type', 'product') == 'product' ? 'selected' : '' }}>📦 Cari Produk</option>
-            <option value="store" {{ request('search_type') == 'store' ? 'selected' : '' }}>🏪 Cari Toko</option>
+            <option value="product" {{ request('search_type', 'product') == 'product' ? 'selected' : '' }}>Cari Produk</option>
+            <option value="store" {{ request('search_type') == 'store' ? 'selected' : '' }}>Cari Toko</option>
         </select>
         <span class="material-symbols-outlined text-on-surface-variant mr-1.5 text-lg">search</span>
         <input id="searchInput" name="search" value="{{ request('search') }}" class="bg-transparent border-none focus:ring-0 w-full text-body-sm font-body-sm text-on-surface placeholder:text-secondary" placeholder="{{ request('search_type') == 'store' ? 'Cari nama toko...' : 'Cari produk atau toko...' }}" type="text"/>
@@ -152,8 +151,8 @@
 </div>
 <div class="flex flex-col md:flex-row gap-gutter">
 <!-- Sidebar Filters (hidden on mobile, visible on md+) -->
-<aside class="hidden md:block w-64 flex-shrink-0">
-<div class="bg-surface-container-lowest border border-[#EDEDED] rounded-xl p-6 sticky top-32">
+<aside class="hidden md:block w-64 lg:w-72 xl:w-80 flex-shrink-0">
+<div class="bg-surface-container-lowest border border-[#EDEDED] rounded-xl p-6">
 <div class="flex items-center justify-between mb-stack-md">
 <h2 class="font-headline-sm text-headline-sm text-on-surface">Filter</h2>
 <a href="{{ route('shop') }}" id="clearFiltersBtn" class="text-body-sm font-body-sm text-primary hover:underline font-bold">Reset Filter</a>
@@ -236,7 +235,7 @@
             <span>Toko Ditemukan ({{ $matchedStores->count() }})</span>
         </h3>
     </div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         @foreach($matchedStores as $st)
             <a href="{{ route('store_product', $st->id) }}" class="flex items-center gap-3 p-3.5 bg-white rounded-xl border border-surface-container-highest hover:shadow-md hover:border-primary/40 transition-all group">
                 <div class="w-12 h-12 rounded-xl bg-primary text-white flex items-center justify-center font-bold flex-shrink-0 group-hover:scale-105 transition-transform">
@@ -281,7 +280,7 @@
 <p class="font-body-sm text-body-sm text-secondary mt-1">Coba sesuaikan filter atau kata kunci pencarian Anda.</p>
 </div>
 
-<div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+<div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-5">
 @forelse($products as $product)
 @php
     $storeCity = !empty($product->store->kota) ? $product->store->kota : 'Kota Denpasar';

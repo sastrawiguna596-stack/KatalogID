@@ -201,7 +201,7 @@
 
     <div class="flex flex-col lg:flex-row gap-8">
         <!-- Sidebar Filters (Desktop) -->
-        <aside class="w-full lg:w-64 flex-shrink-0 space-y-6">
+        <aside class="w-full lg:w-72 xl:w-80 flex-shrink-0 space-y-6">
             <div class="bg-white p-5 rounded-2xl border border-surface-container-highest shadow-xs">
                 <h3 class="font-headline-sm text-lg font-bold mb-4 text-on-surface border-b border-surface-container-low pb-2 flex items-center gap-2">
                     <span class="material-symbols-outlined text-primary">category</span> Kategori Produk
@@ -256,7 +256,7 @@
             </form>
 
             <!-- Product Grid -->
-            <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5">
                 @forelse($products as $product)
                     <div onclick="window.location.href='{{ url('/product') }}/{{ $product->id }}'" class="group product-card bg-white border border-surface-container-highest rounded-sm overflow-hidden cursor-pointer flex flex-col justify-between transition-all duration-300">
                         <div class="relative aspect-square overflow-hidden bg-surface-container-low rounded-sm">

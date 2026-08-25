@@ -12,6 +12,10 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->redirectTo(guests: '/login');
+        $middleware->validateCsrfTokens(except: [
+            'api/payment/webhook/*',
+            'payment/webhook/*',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

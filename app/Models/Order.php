@@ -26,6 +26,12 @@ class Order extends Model
         'courier_company',
         'courier_type',
         'shipping_cost',
+        'payment_method',
+        'payment_gateway',
+        'payment_reference',
+        'payment_url',
+        'payment_token',
+        'paid_at',
     ];
 
     // Relasi: Order milik 1 User (Pembeli)

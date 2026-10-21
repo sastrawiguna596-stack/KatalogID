@@ -7,7 +7,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | Driver aktif yang digunakan untuk memproses pembayaran checkout.
-    | Pilihan: 'manual', 'midtrans', 'xendit', 'tripay'
+    | Pilihan: 'manual', 'midtrans', 'xendit', 'tripay', 'zannpay'
     |
     */
     'default' => env('PAYMENT_GATEWAY', 'manual'),
@@ -60,9 +60,17 @@ return [
 
         'tripay' => [
             'merchant_code' => env('TRIPAY_MERCHANT_CODE', ''),
-            'api_key' => env('TRIPAY_API_KEY', ''),
-            'private_key' => env('TRIPAY_PRIVATE_KEY', ''),
+            'api_key'       => env('TRIPAY_API_KEY', ''),
+            'private_key'   => env('TRIPAY_PRIVATE_KEY', ''),
             'is_production' => env('TRIPAY_IS_PRODUCTION', false),
+        ],
+
+        // ZANNPAY (Zannstore Payment Gateway)
+        // Dapatkan Merchant ID & Secret Key di: https://pay.zannstore.com/dashboard
+        'zannpay' => [
+            'merchant_id'   => env('ZANNPAY_MERCHANT_ID', ''),
+            'secret_key'    => env('ZANNPAY_SECRET_KEY', ''),
+            'is_production' => env('ZANNPAY_IS_PRODUCTION', true),
         ],
     ],
 ];

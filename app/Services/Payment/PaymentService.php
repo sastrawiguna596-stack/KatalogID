@@ -25,6 +25,8 @@ class PaymentService
                 return new XenditDriver();
             case 'tripay':
                 return new TripayDriver();
+            case 'zannpay':
+                return new ZannpayDriver();
             case 'manual':
             default:
                 return new ManualDriver();

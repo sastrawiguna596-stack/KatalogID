@@ -1,20 +1,16 @@
 <!DOCTYPE html>
-
-<html class="light" lang="en">
+<html class="light" lang="id">
 
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Shopping Cart &amp; Checkout | Katalog IDN</title>
+    <title>Keranjang Belanja &amp; Pembayaran | Katalog IDN</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link
-        href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;display=swap"
+        href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
         rel="stylesheet" />
     <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
         rel="stylesheet" />
     <!-- Tailwind Configuration -->
     <script id="tailwind-config">
@@ -22,7 +18,7 @@
             darkMode: "class",
             theme: {
                 extend: {
-                    "colors": {
+                    colors: {
                         "on-secondary-container": "#656464",
                         "surface": "#fbf9f8",
                         "surface-bright": "#fbf9f8",
@@ -71,13 +67,15 @@
                         "on-tertiary-container": "#505250",
                         "surface-container-high": "#e9e8e7"
                     },
-                    "borderRadius": {
+                    borderRadius: {
                         "DEFAULT": "0.25rem",
                         "lg": "0.5rem",
                         "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem",
                         "full": "9999px"
                     },
-                    "spacing": {
+                    spacing: {
                         "stack-md": "24px",
                         "base": "8px",
                         "margin-mobile": "16px",
@@ -87,29 +85,17 @@
                         "gutter": "24px",
                         "container-max": "1280px"
                     },
-                    "fontFamily": {
-                        "body-sm": ["Plus Jakarta Sans"],
-                        "headline-sm": ["Hanken Grotesk"],
-                        "headline-lg": ["Hanken Grotesk"],
-                        "label-md": ["Hanken Grotesk"],
-                        "headline-xl-mobile": ["Hanken Grotesk"],
-                        "body-md": ["Plus Jakarta Sans"],
-                        "body-lg": ["Plus Jakarta Sans"],
-                        "headline-xl": ["Hanken Grotesk"],
-                        "headline-lg-mobile": ["Hanken Grotesk"],
-                        "headline-md": ["Hanken Grotesk"]
-                    },
-                    "fontSize": {
-                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
-                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
-                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
-                        "label-md": ["14px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
-                        "headline-xl-mobile": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
-                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
-                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
-                        "headline-xl": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
-                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "700" }],
-                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }]
+                    fontFamily: {
+                        "body-sm": ["Plus Jakarta Sans", "sans-serif"],
+                        "headline-sm": ["Hanken Grotesk", "sans-serif"],
+                        "headline-lg": ["Hanken Grotesk", "sans-serif"],
+                        "label-md": ["Hanken Grotesk", "sans-serif"],
+                        "headline-xl-mobile": ["Hanken Grotesk", "sans-serif"],
+                        "body-md": ["Plus Jakarta Sans", "sans-serif"],
+                        "body-lg": ["Plus Jakarta Sans", "sans-serif"],
+                        "headline-xl": ["Hanken Grotesk", "sans-serif"],
+                        "headline-lg-mobile": ["Hanken Grotesk", "sans-serif"],
+                        "headline-md": ["Hanken Grotesk", "sans-serif"]
                     }
                 },
             },
@@ -117,30 +103,20 @@
     </script>
     <style>
         @keyframes pageFadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(16px); }
             to { opacity: 1; transform: translateY(0); }
         }
         body {
-            animation: pageFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) ease-out forwards;
+            animation: pageFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) ease-out forwards;
         }
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
             vertical-align: middle;
         }
-        .active-nav-line { position: relative; }
-        .active-nav-line::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background-color: #7c5800;
-        }
-        input:focus {
+        input:focus, select:focus, textarea:focus {
             outline: none;
-            border-color: #1b1c1c !important;
-            box-shadow: 0 0 0 4px rgba(255, 184, 0, 0.2) !important;
+            border-color: #7c5800 !important;
+            box-shadow: 0 0 0 3px rgba(124, 88, 0, 0.15) !important;
         }
         /* Mobile Nav Drawer */
         #nav-overlay { display: none; }
@@ -153,271 +129,399 @@
     </style>
 </head>
 
-<body class="bg-surface text-on-surface font-body-md min-h-screen">
+<body class="bg-surface text-on-surface font-body-md min-h-screen flex flex-col justify-between">
 
-<!-- TopAppBar -->
-@include('layouts.navbar', ['active' => 'cart'])
-    <main class="w-full px-4 md:px-margin-desktop py-6 md:py-8 overflow-hidden">
-        <h1 class="font-headline-xl text-xl md:text-headline-xl mb-stack-md">Your Checkout</h1>
+    <!-- Navbar Component -->
+    @include('layouts.navbar', ['active' => 'cart'])
+
+    <main class="w-full max-w-[1280px] mx-auto px-4 md:px-margin-desktop py-6 md:py-8 flex-grow">
+        
+        <!-- Breadcrumbs -->
+        <nav class="flex items-center gap-2 text-xs md:text-sm text-secondary mb-6">
+            <a href="{{ route('home') }}" class="hover:text-primary transition-colors flex items-center gap-1">
+                <span class="material-symbols-outlined text-base">home</span> Beranda
+            </a>
+            <span class="text-outline-variant">/</span>
+            <a href="{{ route('shop') }}" class="hover:text-primary transition-colors">Katalog Produk</a>
+            <span class="text-outline-variant">/</span>
+            <span class="font-bold text-on-surface">Keranjang Belanja</span>
+        </nav>
+
+        {{-- Flash Messages --}}
+        @if(session('success'))
+        <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl font-bold flex items-center gap-3 shadow-xs">
+            <span class="material-symbols-outlined text-emerald-600 text-xl">check_circle</span>
+            <span>{{ session('success') }}</span>
+        </div>
+        @endif
+
+        @if(session('error'))
+        <div class="mb-6 p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl font-bold flex items-center gap-3 shadow-xs">
+            <span class="material-symbols-outlined text-rose-600 text-xl">error</span>
+            <span>{{ session('error') }}</span>
+        </div>
+        @endif
+
+        {{-- ======================================================== --}}
+        {{-- KONDISI 1: JIKA KERANJANG BERISI BARANG (ADA PRODUK)    --}}
+        {{-- ======================================================== --}}
+        @if(count($cart) > 0)
+        
+        <div class="mb-6">
+            <h1 class="font-headline-xl text-2xl md:text-3xl font-extrabold text-on-surface leading-tight">
+                Keranjang Belanja &amp; Checkout
+            </h1>
+            <p class="text-secondary text-sm md:text-base mt-1">
+                Periksa daftar belanjaan Anda dan lengkapi alamat pengiriman untuk proses pemesanan.
+            </p>
+        </div>
+
         <form action="{{ route('checkout.process') }}" method="POST" id="checkout_form">
             @csrf
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
-            <!-- Left Column: Cart & Details -->
-            <div class="lg:col-span-8 space-y-stack-md">
-                <!-- Section: Cart Items -->
-                <section class="bg-surface-container-lowest border border-[#EDEDED] rounded-xl p-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="font-headline-sm text-headline-sm">Shopping Cart ({{ count($cart) }} Items)</h2>
-                    </div>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                {{-- Kolom Kiri: Daftar Produk, Alamat, dan Metode Pembayaran --}}
+                <div class="lg:col-span-8 space-y-6">
+                    
+                    {{-- 1. Daftar Produk di Keranjang --}}
+                    <section class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-5 sm:p-6 shadow-xs">
+                        <div class="flex items-center justify-between border-b border-outline-variant/20 pb-4 mb-5">
+                            <h2 class="font-headline-sm text-lg sm:text-xl font-bold text-on-surface flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary">shopping_bag</span>
+                                <span>Daftar Produk ({{ count($cart) }} Barang)</span>
+                            </h2>
+                            <a href="{{ route('shop') }}" class="text-xs sm:text-sm font-bold text-primary hover:underline flex items-center gap-1">
+                                <span>+ Tambah Produk Lain</span>
+                            </a>
+                        </div>
 
-                    @if(session('success'))
-                    <div class="mb-4 p-3 bg-emerald-100 text-emerald-800 rounded-lg text-body-sm font-bold">
-                        {{ session('success') }}
-                    </div>
-                    @endif
-
-                    @if(count($cart) > 0)
-                    <div class="space-y-6">
-                        @foreach($cart as $id => $item)
-                        <div class="flex gap-6 pb-6 border-b border-[#EDEDED]">
-                            <div class="w-24 h-24 bg-surface-container rounded-lg overflow-hidden flex-shrink-0">
-                                <img class="w-full h-full object-cover"
-                                    src="{{ str_starts_with($item['foto_path'], 'http') ? $item['foto_path'] : asset($item['foto_path'] ?: 'https://via.placeholder.com/150') }}" alt="{{ $item['nama_produk'] }}" />
-                            </div>
-                            <div class="flex-grow flex flex-col justify-between py-1">
-                                <div>
-                                    <div class="flex justify-between items-start">
-                                        <h3 class="font-headline-sm text-[18px] font-bold">{{ $item['nama_produk'] }}</h3>
-                                        <div class="text-right">
-                                            <p class="font-bold text-primary">Rp {{ number_format($item['harga'] * $item['jumlah'], 0, ',', '.') }}</p>
-                                            @if(!empty($item['harga_asal']) && $item['harga_asal'] > $item['harga'])
-                                                <p class="text-xs text-secondary line-through">Rp {{ number_format($item['harga_asal'] * $item['jumlah'], 0, ',', '.') }}</p>
+                        <div class="space-y-5">
+                            @foreach($cart as $id => $item)
+                            <div class="flex flex-col sm:flex-row gap-4 sm:gap-5 pb-5 border-b border-outline-variant/20 last:border-b-0 last:pb-0">
+                                <div class="w-20 h-20 sm:w-24 sm:h-24 bg-surface-container rounded-xl overflow-hidden flex-shrink-0 border border-outline-variant/20">
+                                    <img class="w-full h-full object-cover"
+                                        src="{{ str_starts_with($item['foto_path'], 'http') ? $item['foto_path'] : asset($item['foto_path'] ?: 'https://via.placeholder.com/150') }}" 
+                                        alt="{{ $item['nama_produk'] }}" />
+                                </div>
+                                <div class="flex-grow flex flex-col justify-between">
+                                    <div>
+                                        <div class="flex justify-between items-start gap-3">
+                                            <h3 class="font-bold text-base sm:text-lg text-on-surface line-clamp-2">{{ $item['nama_produk'] }}</h3>
+                                            <div class="text-right flex-shrink-0">
+                                                <p class="font-extrabold text-primary text-base sm:text-lg">Rp {{ number_format($item['harga'] * $item['jumlah'], 0, ',', '.') }}</p>
+                                                @if(!empty($item['harga_asal']) && $item['harga_asal'] > $item['harga'])
+                                                    <p class="text-xs text-secondary line-through">Rp {{ number_format($item['harga_asal'] * $item['jumlah'], 0, ',', '.') }}</p>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex flex-wrap items-center gap-2 text-xs text-secondary mt-1.5">
+                                            <span class="inline-flex items-center gap-1 bg-surface-container px-2 py-0.5 rounded text-on-surface-variant font-medium">
+                                                <span class="material-symbols-outlined text-[13px]">storefront</span>
+                                                {{ $item['store_name'] }}
+                                            </span>
+                                            @if(!empty($item['variant_name']))
+                                                <span class="inline-flex items-center gap-1 bg-amber-500/10 text-primary font-bold px-2 py-0.5 rounded">
+                                                    <span class="material-symbols-outlined text-[13px]">tune</span>
+                                                    Varian: {{ $item['variant_name'] }}
+                                                </span>
                                             @endif
+                                            <span>Satuan: Rp {{ number_format($item['harga'], 0, ',', '.') }}</span>
                                         </div>
                                     </div>
-                                    <p class="text-body-sm text-secondary mt-1">
-                                        <span>Toko: {{ $item['store_name'] }}</span>
-                                        @if(!empty($item['variant_name']))
-                                            <span class="mx-1">•</span>
-                                            <span class="inline-flex items-center gap-1 bg-amber-500/10 text-primary font-bold px-2 py-0.5 rounded text-xs">
-                                                <span class="material-symbols-outlined text-xs">tune</span>
-                                                Varian: {{ $item['variant_name'] }}
-                                            </span>
-                                        @endif
-                                        <span class="mx-1">•</span>
-                                        <span>Satuan: Rp {{ number_format($item['harga'], 0, ',', '.') }}</span>
-                                        @if(!empty($item['harga_asal']) && $item['harga_asal'] > $item['harga'])
-                                            <span class="text-xs text-secondary line-through ml-1">Rp {{ number_format($item['harga_asal'], 0, ',', '.') }}</span>
-                                        @endif
-                                    </p>
-                                </div>
-                                <div class="flex justify-between items-center mt-4">
-                                    <div class="flex items-center border border-[#EDEDED] rounded-lg">
-                                        <form action="{{ route('cart.update', $id) }}" method="POST" class="inline">
+
+                                    <div class="flex justify-between items-center mt-4 pt-2 border-t border-dashed border-outline-variant/20">
+                                        <div class="flex items-center border border-outline-variant/40 rounded-lg overflow-hidden bg-surface-container-low shadow-2xs">
+                                            <form action="{{ route('cart.update', $id) }}" method="POST" class="inline">
+                                                @csrf
+                                                <input type="hidden" name="type" value="decrease">
+                                                <button type="submit" class="w-8 h-8 flex items-center justify-center hover:bg-surface-container transition-colors font-bold text-secondary" title="Kurangi Kuantitas">-</button>
+                                            </form>
+                                            <span class="w-10 text-center font-bold text-sm text-on-surface">{{ $item['jumlah'] }}</span>
+                                            <form action="{{ route('cart.update', $id) }}" method="POST" class="inline">
+                                                @csrf
+                                                <input type="hidden" name="type" value="increase">
+                                                <button type="submit" class="w-8 h-8 flex items-center justify-center hover:bg-surface-container transition-colors font-bold text-secondary" title="Tambah Kuantitas">+</button>
+                                            </form>
+                                        </div>
+
+                                        <form action="{{ route('cart.remove', $id) }}" method="POST">
                                             @csrf
-                                            <input type="hidden" name="type" value="decrease">
-                                            <button type="submit" class="px-3 py-1 hover:bg-surface-container transition-colors">-</button>
-                                        </form>
-                                        <span class="px-4 font-semibold">{{ $item['jumlah'] }}</span>
-                                        <form action="{{ route('cart.update', $id) }}" method="POST" class="inline">
-                                            @csrf
-                                            <input type="hidden" name="type" value="increase">
-                                            <button type="submit" class="px-3 py-1 hover:bg-surface-container transition-colors">+</button>
+                                            @method('DELETE')
+                                            <button type="submit" class="text-rose-600 hover:text-rose-700 flex items-center gap-1 text-xs sm:text-sm font-bold hover:underline transition-colors" title="Hapus dari keranjang">
+                                                <span class="material-symbols-outlined text-base">delete</span>
+                                                Hapus
+                                            </button>
                                         </form>
                                     </div>
-                                    <form action="{{ route('cart.remove', $id) }}" method="POST">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-error flex items-center gap-1 hover:underline text-body-sm font-bold">
-                                            <span class="material-symbols-outlined text-sm">delete</span>
-                                            Hapus
-                                        </button>
-                                    </form>
                                 </div>
                             </div>
+                            @endforeach
                         </div>
-                        @endforeach
-                    </div>
-                    @else
-                    <div class="py-12 text-center">
-                        <span class="material-symbols-outlined text-6xl text-secondary mb-3">shopping_cart</span>
-                        <p class="text-headline-sm text-on-surface mb-2 font-bold">Keranjang Belanja Anda Kosong</p>
-                        <p class="text-secondary font-body-sm mb-6">Belum ada barang yang Anda tambahkan ke keranjang.</p>
-                        <a href="{{ route('shop') }}" class="px-6 py-3 bg-primary text-on-primary font-bold rounded-lg hover:bg-[#684900] transition-colors inline-block">Mulai Belanja Sekarang</a>
-                    </div>
-                    @endif
-                </section>
-                <!-- Section: Shipping & Delivery -->
-                <section class="bg-surface-container-lowest border border-[#EDEDED] rounded-xl p-6">
-                    <h2 class="font-headline-sm text-headline-sm mb-6">Shipping &amp; Delivery</h2>
-                    <div class="space-y-4 mb-8">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
-                            <div class="space-y-4">
-                                <label class="block text-label-md text-secondary">Contact Information</label>
-                                <input name="email"
-                                    class="w-full h-12 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface"
-                                    value="{{ Auth::user()->email ?? '' }}" placeholder="Email Address" type="email" />
-                                <input name="phone"
-                                    class="w-full h-12 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface"
-                                    value="{{ Auth::user()->phone ?? '' }}" placeholder="Phone Number" type="tel" />
+                    </section>
+
+                    {{-- 2. Alamat Pengiriman & Penerima --}}
+                    <section class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-5 sm:p-6 shadow-xs">
+                        <div class="border-b border-outline-variant/20 pb-4 mb-5">
+                            <h2 class="font-headline-sm text-lg sm:text-xl font-bold text-on-surface flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary">local_shipping</span>
+                                <span>Informasi Pengiriman &amp; Penerima</span>
+                            </h2>
+                            <p class="text-xs text-secondary mt-1">Pastikan data kontak dan alamat tujuan diisi dengan tepat untuk kelancaran pengiriman.</p>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="space-y-2">
+                                    <label class="block text-xs font-bold text-secondary uppercase tracking-wider">Alamat Email Pembeli</label>
+                                    <input name="email"
+                                        class="w-full h-11 px-4 rounded-xl border border-outline-variant/50 bg-surface-container-lowest text-on-surface text-sm transition-all"
+                                        value="{{ Auth::user()->email ?? '' }}" placeholder="contoh: nama@email.com" type="email" required />
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="block text-xs font-bold text-secondary uppercase tracking-wider">Nomor WhatsApp / Telepon</label>
+                                    <input name="phone"
+                                        class="w-full h-11 px-4 rounded-xl border border-outline-variant/50 bg-surface-container-lowest text-on-surface text-sm transition-all"
+                                        value="{{ Auth::user()->phone ?? '' }}" placeholder="contoh: 08123456789" type="tel" required />
+                                </div>
                             </div>
-                            <div class="space-y-4">
-                                <label class="block text-label-md text-secondary">Shipping Address</label>
-                                <input id="address_input" name="address"
-                                    class="w-full h-12 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface"
-                                    value="{{ Auth::user()->address ?? '' }}" placeholder="Full Address (Street, No)" type="text" />
-                                
-                                <!-- Area Search -->
+
+                            <div class="space-y-2">
+                                <label class="block text-xs font-bold text-secondary uppercase tracking-wider">Alamat Lengkap Pengiriman</label>
+                                <textarea id="address_input" name="address" rows="2"
+                                    class="w-full p-3 rounded-xl border border-outline-variant/50 bg-surface-container-lowest text-on-surface text-sm transition-all"
+                                    placeholder="Nama Jalan, Nomor Rumah, RT/RW, Kelurahan, Patokan Khusus..." required>{{ Auth::user()->address ?? '' }}</textarea>
+                            </div>
+
+                            {{-- Area Search Biteship --}}
+                            <div class="space-y-2">
+                                <label class="block text-xs font-bold text-secondary uppercase tracking-wider">Kecamatan / Kota Tujuan</label>
                                 <div class="relative">
+                                    <span class="absolute left-3.5 top-3 text-secondary material-symbols-outlined text-lg">location_on</span>
                                     <input id="area_search" type="text" 
-                                        class="w-full h-12 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface"
-                                        placeholder="Ketik Kecamatan / Kota Tujuan..." autocomplete="off">
+                                        class="w-full h-11 pl-10 pr-4 rounded-xl border border-outline-variant/50 bg-surface-container-lowest text-on-surface text-sm transition-all"
+                                        placeholder="Ketik minimal 3 huruf nama kecamatan atau kota..." autocomplete="off">
                                     <input type="hidden" name="destination_area_id" id="destination_area_id" value="">
                                     
                                     <!-- Search Results Dropdown -->
-                                    <ul id="area_results" class="absolute z-10 w-full bg-white border border-outline-variant rounded-lg mt-1 max-h-48 overflow-y-auto hidden shadow-lg">
+                                    <ul id="area_results" class="absolute z-20 w-full bg-white border border-outline-variant/40 rounded-xl mt-1.5 max-h-48 overflow-y-auto hidden shadow-xl divide-y divide-outline-variant/20">
                                     </ul>
                                 </div>
                             </div>
+
+                            <!-- Courier Selection (Loaded via AJAX) -->
+                            <div id="courier_selection_container" class="hidden mt-5 pt-5 border-t border-outline-variant/20">
+                                <label class="block text-xs font-bold text-secondary uppercase tracking-wider mb-3">Pilihan Layanan Kurir &amp; Tarif Ongkir</label>
+                                <div id="courier_list" class="space-y-2.5">
+                                    <!-- Courier options will be injected here -->
+                                </div>
+                                <input type="hidden" name="courier_company" id="courier_company" value="">
+                                <input type="hidden" name="courier_type" id="courier_type" value="">
+                                <input type="hidden" name="shipping_cost" id="shipping_cost" value="0">
+                            </div>
+                        </div>
+                    </section>
+
+                    {{-- 3. Metode Pembayaran --}}
+                    <section class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-5 sm:p-6 shadow-xs">
+                        <div class="border-b border-outline-variant/20 pb-4 mb-5">
+                            <h2 class="font-headline-sm text-lg sm:text-xl font-bold text-on-surface flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary">account_balance_wallet</span>
+                                <span>Pilihan Metode Pembayaran</span>
+                            </h2>
+                            <p class="text-xs text-secondary mt-1">Pilih cara pembayaran yang paling nyaman untuk Anda.</p>
                         </div>
 
-                        <!-- Courier Selection (Loaded via AJAX) -->
-                        <div id="courier_selection_container" class="hidden mt-6 pt-6 border-t border-[#EDEDED]">
-                            <label class="block text-label-md text-secondary mb-3">Pilih Layanan Pengiriman</label>
-                            <div id="courier_list" class="space-y-3">
-                                <!-- Courier options will be injected here -->
-                            </div>
-                            <!-- Hidden inputs to store selected shipping info for form submission -->
-                            <input type="hidden" name="courier_company" id="courier_company" value="">
-                            <input type="hidden" name="courier_type" id="courier_type" value="">
-                            <input type="hidden" name="shipping_cost" id="shipping_cost" value="0">
-                        </div>
-                    </div>
-                <section class="bg-surface-container-lowest border border-[#EDEDED] rounded-xl p-6">
-                    <h2 class="font-headline-sm text-headline-sm mb-6">Metode Pembayaran</h2>
-                    <input type="hidden" name="payment_method" id="selected_payment_method" value="bank_transfer">
-                    <div class="space-y-4">
-                        <div class="flex flex-wrap gap-4">
+                        <input type="hidden" name="payment_method" id="selected_payment_method" value="bank_transfer">
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <button type="button" data-method="bank_transfer"
-                                class="payment-option-btn flex-1 min-w-[120px] flex flex-col items-center justify-center py-4 border-2 border-primary bg-primary/5 rounded-xl gap-2 transition-all cursor-pointer">
-                                <span class="material-symbols-outlined text-primary">account_balance_wallet</span>
-                                <span class="text-label-md font-semibold text-primary">Transfer Bank</span>
+                                class="payment-option-btn flex flex-col items-center justify-center p-4 border-2 border-primary bg-primary/5 rounded-xl gap-2 transition-all cursor-pointer text-center">
+                                <span class="material-symbols-outlined text-primary text-2xl">account_balance</span>
+                                <span class="text-sm font-bold text-primary">Transfer Bank</span>
+                                <span class="text-[11px] text-secondary">Virtual Account Otomatis</span>
                             </button>
+
                             <button type="button" data-method="qris"
-                                class="payment-option-btn flex-1 min-w-[120px] flex flex-col items-center justify-center py-4 border border-[#EDEDED] hover:bg-surface-container-low rounded-xl gap-2 transition-all cursor-pointer">
-                                <span class="material-symbols-outlined text-secondary">qr_code_2</span>
-                                <span class="text-label-md text-on-surface">QRIS</span>
+                                class="payment-option-btn flex flex-col items-center justify-center p-4 border border-outline-variant/40 hover:bg-surface-container-low rounded-xl gap-2 transition-all cursor-pointer text-center">
+                                <span class="material-symbols-outlined text-secondary text-2xl">qr_code_2</span>
+                                <span class="text-sm font-bold text-on-surface">QRIS Instant</span>
+                                <span class="text-[11px] text-secondary">Gopay, OVO, Dana, BCA, dll</span>
                             </button>
+
                             <button type="button" data-method="cod"
-                                class="payment-option-btn flex-1 min-w-[120px] flex flex-col items-center justify-center py-4 border border-[#EDEDED] hover:bg-surface-container-low rounded-xl gap-2 transition-all cursor-pointer">
-                                <span class="material-symbols-outlined text-secondary">handshake</span>
-                                <span class="text-label-md text-on-surface">COD</span>
+                                class="payment-option-btn flex flex-col items-center justify-center p-4 border border-outline-variant/40 hover:bg-surface-container-low rounded-xl gap-2 transition-all cursor-pointer text-center">
+                                <span class="material-symbols-outlined text-secondary text-2xl">handshake</span>
+                                <span class="text-sm font-bold text-on-surface">COD (Bayar di Tempat)</span>
+                                <span class="text-[11px] text-secondary">Bayar saat kurir tiba</span>
                             </button>
                         </div>
-                    </div>
-                </section>
-            </div>
-            <!-- Right Column: Sticky Summary -->
-            <aside class="lg:col-span-4 sticky top-24">
-                <div
-                    class="bg-surface-container-lowest border border-[#EDEDED] rounded-xl p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.04)]">
-                    <h2 class="font-headline-sm text-headline-sm mb-6">Ringkasan Pesanan</h2>
-                    <div class="space-y-4 mb-6">
-                        <div class="flex justify-between text-body-md text-secondary">
-                            <span>Subtotal Produk</span>
-                            <span id="summary_subtotal" class="font-semibold text-on-surface" data-value="{{ $subtotal }}">Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
+                    </section>
+
+                </div>
+
+                {{-- Kolom Kanan: Sticky Summary --}}
+                <aside class="lg:col-span-4 sticky top-24 space-y-5">
+                    <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-5 sm:p-6 shadow-xs">
+                        <h2 class="font-headline-sm text-lg font-bold text-on-surface mb-5 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">receipt_long</span>
+                            <span>Ringkasan Pesanan</span>
+                        </h2>
+
+                        <div class="space-y-3.5 mb-6 text-sm">
+                            <div class="flex justify-between text-secondary">
+                                <span>Subtotal Produk</span>
+                                <span id="summary_subtotal" class="font-bold text-on-surface" data-value="{{ $subtotal }}">Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="flex justify-between text-secondary">
+                                <span>Estimasi Biaya Ongkir</span>
+                                <span id="summary_shipping" class="font-bold text-on-surface" data-value="0">Rp 0</span>
+                            </div>
+                            <div class="flex justify-between text-secondary pb-4 border-b border-outline-variant/20">
+                                <span>Biaya Layanan</span>
+                                <span id="summary_fees" class="font-bold text-on-surface" data-value="{{ $biayaOperasional }}">Rp {{ number_format($biayaOperasional, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="flex justify-between items-center pt-1">
+                                <span class="font-bold text-base text-on-surface">Total Pembayaran</span>
+                                <span id="summary_total" class="text-primary text-xl font-extrabold" data-value="{{ $subtotal + $biayaOperasional }}">Rp {{ number_format($subtotal + $biayaOperasional, 0, ',', '.') }}</span>
+                            </div>
                         </div>
-                        <div class="flex justify-between text-body-md text-secondary">
-                            <span>Estimasi Pengiriman</span>
-                            <span id="summary_shipping" class="font-semibold text-on-surface" data-value="0">Rp 0</span>
+
+                        {{-- Kupon Diskon --}}
+                        <div class="mb-6 pt-4 border-t border-outline-variant/20">
+                            <label class="block text-xs font-bold text-secondary mb-2 uppercase tracking-wider">Kode Kupon / Promo Diskon</label>
+                            <div class="flex gap-2">
+                                <input
+                                    class="flex-grow h-10 px-3 text-sm rounded-xl border border-outline-variant/50 bg-surface-container-lowest transition-all"
+                                    placeholder="Masukkan kode promo..." type="text" />
+                                <button type="button"
+                                    class="px-4 py-2 bg-on-surface text-surface text-xs font-bold rounded-xl hover:bg-secondary transition-colors">Gunakan</button>
+                            </div>
                         </div>
-                        <div class="flex justify-between text-body-md text-secondary pb-4 border-b border-[#EDEDED]">
-                            <span>Biaya Operasional</span>
-                            <span id="summary_fees" class="font-semibold text-on-surface" data-value="{{ $biayaOperasional }}">Rp {{ number_format($biayaOperasional, 0, ',', '.') }}</span>
-                        </div>
-                        <div class="flex justify-between text-headline-sm font-bold pt-2">
-                            <span>Total Pembayaran</span>
-                            <span id="summary_total" class="text-primary text-xl font-extrabold" data-value="{{ $subtotal + $biayaOperasional }}">Rp {{ number_format($subtotal + $biayaOperasional, 0, ',', '.') }}</span>
-                        </div>
-                    </div>
-                    <div class="mb-6">
-                        <label class="block text-label-md text-secondary mb-2">Promo Code</label>
-                        <div class="flex gap-2">
-                            <input
-                                class="flex-grow h-10 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest"
-                                placeholder="Enter code" type="text" />
-                            <button
-                                class="px-4 py-2 bg-secondary text-white text-label-md rounded-lg hover:bg-on-surface transition-colors">Apply</button>
-                        </div>
-                    </div>
+
+                        {{-- Tombol Checkout Utama --}}
                         <button type="submit" id="btn_checkout"
-                            class="w-full py-4 bg-primary text-on-secondary font-bold rounded-xl text-headline-sm shadow-lg hover:brightness-90 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
-                            Buat Pesanan Sekarang
-                            <span class="material-symbols-outlined">arrow_forward</span>
+                            class="w-full py-4 bg-primary text-white font-extrabold rounded-xl text-base shadow-md hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer">
+                            <span>Buat Pesanan Sekarang</span>
+                            <span class="material-symbols-outlined text-lg">arrow_forward</span>
                         </button>
-                    <div class="mt-6 flex items-center justify-center gap-4 opacity-50 grayscale">
-                        <span class="material-symbols-outlined">verified_user</span>
-                        <p class="text-[10px] text-center uppercase tracking-widest font-bold">Secure SSL Checkout</p>
-                    </div>
-                </div>
-                <div class="mt-stack-md p-6 bg-surface-container rounded-xl">
-                    <div class="flex items-start gap-4">
-                        <span class="material-symbols-outlined text-primary">local_shipping</span>
-                        <div>
-                            <p class="font-semibold text-body-sm">Ethical Fulfillment</p>
-                            <p class="text-body-sm text-secondary">This order supports small independent makers and
-                                local delivery partners.</p>
+
+                        <div class="mt-5 flex items-center justify-center gap-2 text-xs text-secondary">
+                            <span class="material-symbols-outlined text-emerald-600 text-sm">lock</span>
+                            <span class="font-medium">Transaksi Aman &amp; Terenkripsi SSL 256-bit</span>
                         </div>
                     </div>
-                </div>
-            </aside>
+
+                    {{-- Kotak Dukungan UMKM --}}
+                    <div class="p-5 bg-surface-container-low border border-outline-variant/20 rounded-2xl">
+                        <div class="flex items-start gap-3.5">
+                            <div class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
+                                <span class="material-symbols-outlined text-xl">diversity_3</span>
+                            </div>
+                            <div>
+                                <p class="font-bold text-sm text-on-surface">Dukungan Produk Lokal UMKM</p>
+                                <p class="text-xs text-secondary mt-1 leading-relaxed">
+                                    Setiap pesanan Anda langsung memberdayakan pengrajin, produsen lokal, serta mitra logistik daerah di seluruh Indonesia.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+
             </div>
         </form>
+
+        {{-- ======================================================== --}}
+        {{-- KONDISI 2: JIKA KERANJANG KOSONG (0 BARANG)              --}}
+        {{-- ======================================================== --}}
+        @else
+
+        <div class="max-w-2xl mx-auto py-10 md:py-16">
+            {{-- Kartu Empty State --}}
+            <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-3xl p-8 sm:p-12 text-center shadow-xs">
+                <div class="w-24 h-24 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto mb-6 shadow-xs">
+                    <span class="material-symbols-outlined text-5xl">remove_shopping_cart</span>
+                </div>
+                
+                <h1 class="font-headline-md text-2xl sm:text-3xl font-extrabold text-on-surface mb-3">
+                    Keranjang Belanja Anda Masih Kosong
+                </h1>
+                
+                <p class="text-secondary text-sm sm:text-base max-w-lg mx-auto leading-relaxed mb-8">
+                    Sepertinya Anda belum menambahkan produk apa pun ke dalam keranjang. Yuk, temukan beragam karya pengrajin dan produk lokal UMKM unggulan kami!
+                </p>
+
+                <div class="flex flex-col sm:flex-row gap-3.5 justify-center items-center">
+                    <a href="{{ route('shop') }}" 
+                        class="w-full sm:w-auto px-8 py-3.5 bg-primary text-white font-bold rounded-xl hover:brightness-110 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-lg">storefront</span>
+                        <span>Jelajahi Katalog Produk</span>
+                    </a>
+                    <a href="{{ route('home') }}" 
+                        class="w-full sm:w-auto px-6 py-3.5 border border-outline-variant/50 text-on-surface hover:bg-surface-variant font-bold rounded-xl active:scale-95 transition-all flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-lg">home</span>
+                        <span>Kembali ke Beranda</span>
+                    </a>
+                </div>
+            </div>
+
+            {{-- 3 Pilar Keunggulan --}}
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
+                <div class="p-4 rounded-2xl bg-surface-container-lowest border border-outline-variant/20 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-primary flex items-center justify-center flex-shrink-0">
+                        <span class="material-symbols-outlined text-xl">verified</span>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-on-surface">100% Produk UMKM</h4>
+                        <p class="text-[11px] text-secondary mt-0.5">Produk asli karya anak bangsa</p>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-2xl bg-surface-container-lowest border border-outline-variant/20 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-700 flex items-center justify-center flex-shrink-0">
+                        <span class="material-symbols-outlined text-xl">security</span>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-on-surface">Transaksi Aman</h4>
+                        <p class="text-[11px] text-secondary mt-0.5">Payment gateway terpercaya</p>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-2xl bg-surface-container-lowest border border-outline-variant/20 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-700 flex items-center justify-center flex-shrink-0">
+                        <span class="material-symbols-outlined text-xl">local_shipping</span>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-on-surface">Pengiriman Seluruh RI</h4>
+                        <p class="text-[11px] text-secondary mt-0.5">Multi-kurir terintegrasi</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @endif
+
     </main>
+
+    <!-- Footer Component -->
     @include('layouts.footer')
+
     <script>
         // Mobile nav drawer
         function openNavDrawer() {
-            document.getElementById('mobile-nav-drawer').classList.add('open');
-            document.getElementById('nav-overlay').classList.add('active');
+            const drawer = document.getElementById('mobile-nav-drawer');
+            const overlay = document.getElementById('nav-overlay');
+            if(drawer) drawer.classList.add('open');
+            if(overlay) overlay.classList.add('active');
         }
         function closeNavDrawer() {
-            document.getElementById('mobile-nav-drawer').classList.remove('open');
-            document.getElementById('nav-overlay').classList.remove('active');
+            const drawer = document.getElementById('mobile-nav-drawer');
+            const overlay = document.getElementById('nav-overlay');
+            if(drawer) drawer.classList.remove('open');
+            if(overlay) overlay.classList.remove('active');
         }
 
-        // Micro-interaction for quantity buttons
-        document.querySelectorAll('button').forEach(btn => {
-            btn.addEventListener('mousedown', () => {
-                btn.classList.add('scale-95');
-            });
-            btn.addEventListener('mouseup', () => {
-                btn.classList.remove('scale-95');
-            });
-            btn.addEventListener('mouseleave', () => {
-                btn.classList.remove('scale-95');
-            });
-        });
-
-        // Toggle radio button visual state for shipping/delivery
-        const deliveryRadios = document.querySelectorAll('input[name="delivery"]');
-        deliveryRadios.forEach(radio => {
-            radio.parentElement.addEventListener('click', () => {
-                deliveryRadios.forEach(r => {
-                    r.parentElement.classList.remove('border-primary', 'bg-primary/5', 'border-2');
-                    r.parentElement.classList.add('border-[#EDEDED]', 'border');
-                    r.parentElement.querySelector('.w-5').classList.remove('border-primary');
-                    r.parentElement.querySelector('.w-5').innerHTML = '';
-                });
-                radio.checked = true;
-                radio.parentElement.classList.add('border-primary', 'bg-primary/5', 'border-2');
-                radio.parentElement.classList.remove('border-[#EDEDED]', 'border');
-                radio.parentElement.querySelector('.w-5').classList.add('border-primary');
-                radio.parentElement.querySelector('.w-5').innerHTML = '<div class="w-2.5 h-2.5 rounded-full bg-primary"></div>';
-            });
-        });
-
-        // Toggle payment option visual border state
+        // Toggle payment option visual state
         const paymentBtns = document.querySelectorAll('.payment-option-btn');
         const selectedPaymentInput = document.getElementById('selected_payment_method');
 
@@ -430,28 +534,28 @@
 
                 paymentBtns.forEach(b => {
                     b.classList.remove('border-primary', 'bg-primary/5', 'border-2');
-                    b.classList.add('border-[#EDEDED]', 'border');
+                    b.classList.add('border-outline-variant/40', 'border');
                     const icon = b.querySelector('.material-symbols-outlined');
-                    const text = b.querySelector('.text-label-md');
+                    const text = b.querySelector('.text-sm');
                     if (icon) {
                         icon.classList.remove('text-primary');
                         icon.classList.add('text-secondary');
                     }
                     if (text) {
-                        text.classList.remove('font-semibold', 'text-primary');
+                        text.classList.remove('text-primary');
                         text.classList.add('text-on-surface');
                     }
                 });
                 btn.classList.add('border-primary', 'bg-primary/5', 'border-2');
-                btn.classList.remove('border-[#EDEDED]', 'border');
+                btn.classList.remove('border-outline-variant/40', 'border');
                 const icon = btn.querySelector('.material-symbols-outlined');
-                const text = btn.querySelector('.text-label-md');
+                const text = btn.querySelector('.text-sm');
                 if (icon) {
                     icon.classList.add('text-primary');
                     icon.classList.remove('text-secondary');
                 }
                 if (text) {
-                    text.classList.add('font-semibold', 'text-primary');
+                    text.classList.add('text-primary');
                     text.classList.remove('text-on-surface');
                 }
             });
@@ -460,7 +564,7 @@
         // Biteship Integration Logic
         document.addEventListener('DOMContentLoaded', function() {
             const areaSearchInput = document.getElementById('area_search');
-            if(!areaSearchInput) return; // if cart is empty
+            if (!areaSearchInput) return; // If cart is empty, do nothing
 
             const areaResults = document.getElementById('area_results');
             const destinationAreaIdInput = document.getElementById('destination_area_id');
@@ -484,7 +588,7 @@
                 const query = this.value;
 
                 if (query.length < 3) {
-                    areaResults.classList.add('hidden');
+                    if (areaResults) areaResults.classList.add('hidden');
                     return;
                 }
 
@@ -492,12 +596,13 @@
                     fetch(`/api/biteship/search-area?query=${encodeURIComponent(query)}`)
                         .then(res => res.json())
                         .then(data => {
+                            if (!areaResults) return;
                             areaResults.innerHTML = '';
                             if (data.length > 0) {
                                 data.forEach(area => {
                                     const li = document.createElement('li');
-                                    li.className = 'px-4 py-3 hover:bg-surface-container cursor-pointer border-b border-[#EDEDED] last:border-0';
-                                    li.innerHTML = `<p class="font-bold text-body-sm">${area.name}</p>`;
+                                    li.className = 'px-4 py-3 hover:bg-surface-container cursor-pointer text-xs font-semibold text-on-surface transition-colors';
+                                    li.innerHTML = `<span class="flex items-center gap-2"><span class="material-symbols-outlined text-sm text-primary">pin_drop</span> ${area.name}</span>`;
                                     li.addEventListener('click', () => {
                                         areaSearchInput.value = area.name;
                                         destinationAreaIdInput.value = area.id;
@@ -510,24 +615,25 @@
                                 });
                                 areaResults.classList.remove('hidden');
                             } else {
-                                areaResults.innerHTML = '<li class="px-4 py-3 text-secondary text-body-sm">Area tidak ditemukan</li>';
+                                areaResults.innerHTML = '<li class="px-4 py-3 text-secondary text-xs">Area tidak ditemukan</li>';
                                 areaResults.classList.remove('hidden');
                             }
                         })
                         .catch(err => console.error('Error searching area:', err));
-                }, 500);
+                }, 400);
             });
 
             // Close dropdown when clicking outside
             document.addEventListener('click', function(e) {
-                if (!areaSearchInput.contains(e.target) && !areaResults.contains(e.target)) {
+                if (areaSearchInput && areaResults && !areaSearchInput.contains(e.target) && !areaResults.contains(e.target)) {
                     areaResults.classList.add('hidden');
                 }
             });
 
             // Fetch Rates
             function fetchRates(destinationId) {
-                courierList.innerHTML = '<div class="text-secondary text-body-sm animate-pulse">Menghitung ongkos kirim...</div>';
+                if (!courierList || !courierSelectionContainer) return;
+                courierList.innerHTML = '<div class="text-secondary text-xs animate-pulse p-3 bg-surface-container-low rounded-xl">Menghubungkan ke server kurir... Mohon tunggu.</div>';
                 courierSelectionContainer.classList.remove('hidden');
                 
                 const storeId = {{ !empty($cart) ? collect($cart)->first()['store_id'] : 1 }};
@@ -548,14 +654,14 @@
                 .then(data => {
                     courierList.innerHTML = '';
                     if (data.error) {
-                        courierList.innerHTML = `<div class="text-error text-body-sm">${data.error}</div>`;
+                        courierList.innerHTML = `<div class="text-rose-600 text-xs p-3 bg-rose-50 border border-rose-200 rounded-xl font-bold">${data.error}</div>`;
                         return;
                     }
 
                     if (data.length > 0) {
                         data.forEach((rate, index) => {
                             const option = document.createElement('div');
-                            option.className = 'flex items-center justify-between p-3 border border-outline-variant rounded-lg hover:border-primary cursor-pointer courier-option';
+                            option.className = 'flex items-center justify-between p-3.5 border border-outline-variant/40 rounded-xl hover:border-primary cursor-pointer courier-option transition-all bg-surface-container-lowest';
                             option.dataset.company = rate.company;
                             option.dataset.type = rate.type;
                             option.dataset.price = rate.price;
@@ -564,25 +670,24 @@
                                 <div class="flex items-center gap-3">
                                     <input type="radio" name="courier_selection" class="w-4 h-4 text-primary bg-surface-container border-outline focus:ring-primary">
                                     <div>
-                                        <p class="font-bold text-body-sm uppercase">${rate.company} - ${rate.type}</p>
-                                        <p class="text-xs text-secondary">Estimasi: ${rate.duration}</p>
+                                        <p class="font-bold text-xs uppercase text-on-surface">${rate.company} - ${rate.type}</p>
+                                        <p class="text-[11px] text-secondary">Estimasi pengiriman: ${rate.duration}</p>
                                     </div>
                                 </div>
-                                <div class="font-bold text-primary">Rp ${rate.price.toLocaleString('id-ID')}</div>
+                                <div class="font-extrabold text-primary text-sm">Rp ${rate.price.toLocaleString('id-ID')}</div>
                             `;
 
                             option.addEventListener('click', function() {
-                                // Select Radio
                                 const radio = this.querySelector('input[type="radio"]');
-                                radio.checked = true;
+                                if (radio) radio.checked = true;
 
-                                // UI update
                                 document.querySelectorAll('.courier-option').forEach(opt => {
-                                    opt.classList.remove('border-primary', 'bg-primary/5');
+                                    opt.classList.remove('border-primary', 'bg-primary/5', 'border-2');
+                                    opt.classList.add('border-outline-variant/40', 'border');
                                 });
-                                this.classList.add('border-primary', 'bg-primary/5');
+                                this.classList.add('border-primary', 'bg-primary/5', 'border-2');
+                                this.classList.remove('border-outline-variant/40', 'border');
 
-                                // Set values
                                 courierCompanyInput.value = this.dataset.company;
                                 courierTypeInput.value = this.dataset.type;
                                 shippingCostInput.value = this.dataset.price;
@@ -593,42 +698,47 @@
                             courierList.appendChild(option);
                         });
                     } else {
-                        courierList.innerHTML = '<div class="text-secondary text-body-sm">Kurir tidak tersedia untuk rute ini.</div>';
+                        courierList.innerHTML = '<div class="text-secondary text-xs p-3 bg-surface-container-low rounded-xl">Layanan kurir tidak tersedia untuk rute tujuan ini.</div>';
                     }
                 })
                 .catch(err => {
                     console.error('Error fetching rates:', err);
-                    courierList.innerHTML = '<div class="text-error text-body-sm">Terjadi kesalahan saat memuat kurir.</div>';
+                    courierList.innerHTML = '<div class="text-rose-600 text-xs p-3 bg-rose-50 border border-rose-200 rounded-xl font-bold">Gagal memuat tarif kurir. Silakan coba lagi.</div>';
                 });
             }
 
             // Update Order Summary
             function updateSummary(shippingCost) {
-                summaryShipping.innerText = `Rp ${shippingCost.toLocaleString('id-ID')}`;
+                if (summaryShipping) summaryShipping.innerText = `Rp ${shippingCost.toLocaleString('id-ID')}`;
                 
-                const subtotal = parseInt(summarySubtotal.dataset.value);
-                const fees = parseInt(summaryFees.dataset.value);
+                const subtotal = summarySubtotal ? parseInt(summarySubtotal.dataset.value) : 0;
+                const fees = summaryFees ? parseInt(summaryFees.dataset.value) : 0;
                 const total = subtotal + fees + shippingCost;
                 
-                summaryTotal.innerText = `Rp ${total.toLocaleString('id-ID')}`;
-                summaryTotal.dataset.value = total;
+                if (summaryTotal) {
+                    summaryTotal.innerText = `Rp ${total.toLocaleString('id-ID')}`;
+                    summaryTotal.dataset.value = total;
+                }
             }
 
             // Form Validation before submit
-            document.getElementById('checkout_form').addEventListener('submit', function(e) {
-                if (!destinationAreaIdInput.value) {
-                    e.preventDefault();
-                    alert('Silakan pilih Area Tujuan Pengiriman terlebih dahulu!');
-                    document.getElementById('area_search').focus();
-                    return;
-                }
-                
-                if (!courierCompanyInput.value || !courierTypeInput.value) {
-                    e.preventDefault();
-                    alert('Silakan pilih Layanan Pengiriman (Kurir) terlebih dahulu!');
-                    return;
-                }
-            });
+            const checkoutForm = document.getElementById('checkout_form');
+            if (checkoutForm) {
+                checkoutForm.addEventListener('submit', function(e) {
+                    if (!destinationAreaIdInput || !destinationAreaIdInput.value) {
+                        e.preventDefault();
+                        alert('Silakan pilih Area Kecamatan / Kota Tujuan Pengiriman terlebih dahulu!');
+                        if (areaSearchInput) areaSearchInput.focus();
+                        return;
+                    }
+                    
+                    if (!courierCompanyInput || !courierCompanyInput.value || !courierTypeInput || !courierTypeInput.value) {
+                        e.preventDefault();
+                        alert('Silakan pilih salah satu Layanan Kurir pengiriman yang tersedia!');
+                        return;
+                    }
+                });
+            }
         });
     </script>
 </body>

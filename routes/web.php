@@ -82,6 +82,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/payment/{id}', [PaymentController::class, 'showPaymentPage'])->name('payment.page');
     Route::post('/payment/{id}/confirm-manual', [PaymentController::class, 'confirmManualPayment'])->name('payment.confirm_manual');
     Route::get('/payment/{id}/check-status', [PaymentController::class, 'checkPaymentStatus'])->name('payment.check_status');
+    Route::post('/payment/{id}/zannpay/initiate', [PaymentController::class, 'initiateZannpay'])->name('payment.zannpay.initiate');
 
 
     // Customer Dashboard

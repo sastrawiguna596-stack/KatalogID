@@ -45,12 +45,9 @@
 
     <div class="border-t border-outline-variant pt-4 mt-auto">
         @auth
-        <form action="{{ route('logout') }}" method="POST">
-            @csrf
-            <button type="submit" class="w-full flex items-center gap-3 px-3.5 py-3 text-error hover:bg-error-container rounded-xl font-label-md text-label-md font-bold transition-all">
-                <span class="material-symbols-outlined">logout</span> Keluar Akun
-            </button>
-        </form>
+        <a href="{{ Auth::user()->role === 'seller' ? route('account_setting') : (Auth::user()->role === 'admin' ? route('admin.dashboard') : route('cust_account_setting')) }}" class="flex items-center gap-3 px-3.5 py-3 text-on-surface-variant hover:bg-surface-variant rounded-xl font-label-md text-label-md font-bold transition-all" onclick="closeNavDrawer()">
+            <span class="material-symbols-outlined">settings</span> Pengaturan Akun
+        </a>
         @else
         <a href="{{ route('login') }}" class="flex items-center justify-center gap-2 w-full py-3 bg-primary text-white rounded-xl font-label-md text-label-md font-bold hover:brightness-110 transition-all shadow-sm">
             <span class="material-symbols-outlined text-lg">login</span> Masuk / Daftar
@@ -111,18 +108,12 @@
 
             <!-- Auth Buttons -->
             @auth
-            <div class="flex items-center gap-2 pl-2 ml-1 border-l border-outline-variant">
+            <div class="flex items-center pl-2 ml-1 border-l border-outline-variant">
                 <a href="{{ Auth::user()->role === 'seller' ? route('account') : (Auth::user()->role === 'admin' ? route('admin.dashboard') : route('cust_account')) }}" class="flex items-center gap-2 p-1 rounded-full hover:bg-surface-variant transition-colors" title="Dashboard Saya">
                     <div class="w-7 h-7 rounded-full overflow-hidden border border-outline-variant shadow-xs">
                         <img src="{{ Auth::user()->avatar ? asset(Auth::user()->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) . '&background=7c5800&color=ffffff&size=128' }}" class="w-full h-full object-cover" alt="{{ Auth::user()->name }}">
                     </div>
                 </a>
-                <form action="{{ route('logout') }}" method="POST" class="inline">
-                    @csrf
-                    <button type="submit" class="p-1.5 text-error hover:bg-error-container/40 rounded-full transition-colors" title="Keluar Akun">
-                        <span class="material-symbols-outlined text-[20px]">logout</span>
-                    </button>
-                </form>
             </div>
             @else
             <a href="{{ route('login') }}" class="font-label-md text-[11px] font-bold text-primary border-2 border-primary px-3 py-1 rounded-full hover:bg-primary hover:text-white transition-all shadow-xs ml-1">

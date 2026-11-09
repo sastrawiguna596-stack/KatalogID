@@ -72,10 +72,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
     
-    // Biteship API AJAX Routes
-    Route::get('/api/biteship/search-area', [CartController::class, 'searchArea'])->name('biteship.search_area');
-    Route::post('/api/biteship/check-rates', [CartController::class, 'checkRates'])->name('biteship.check_rates');
-    
     Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('checkout.process');
 
     // Payment System Routes
@@ -83,6 +79,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/payment/{id}/confirm-manual', [PaymentController::class, 'confirmManualPayment'])->name('payment.confirm_manual');
     Route::get('/payment/{id}/check-status', [PaymentController::class, 'checkPaymentStatus'])->name('payment.check_status');
     Route::post('/payment/{id}/zannpay/initiate', [PaymentController::class, 'initiateZannpay'])->name('payment.zannpay.initiate');
+    Route::get('/payment/{id}/zannpay/initiate', fn($id) => redirect()->route('payment.page', $id));
 
 
     // Customer Dashboard
@@ -94,7 +91,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/customer/orders', [OrderController::class, 'customerOrders'])->name('cust_recent_orders');
     Route::post('/customer/orders/{id}/confirm', [OrderController::class, 'confirmReceipt'])->name('order.confirm_receipt');
-    Route::get('/customer/orders/{id}/track', [OrderController::class, 'trackOrder'])->name('order.track');
 
     // Seller Dashboard & Management
     Route::get('/account', [OrderController::class, 'sellerDashboard'])->name('account');
@@ -104,7 +100,7 @@ Route::middleware(['auth'])->group(function () {
     })->name('account_setting');
 
     Route::get('/account/order', [OrderController::class, 'sellerOrders'])->name('recent_orders');
-    Route::post('/account/order/{id}/pickup', [OrderController::class, 'requestPickup'])->name('order.request_pickup');
+    Route::post('/account/order/{id}/ship', [OrderController::class, 'markShipping'])->name('order.mark_shipping');
 
     Route::get('/account/sales-analytics', [InventoryController::class, 'salesAnalytics'])->name('sales_analytics');
 

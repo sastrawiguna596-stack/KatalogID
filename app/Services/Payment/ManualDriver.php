@@ -9,16 +9,17 @@ class ManualDriver implements PaymentDriverInterface
 {
     public function createTransaction(Order $order, array $params = []): array
     {
-        $ref = 'PAY-MANUAL-' . $order->kode_transaksi;
+        $isCod = strtoupper($params['payment_method'] ?? '') === 'COD';
+        $ref   = ($isCod ? 'COD-' : 'PAY-MANUAL-') . $order->kode_transaksi;
         
         return [
-            'success' => true,
-            'payment_gateway' => 'manual',
+            'success'           => true,
+            'payment_gateway'   => $isCod ? 'cod' : 'manual',
             'payment_reference' => $ref,
-            'payment_url' => route('payment.page', $order->id),
-            'payment_token' => $ref,
-            'status' => 'pending',
-            'message' => 'Instruksi pembayaran manual berhasil dibuat.',
+            'payment_url'       => route('payment.page', $order->id),
+            'payment_token'     => $ref,
+            'status'            => 'pending',
+            'message'           => $isCod ? 'Pesanan COD berhasil dibuat.' : 'Instruksi pembayaran manual berhasil dibuat.',
         ];
     }
 

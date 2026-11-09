@@ -35,17 +35,20 @@ class PaymentController extends Controller
         $midtransClientKey   = config('payment.drivers.midtrans.client_key', '');
         $isMidtransProduction = config('payment.drivers.midtrans.is_production', false);
 
-        // Zannpay: ambil metode pembayaran & simpan sementara di cache (rate-limit 1 req/2 menit)
+        // Zannpay: ambil metode pembayaran & simpan sementara di cache (30 menit agar tidak terkena rate limit)
         $zannpayMethods      = [];
         $isZannpayConfigured = !empty(config('payment.drivers.zannpay.merchant_id'))
                             && !empty(config('payment.drivers.zannpay.secret_key'));
 
         if ($isZannpayConfigured && $activeGateway === 'zannpay') {
             $cacheKey       = 'zannpay_payment_methods_' . config('payment.drivers.zannpay.merchant_id');
-            $zannpayMethods = Cache::remember($cacheKey, 120, function () {
+            $zannpayMethods = Cache::remember($cacheKey, 1800, function () {
                 $driver = new ZannpayDriver();
                 return $driver->getPaymentMethods();
             });
+            if (empty($zannpayMethods)) {
+                Cache::forget($cacheKey);
+            }
         }
 
         return view('product.payment', compact(
@@ -70,7 +73,11 @@ class PaymentController extends Controller
             abort(403);
         }
 
-        $method = $request->input('payment_method', 'QRIS');
+        // Ambil metode dari request POST atau dari session flash (dari checkout)
+        $method = $request->input('payment_method')
+                  ?? session()->pull('_zannpay_method')
+                  ?? $order->payment_method
+                  ?? 'QRIS';
 
         $result = $this->paymentService->createPayment($order, $method, 'zannpay');
 

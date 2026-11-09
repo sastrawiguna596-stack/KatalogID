@@ -5,20 +5,19 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Services\Payment\ZannpayDriver;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
-use App\Services\BiteshipService;
 use App\Services\Payment\PaymentService;
 
 class CartController extends Controller
 {
-    protected $biteship;
     protected $paymentService;
 
-    public function __construct(BiteshipService $biteship, PaymentService $paymentService)
+    public function __construct(PaymentService $paymentService)
     {
-        $this->biteship = $biteship;
         $this->paymentService = $paymentService;
     }
 
@@ -28,18 +27,35 @@ class CartController extends Controller
     public function index()
     {
         $cart = session()->get('cart', []);
-        
+
         $subtotal = 0;
         foreach ($cart as $item) {
             $subtotal += $item['harga'] * $item['jumlah'];
         }
 
         $hasItems = count($cart) > 0;
-        $shipping = $hasItems ? 15000 : 0; // Flat ongkir contoh Rp 15.000
-        $biayaOperasional = $hasItems ? 1000 : 0; // Biaya operasional Rp 1.000
-        $total = $subtotal + $shipping + $biayaOperasional;
+        $biayaOperasional = $hasItems ? 1000 : 0;
+        $total = $subtotal + $biayaOperasional;
 
-        return view('product.cart_checkout', compact('cart', 'subtotal', 'shipping', 'biayaOperasional', 'total'));
+        // Ambil metode pembayaran Zannpay (cache 30 menit agar tidak terkena rate limit)
+        $isZannpayConfigured = !empty(config('payment.drivers.zannpay.merchant_id'))
+                            && !empty(config('payment.drivers.zannpay.secret_key'));
+        $zannpayMethods = [];
+        if ($isZannpayConfigured) {
+            $cacheKey = 'zannpay_payment_methods_' . config('payment.drivers.zannpay.merchant_id');
+            $zannpayMethods = Cache::remember($cacheKey, 1800, function () {
+                $driver = new ZannpayDriver();
+                return $driver->getPaymentMethods();
+            });
+            if (empty($zannpayMethods)) {
+                Cache::forget($cacheKey);
+            }
+        }
+
+        return view('product.cart_checkout', compact(
+            'cart', 'subtotal', 'biayaOperasional', 'total',
+            'zannpayMethods', 'isZannpayConfigured'
+        ));
     }
 
     /**
@@ -163,12 +179,12 @@ class CartController extends Controller
 
         $user = Auth::user();
         $alamat = $request->input('address', 'Jl. Utama No. 123, Denpasar, Bali');
-
-        $destinationAreaId = $request->input('destination_area_id');
-        $courierCompany = $request->input('courier_company');
-        $courierType = $request->input('courier_type');
-        $shippingCost = $request->input('shipping_cost', 0);
         $paymentMethod = $request->input('payment_method', 'bank_transfer');
+
+        // Jika opsi COD dipilih
+        if ($request->boolean('is_cod') || strtoupper($paymentMethod) === 'COD') {
+            $paymentMethod = 'COD';
+        }
 
         // Kelompokkan item berdasarkan store_id
         $itemsByStore = [];
@@ -186,7 +202,7 @@ class CartController extends Controller
             }
 
             $biayaOperasional = 1000;
-            $totalHarga = $storeSubtotal + $shippingCost + $biayaOperasional;
+            $totalHarga = $storeSubtotal + $biayaOperasional;
 
             $order = Order::create([
                 'user_id' => $user ? $user->id : 1,
@@ -196,10 +212,6 @@ class CartController extends Controller
                 'status_pembayaran' => 'pending',
                 'status_pengiriman' => 'pending',
                 'alamat_pengiriman' => $alamat,
-                'destination_area_id' => $destinationAreaId,
-                'courier_company' => $courierCompany,
-                'courier_type' => $courierType,
-                'shipping_cost' => $shippingCost,
                 'payment_method' => $paymentMethod,
             ]);
 
@@ -221,59 +233,13 @@ class CartController extends Controller
         session()->forget('cart');
 
         $firstOrder = reset($createdOrders);
-        return redirect()->route('payment.page', $firstOrder->id)->with('success', 'Pesanan Anda berhasil dibuat! Silakan selesaikan pembayaran.');
-    }
 
-    /**
-     * Cari Area pengiriman berdasarkan keyword via Biteship
-     */
-    public function searchArea(Request $request)
-    {
-        $query = $request->input('query');
-        if (empty($query) || strlen($query) < 3) {
-            return response()->json([]);
+        if (strtoupper($paymentMethod) === 'COD') {
+            return redirect()->route('payment.page', $firstOrder->id)
+                ->with('success', 'Pesanan Anda #' . $firstOrder->kode_transaksi . ' berhasil dibuat dengan metode Bayar di Tempat (COD)! Silakan siapkan uang tunai saat penjual mengantarkan pesanan.');
         }
 
-        $areas = $this->biteship->searchArea($query);
-        return response()->json($areas);
-    }
-
-    /**
-     * Hitung ongkos kirim berdasarkan origin, destination dan items
-     */
-    public function checkRates(Request $request)
-    {
-        $destinationAreaId = $request->input('destination_area_id');
-        $storeId = $request->input('store_id');
-        $couriers = $request->input('couriers', 'jne,sicepat,jnt,anteraja');
-
-        if (!$destinationAreaId || !$storeId) {
-            return response()->json(['error' => 'Data origin atau destination tidak lengkap'], 400);
-        }
-
-        $store = \App\Models\Store::find($storeId);
-        $originAreaId = $store->biteship_area_id ?? 'IDNP1IDNC110IDND261IDZ80111'; // Fallback Denpasar
-
-        // Ambil item dari keranjang untuk store tersebut
-        $cart = session()->get('cart', []);
-        $itemsForBiteship = [];
-        
-        foreach ($cart as $item) {
-            if ($item['store_id'] == $storeId) {
-                $itemsForBiteship[] = [
-                    'name' => $item['nama_produk'],
-                    'value' => $item['harga'],
-                    'weight' => $item['berat_gram'] ?? 500,
-                    'quantity' => $item['jumlah']
-                ];
-            }
-        }
-
-        if (empty($itemsForBiteship)) {
-            return response()->json(['error' => 'Tidak ada item untuk toko ini di keranjang'], 400);
-        }
-
-        $rates = $this->biteship->getRates($originAreaId, $destinationAreaId, $itemsForBiteship, $couriers);
-        return response()->json($rates);
+        return redirect()->route('payment.page', $firstOrder->id)
+            ->with('success', 'Pesanan berhasil dibuat! Silakan pilih dan selesaikan pembayaran.');
     }
 }

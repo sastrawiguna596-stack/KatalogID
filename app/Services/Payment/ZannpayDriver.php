@@ -36,6 +36,15 @@ class ZannpayDriver implements PaymentDriverInterface
         return hash('sha256', $this->merchantId . $this->secretKey);
     }
 
+    protected function httpHeaders(): array
+    {
+        return [
+            'Content-Type' => 'application/json',
+            'Accept'       => 'application/json',
+            'User-Agent'   => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        ];
+    }
+
     // -------------------------------------------------------
     // 1. Create Transaction (request=new)
     // -------------------------------------------------------
@@ -62,7 +71,9 @@ class ZannpayDriver implements PaymentDriverInterface
             'request'      => 'new',
             'merchant'     => $this->merchantId,
             'trx_id'       => $trxId,
+            'amount'       => $amount,
             'nominal'      => $amount,
+            'payment'      => $method,
             'method'       => $method,
             'callback_url' => route('payment.webhook', 'zannpay'),
             'return_url'   => route('payment.page', $order->id),
@@ -77,27 +88,44 @@ class ZannpayDriver implements PaymentDriverInterface
         }
 
         try {
-            $response = Http::withHeaders(['Content-Type' => 'application/json'])
+            $response = Http::withHeaders($this->httpHeaders())
+                ->timeout(20)
                 ->post($this->baseUrl, $payload);
 
             $result = $response->json();
 
-            Log::info('Zannpay createTransaction response', ['res' => $result]);
+            Log::info('Zannpay createTransaction response', [
+                'status_code' => $response->status(),
+                'res'         => $result,
+            ]);
 
             if ($response->successful() && !empty($result['status']) && $result['status'] === true) {
                 $data = $result['data'] ?? [];
                 return [
                     'success'           => true,
                     'payment_gateway'   => 'zannpay',
-                    'payment_reference' => $data['reference'] ?? $trxId,
+                    'payment_reference' => $data['trx_svr'] ?? $data['reference'] ?? $trxId,
                     'payment_url'       => $data['checkout_url'] ?? $data['pay_url'] ?? route('payment.page', $order->id),
-                    'payment_token'     => $data['reference'] ?? '',
+                    'payment_token'     => $data['trx_svr'] ?? $data['reference'] ?? '',
                     'status'            => 'pending',
-                    'message'           => $result['message'] ?? 'Transaksi Zannpay berhasil dibuat.',
+                    'message'           => $result['message'] ?? $result['msg'] ?? 'Transaksi Zannpay berhasil dibuat.',
                 ];
             }
 
-            Log::error('Zannpay API Error', ['response' => $result]);
+            // Ekstrak pesan error dari Zannpay
+            $errorMessage = $result['message'] ?? $result['msg'] ?? null;
+            if (!$errorMessage && !empty($result['errors']) && is_array($result['errors'])) {
+                $errorMessage = implode(', ', array_map(fn($e) => is_array($e) ? implode(' ', $e) : $e, $result['errors']));
+            }
+            if (!$errorMessage && $response->status() === 429) {
+                $errorMessage = 'Terlalu banyak permintaan ke Zannpay. Silakan tunggu beberapa saat lagi.';
+            }
+
+            Log::error('Zannpay API Error', [
+                'status_code' => $response->status(),
+                'response'    => $result,
+                'raw'         => substr($response->body(), 0, 500),
+            ]);
 
             return [
                 'success'           => false,
@@ -106,7 +134,7 @@ class ZannpayDriver implements PaymentDriverInterface
                 'payment_url'       => '',
                 'payment_token'     => '',
                 'status'            => 'failed',
-                'message'           => $result['message'] ?? 'Gagal membuat transaksi Zannpay.',
+                'message'           => $errorMessage ?: 'Gagal membuat transaksi Zannpay (Kode ' . $response->status() . ').',
             ];
 
         } catch (\Exception $e) {
@@ -168,7 +196,8 @@ class ZannpayDriver implements PaymentDriverInterface
         ];
 
         try {
-            $response = Http::withHeaders(['Content-Type' => 'application/json'])
+            $response = Http::withHeaders($this->httpHeaders())
+                ->timeout(15)
                 ->post($this->baseUrl, $payload);
 
             $result = $response->json();
@@ -205,7 +234,8 @@ class ZannpayDriver implements PaymentDriverInterface
         ];
 
         try {
-            $response = Http::withHeaders(['Content-Type' => 'application/json'])
+            $response = Http::withHeaders($this->httpHeaders())
+                ->timeout(15)
                 ->post($this->baseUrl, $payload);
 
             $result = $response->json();

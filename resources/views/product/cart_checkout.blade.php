@@ -126,6 +126,25 @@
             transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
         }
         #mobile-nav-drawer.open { transform: translateX(0); }
+        /* Zannpay method cards */
+        .zann-method-card {
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.18s ease;
+        }
+        .zann-method-card:hover { border-color: rgba(124,88,0,0.35); transform: translateY(-2px); }
+        .zann-method-card.active { border-color: #7c5800; background: rgba(124,88,0,0.07); }
+        .zann-methods-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 10px;
+        }
+        @media (max-width: 480px) { .zann-methods-grid { grid-template-columns: repeat(2, 1fr); } }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .zann-category { animation: slideUp 0.3s ease both; }
     </style>
 </head>
 
@@ -293,68 +312,117 @@
                                     placeholder="Nama Jalan, Nomor Rumah, RT/RW, Kelurahan, Patokan Khusus..." required>{{ Auth::user()->address ?? '' }}</textarea>
                             </div>
 
-                            {{-- Area Search Biteship --}}
                             <div class="space-y-2">
-                                <label class="block text-xs font-bold text-secondary uppercase tracking-wider">Kecamatan / Kota Tujuan</label>
-                                <div class="relative">
-                                    <span class="absolute left-3.5 top-3 text-secondary material-symbols-outlined text-lg">location_on</span>
-                                    <input id="area_search" type="text" 
-                                        class="w-full h-11 pl-10 pr-4 rounded-xl border border-outline-variant/50 bg-surface-container-lowest text-on-surface text-sm transition-all"
-                                        placeholder="Ketik minimal 3 huruf nama kecamatan atau kota..." autocomplete="off">
-                                    <input type="hidden" name="destination_area_id" id="destination_area_id" value="">
-                                    
-                                    <!-- Search Results Dropdown -->
-                                    <ul id="area_results" class="absolute z-20 w-full bg-white border border-outline-variant/40 rounded-xl mt-1.5 max-h-48 overflow-y-auto hidden shadow-xl divide-y divide-outline-variant/20">
-                                    </ul>
-                                </div>
+                                <label class="block text-xs font-bold text-secondary uppercase tracking-wider">Catatan Pesanan (Opsional)</label>
+                                <textarea name="catatan" rows="2"
+                                    class="w-full p-3 rounded-xl border border-outline-variant/50 bg-surface-container-lowest text-on-surface text-sm transition-all"
+                                    placeholder="Contoh: Tolong dibungkus rapi, warna sesuai pilihan..."></textarea>
                             </div>
 
-                            <!-- Courier Selection (Loaded via AJAX) -->
-                            <div id="courier_selection_container" class="hidden mt-5 pt-5 border-t border-outline-variant/20">
-                                <label class="block text-xs font-bold text-secondary uppercase tracking-wider mb-3">Pilihan Layanan Kurir &amp; Tarif Ongkir</label>
-                                <div id="courier_list" class="space-y-2.5">
-                                    <!-- Courier options will be injected here -->
+                            <div class="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-3">
+                                <span class="material-symbols-outlined text-amber-600 flex-shrink-0 mt-0.5">info</span>
+                                <div>
+                                    <p class="text-xs font-bold text-amber-800">Pengiriman Langsung oleh Owner</p>
+                                    <p class="text-xs text-amber-700 mt-0.5 leading-relaxed">Pesanan Anda akan diantarkan langsung oleh pemilik toko. Pihak toko akan menghubungi Anda untuk konfirmasi jadwal pengiriman.</p>
                                 </div>
-                                <input type="hidden" name="courier_company" id="courier_company" value="">
-                                <input type="hidden" name="courier_type" id="courier_type" value="">
-                                <input type="hidden" name="shipping_cost" id="shipping_cost" value="0">
                             </div>
                         </div>
                     </section>
 
-                    {{-- 3. Metode Pembayaran --}}
-                    <section class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-5 sm:p-6 shadow-xs">
+                    {{-- 3. Metode Pembayaran & Opsi COD --}}
+                    <section id="payment_section" class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-5 sm:p-6 shadow-xs">
                         <div class="border-b border-outline-variant/20 pb-4 mb-5">
                             <h2 class="font-headline-sm text-lg sm:text-xl font-bold text-on-surface flex items-center gap-2">
                                 <span class="material-symbols-outlined text-primary">account_balance_wallet</span>
-                                <span>Pilihan Metode Pembayaran</span>
+                                <span>Metode Pembayaran</span>
                             </h2>
-                            <p class="text-xs text-secondary mt-1">Pilih cara pembayaran yang paling nyaman untuk Anda.</p>
+                            <p class="text-xs text-secondary mt-1">Centang Bayar di Tempat (COD) atau pilih salah satu metode pembayaran online.</p>
                         </div>
 
-                        <input type="hidden" name="payment_method" id="selected_payment_method" value="bank_transfer">
-                        
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                            <button type="button" data-method="bank_transfer"
-                                class="payment-option-btn flex flex-col items-center justify-center p-4 border-2 border-primary bg-primary/5 rounded-xl gap-2 transition-all cursor-pointer text-center">
-                                <span class="material-symbols-outlined text-primary text-2xl">account_balance</span>
-                                <span class="text-sm font-bold text-primary">Transfer Bank</span>
-                                <span class="text-[11px] text-secondary">Virtual Account Otomatis</span>
-                            </button>
+                        <input type="hidden" name="payment_method" id="selected_payment_method" value="">
 
-                            <button type="button" data-method="qris"
-                                class="payment-option-btn flex flex-col items-center justify-center p-4 border border-outline-variant/40 hover:bg-surface-container-low rounded-xl gap-2 transition-all cursor-pointer text-center">
-                                <span class="material-symbols-outlined text-secondary text-2xl">qr_code_2</span>
-                                <span class="text-sm font-bold text-on-surface">QRIS Instant</span>
-                                <span class="text-[11px] text-secondary">Gopay, OVO, Dana, BCA, dll</span>
-                            </button>
+                        {{-- Opsi COD (Cash on Delivery) - Checklist --}}
+                        <div class="mb-5">
+                            <label for="cod_checkbox" id="cod_card" class="flex items-center justify-between p-4 rounded-2xl border-2 border-outline-variant/40 bg-surface-container-low hover:border-primary/50 transition-all cursor-pointer select-none">
+                                <div class="flex items-start sm:items-center gap-3.5">
+                                    <div class="pt-0.5 sm:pt-0">
+                                        <input type="checkbox" id="cod_checkbox" name="is_cod" value="1" 
+                                               class="w-5 h-5 rounded text-primary focus:ring-primary border-outline-variant cursor-pointer"
+                                               onchange="toggleCodOption(this)">
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <span class="font-bold text-on-surface text-sm sm:text-base">Bayar di Tempat (COD)</span>
+                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/10 text-emerald-700 uppercase tracking-wide">Cash on Delivery</span>
+                                        </div>
+                                        <p class="text-xs text-secondary mt-1 leading-relaxed">
+                                            Bayar tunai secara langsung kepada penjual saat pesanan diantarkan ke lokasi Anda.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center flex-shrink-0 ml-3">
+                                    <span class="material-symbols-outlined text-2xl">local_shipping</span>
+                                </div>
+                            </label>
+                        </div>
 
-                            <button type="button" data-method="cod"
-                                class="payment-option-btn flex flex-col items-center justify-center p-4 border border-outline-variant/40 hover:bg-surface-container-low rounded-xl gap-2 transition-all cursor-pointer text-center">
-                                <span class="material-symbols-outlined text-secondary text-2xl">handshake</span>
-                                <span class="text-sm font-bold text-on-surface">COD (Bayar di Tempat)</span>
-                                <span class="text-[11px] text-secondary">Bayar saat kurir tiba</span>
-                            </button>
+                        {{-- Pembayaran Online Zannpay --}}
+                        <div id="online_payment_section" class="transition-all duration-200">
+                            <div class="flex items-center gap-3 my-5">
+                                <div class="h-px bg-outline-variant/30 flex-1"></div>
+                                <span class="text-xs font-bold text-secondary uppercase tracking-wider">Atau Pilih Pembayaran Online</span>
+                                <div class="h-px bg-outline-variant/30 flex-1"></div>
+                            </div>
+
+                            @if($isZannpayConfigured && count($zannpayMethods) > 0)
+                                @php $grouped = collect($zannpayMethods)->groupBy('category'); @endphp
+                                <div class="space-y-5" id="zann-groups">
+                                    @foreach($grouped as $category => $methods)
+                                        @php $activeMethods = $methods->where('status', 'aktif'); @endphp
+                                        @if($activeMethods->count() > 0)
+                                        <div class="zann-category">
+                                            <p class="text-[11px] font-extrabold uppercase tracking-widest text-secondary mb-3">{{ $category }}</p>
+                                            <div class="zann-methods-grid">
+                                                @foreach($activeMethods as $method)
+                                                <div class="zann-method-card rounded-xl p-3 bg-surface-container-low flex flex-col items-center gap-2 select-none"
+                                                     data-code="{{ $method['code'] }}"
+                                                     data-name="{{ $method['name'] }}"
+                                                     onclick="selectZannMethod(this)">
+                                                    <img src="{{ $method['logo'] ?? '' }}" alt="{{ $method['name'] }}"
+                                                         class="h-8 w-auto object-contain" onerror="this.style.display='none'">
+                                                    <span class="text-[11px] font-bold text-on-surface text-center leading-tight line-clamp-2">{{ $method['name'] }}</span>
+                                                    @if(!empty($method['fee_format']))
+                                                    <span class="text-[10px] text-secondary bg-surface-container px-2 py-0.5 rounded-full">Fee: {{ $method['fee_format'] }}</span>
+                                                    @endif
+                                                </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        @endif
+                                    @endforeach
+                                </div>
+
+                                {{-- Selected Method Summary --}}
+                                <div id="zann-selected-bar" class="hidden mt-5 p-4 rounded-2xl bg-primary/5 border border-primary/20 flex items-center justify-between gap-3">
+                                    <div class="flex items-center gap-3">
+                                        <span class="material-symbols-outlined text-primary">check_circle</span>
+                                        <div>
+                                            <p class="text-xs text-secondary font-bold">Metode Dipilih</p>
+                                            <p id="zann-selected-name" class="font-extrabold text-on-surface text-sm"></p>
+                                        </div>
+                                    </div>
+                                    <button type="button" onclick="clearZannMethod()" class="text-xs text-secondary hover:text-primary font-bold">Ganti</button>
+                                </div>
+                            @else
+                                {{-- Fallback jika Zannpay belum dikonfig / kosong --}}
+                                <div class="p-5 rounded-2xl bg-amber-50 border border-amber-200 flex items-start gap-3">
+                                    <span class="material-symbols-outlined text-amber-600 flex-shrink-0 mt-0.5">info</span>
+                                    <div>
+                                        <p class="text-sm font-bold text-amber-800">Pembayaran online sedang tidak tersedia</p>
+                                        <p class="text-xs text-amber-700 mt-1">Anda tetap dapat memilih opsi Bayar di Tempat (COD) di atas.</p>
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     </section>
 
@@ -373,17 +441,13 @@
                                 <span>Subtotal Produk</span>
                                 <span id="summary_subtotal" class="font-bold text-on-surface" data-value="{{ $subtotal }}">Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
                             </div>
-                            <div class="flex justify-between text-secondary">
-                                <span>Estimasi Biaya Ongkir</span>
-                                <span id="summary_shipping" class="font-bold text-on-surface" data-value="0">Rp 0</span>
-                            </div>
                             <div class="flex justify-between text-secondary pb-4 border-b border-outline-variant/20">
                                 <span>Biaya Layanan</span>
                                 <span id="summary_fees" class="font-bold text-on-surface" data-value="{{ $biayaOperasional }}">Rp {{ number_format($biayaOperasional, 0, ',', '.') }}</span>
                             </div>
                             <div class="flex justify-between items-center pt-1">
                                 <span class="font-bold text-base text-on-surface">Total Pembayaran</span>
-                                <span id="summary_total" class="text-primary text-xl font-extrabold" data-value="{{ $subtotal + $biayaOperasional }}">Rp {{ number_format($subtotal + $biayaOperasional, 0, ',', '.') }}</span>
+                                <span id="summary_total" class="text-primary text-xl font-extrabold">Rp {{ number_format($subtotal + $biayaOperasional, 0, ',', '.') }}</span>
                             </div>
                         </div>
 
@@ -521,225 +585,107 @@
             if(overlay) overlay.classList.remove('active');
         }
 
-        // Toggle payment option visual state
-        const paymentBtns = document.querySelectorAll('.payment-option-btn');
-        const selectedPaymentInput = document.getElementById('selected_payment_method');
+        // ── COD Toggle ───────────────────────────────────────────
+        function toggleCodOption(checkbox) {
+            const card = document.getElementById('cod_card');
+            const onlineSection = document.getElementById('online_payment_section');
+            const input = document.getElementById('selected_payment_method');
+            const btn = document.getElementById('btn_checkout');
+            const btnText = btn?.querySelector('span');
 
-        paymentBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const method = btn.getAttribute('data-method') || 'bank_transfer';
-                if (selectedPaymentInput) {
-                    selectedPaymentInput.value = method;
+            if (checkbox.checked) {
+                // Highlight COD Card
+                card.classList.add('border-primary', 'bg-primary/5');
+                card.classList.remove('border-outline-variant/40', 'bg-surface-container-low');
+
+                // Deselect Zannpay methods
+                clearZannMethod();
+
+                // Set method value to COD
+                if (input) input.value = 'COD';
+
+                // Dim online section
+                if (onlineSection) {
+                    onlineSection.classList.add('opacity-40', 'pointer-events-none');
                 }
 
-                paymentBtns.forEach(b => {
-                    b.classList.remove('border-primary', 'bg-primary/5', 'border-2');
-                    b.classList.add('border-outline-variant/40', 'border');
-                    const icon = b.querySelector('.material-symbols-outlined');
-                    const text = b.querySelector('.text-sm');
-                    if (icon) {
-                        icon.classList.remove('text-primary');
-                        icon.classList.add('text-secondary');
-                    }
-                    if (text) {
-                        text.classList.remove('text-primary');
-                        text.classList.add('text-on-surface');
-                    }
-                });
-                btn.classList.add('border-primary', 'bg-primary/5', 'border-2');
-                btn.classList.remove('border-outline-variant/40', 'border');
-                const icon = btn.querySelector('.material-symbols-outlined');
-                const text = btn.querySelector('.text-sm');
-                if (icon) {
-                    icon.classList.add('text-primary');
-                    icon.classList.remove('text-secondary');
-                }
-                if (text) {
-                    text.classList.add('text-primary');
-                    text.classList.remove('text-on-surface');
-                }
-            });
-        });
+                // Update button text
+                if (btnText) btnText.textContent = 'Buat Pesanan (Bayar COD)';
+            } else {
+                // Unhighlight COD Card
+                card.classList.remove('border-primary', 'bg-primary/5');
+                card.classList.add('border-outline-variant/40', 'bg-surface-container-low');
 
-        // Biteship Integration Logic
-        document.addEventListener('DOMContentLoaded', function() {
-            const areaSearchInput = document.getElementById('area_search');
-            if (!areaSearchInput) return; // If cart is empty, do nothing
+                // Reset method value
+                if (input) input.value = '';
 
-            const areaResults = document.getElementById('area_results');
-            const destinationAreaIdInput = document.getElementById('destination_area_id');
-            const courierSelectionContainer = document.getElementById('courier_selection_container');
-            const courierList = document.getElementById('courier_list');
-            
-            const courierCompanyInput = document.getElementById('courier_company');
-            const courierTypeInput = document.getElementById('courier_type');
-            const shippingCostInput = document.getElementById('shipping_cost');
-
-            const summaryShipping = document.getElementById('summary_shipping');
-            const summaryTotal = document.getElementById('summary_total');
-            const summarySubtotal = document.getElementById('summary_subtotal');
-            const summaryFees = document.getElementById('summary_fees');
-
-            let searchTimeout;
-
-            // Handle Area Search with Debounce
-            areaSearchInput.addEventListener('input', function() {
-                clearTimeout(searchTimeout);
-                const query = this.value;
-
-                if (query.length < 3) {
-                    if (areaResults) areaResults.classList.add('hidden');
-                    return;
+                // Restore online section
+                if (onlineSection) {
+                    onlineSection.classList.remove('opacity-40', 'pointer-events-none');
                 }
 
-                searchTimeout = setTimeout(() => {
-                    fetch(`/api/biteship/search-area?query=${encodeURIComponent(query)}`)
-                        .then(res => res.json())
-                        .then(data => {
-                            if (!areaResults) return;
-                            areaResults.innerHTML = '';
-                            if (data.length > 0) {
-                                data.forEach(area => {
-                                    const li = document.createElement('li');
-                                    li.className = 'px-4 py-3 hover:bg-surface-container cursor-pointer text-xs font-semibold text-on-surface transition-colors';
-                                    li.innerHTML = `<span class="flex items-center gap-2"><span class="material-symbols-outlined text-sm text-primary">pin_drop</span> ${area.name}</span>`;
-                                    li.addEventListener('click', () => {
-                                        areaSearchInput.value = area.name;
-                                        destinationAreaIdInput.value = area.id;
-                                        areaResults.classList.add('hidden');
-                                        
-                                        // Once area is selected, fetch rates
-                                        fetchRates(area.id);
-                                    });
-                                    areaResults.appendChild(li);
-                                });
-                                areaResults.classList.remove('hidden');
-                            } else {
-                                areaResults.innerHTML = '<li class="px-4 py-3 text-secondary text-xs">Area tidak ditemukan</li>';
-                                areaResults.classList.remove('hidden');
-                            }
-                        })
-                        .catch(err => console.error('Error searching area:', err));
-                }, 400);
-            });
+                // Restore button text
+                if (btnText) btnText.textContent = 'Buat Pesanan Sekarang';
+            }
+        }
 
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function(e) {
-                if (areaSearchInput && areaResults && !areaSearchInput.contains(e.target) && !areaResults.contains(e.target)) {
-                    areaResults.classList.add('hidden');
-                }
-            });
-
-            // Fetch Rates
-            function fetchRates(destinationId) {
-                if (!courierList || !courierSelectionContainer) return;
-                courierList.innerHTML = '<div class="text-secondary text-xs animate-pulse p-3 bg-surface-container-low rounded-xl">Menghubungkan ke server kurir... Mohon tunggu.</div>';
-                courierSelectionContainer.classList.remove('hidden');
-                
-                const storeId = {{ !empty($cart) ? collect($cart)->first()['store_id'] : 1 }};
-
-                fetch('/api/biteship/check-rates', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        destination_area_id: destinationId,
-                        store_id: storeId,
-                        couriers: 'jne,sicepat,jnt,anteraja'
-                    })
-                })
-                .then(res => res.json())
-                .then(data => {
-                    courierList.innerHTML = '';
-                    if (data.error) {
-                        courierList.innerHTML = `<div class="text-rose-600 text-xs p-3 bg-rose-50 border border-rose-200 rounded-xl font-bold">${data.error}</div>`;
-                        return;
-                    }
-
-                    if (data.length > 0) {
-                        data.forEach((rate, index) => {
-                            const option = document.createElement('div');
-                            option.className = 'flex items-center justify-between p-3.5 border border-outline-variant/40 rounded-xl hover:border-primary cursor-pointer courier-option transition-all bg-surface-container-lowest';
-                            option.dataset.company = rate.company;
-                            option.dataset.type = rate.type;
-                            option.dataset.price = rate.price;
-                            
-                            option.innerHTML = `
-                                <div class="flex items-center gap-3">
-                                    <input type="radio" name="courier_selection" class="w-4 h-4 text-primary bg-surface-container border-outline focus:ring-primary">
-                                    <div>
-                                        <p class="font-bold text-xs uppercase text-on-surface">${rate.company} - ${rate.type}</p>
-                                        <p class="text-[11px] text-secondary">Estimasi pengiriman: ${rate.duration}</p>
-                                    </div>
-                                </div>
-                                <div class="font-extrabold text-primary text-sm">Rp ${rate.price.toLocaleString('id-ID')}</div>
-                            `;
-
-                            option.addEventListener('click', function() {
-                                const radio = this.querySelector('input[type="radio"]');
-                                if (radio) radio.checked = true;
-
-                                document.querySelectorAll('.courier-option').forEach(opt => {
-                                    opt.classList.remove('border-primary', 'bg-primary/5', 'border-2');
-                                    opt.classList.add('border-outline-variant/40', 'border');
-                                });
-                                this.classList.add('border-primary', 'bg-primary/5', 'border-2');
-                                this.classList.remove('border-outline-variant/40', 'border');
-
-                                courierCompanyInput.value = this.dataset.company;
-                                courierTypeInput.value = this.dataset.type;
-                                shippingCostInput.value = this.dataset.price;
-
-                                updateSummary(parseInt(this.dataset.price));
-                            });
-
-                            courierList.appendChild(option);
-                        });
-                    } else {
-                        courierList.innerHTML = '<div class="text-secondary text-xs p-3 bg-surface-container-low rounded-xl">Layanan kurir tidak tersedia untuk rute tujuan ini.</div>';
-                    }
-                })
-                .catch(err => {
-                    console.error('Error fetching rates:', err);
-                    courierList.innerHTML = '<div class="text-rose-600 text-xs p-3 bg-rose-50 border border-rose-200 rounded-xl font-bold">Gagal memuat tarif kurir. Silakan coba lagi.</div>';
-                });
+        // ── Zannpay Method Selector ──────────────────────────────
+        function selectZannMethod(el) {
+            // Uncheck COD if checked
+            const codCheckbox = document.getElementById('cod_checkbox');
+            if (codCheckbox && codCheckbox.checked) {
+                codCheckbox.checked = false;
+                toggleCodOption(codCheckbox);
             }
 
-            // Update Order Summary
-            function updateSummary(shippingCost) {
-                if (summaryShipping) summaryShipping.innerText = `Rp ${shippingCost.toLocaleString('id-ID')}`;
-                
-                const subtotal = summarySubtotal ? parseInt(summarySubtotal.dataset.value) : 0;
-                const fees = summaryFees ? parseInt(summaryFees.dataset.value) : 0;
-                const total = subtotal + fees + shippingCost;
-                
-                if (summaryTotal) {
-                    summaryTotal.innerText = `Rp ${total.toLocaleString('id-ID')}`;
-                    summaryTotal.dataset.value = total;
-                }
-            }
+            // Deselect all cards
+            document.querySelectorAll('.zann-method-card').forEach(c => c.classList.remove('active'));
+            // Activate clicked card
+            el.classList.add('active');
 
-            // Form Validation before submit
-            const checkoutForm = document.getElementById('checkout_form');
-            if (checkoutForm) {
-                checkoutForm.addEventListener('submit', function(e) {
-                    if (!destinationAreaIdInput || !destinationAreaIdInput.value) {
-                        e.preventDefault();
-                        alert('Silakan pilih Area Kecamatan / Kota Tujuan Pengiriman terlebih dahulu!');
-                        if (areaSearchInput) areaSearchInput.focus();
-                        return;
-                    }
-                    
-                    if (!courierCompanyInput || !courierCompanyInput.value || !courierTypeInput || !courierTypeInput.value) {
-                        e.preventDefault();
-                        alert('Silakan pilih salah satu Layanan Kurir pengiriman yang tersedia!');
-                        return;
-                    }
-                });
-            }
-        });
+            const code = el.dataset.code;
+            const name = el.dataset.name;
+
+            // Update hidden input
+            const input = document.getElementById('selected_payment_method');
+            if (input) input.value = code;
+
+            // Show selected bar
+            const bar  = document.getElementById('zann-selected-bar');
+            const label = document.getElementById('zann-selected-name');
+            if (bar)   bar.classList.remove('hidden');
+            if (label) label.textContent = name;
+
+            // Reset button text
+            const btn = document.getElementById('btn_checkout');
+            const btnText = btn?.querySelector('span');
+            if (btnText) btnText.textContent = 'Buat Pesanan & Bayar';
+        }
+
+        function clearZannMethod() {
+            document.querySelectorAll('.zann-method-card').forEach(c => c.classList.remove('active'));
+            const input = document.getElementById('selected_payment_method');
+            if (input && input.value !== 'COD') input.value = '';
+            const bar = document.getElementById('zann-selected-bar');
+            if (bar) bar.classList.add('hidden');
+
+            const btn = document.getElementById('btn_checkout');
+            const btnText = btn?.querySelector('span');
+            if (btnText && (!input || input.value !== 'COD')) btnText.textContent = 'Buat Pesanan Sekarang';
+        }
+
+        // ── Form Validation ──────────────────────────────────────
+        const checkoutForm = document.getElementById('checkout_form');
+        if (checkoutForm) {
+            checkoutForm.addEventListener('submit', function(e) {
+                const method = document.getElementById('selected_payment_method')?.value;
+                if (!method) {
+                    e.preventDefault();
+                    alert('Silakan pilih metode pembayaran (centang COD atau pilih metode pembayaran online)!');
+                    document.getElementById('payment_section')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            });
+        }
     </script>
 </body>
 

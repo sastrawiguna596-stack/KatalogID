@@ -319,19 +319,16 @@
                     </div>
                     <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                         @if($order->status_pengiriman === 'pending')
-                            <form action="{{ route('order.request_pickup', $order->id) }}" method="POST" class="flex-1 sm:flex-initial">
+                            <form action="{{ route('order.mark_shipping', $order->id) }}" method="POST" class="flex-1 sm:flex-initial">
                                 @csrf
-                                <button type="submit" onclick="return confirm('Proses penjemputan sekarang menggunakan Biteship?')" class="w-full sm:w-auto px-4 py-2 bg-primary text-on-primary hover:bg-[#684900] rounded-xl font-bold text-xs text-center transition-all flex items-center justify-center gap-1">
+                                <button type="submit" onclick="return confirm('Tandai pesanan ini sedang dikirim langsung?')" class="w-full sm:w-auto px-4 py-2 bg-primary text-on-primary hover:bg-[#684900] rounded-xl font-bold text-xs text-center transition-all flex items-center justify-center gap-1">
                                     <span class="material-symbols-outlined text-sm">local_shipping</span>
-                                    Proses Penjemputan
+                                    Tandai Dikirim
                                 </button>
                             </form>
                         @elseif($order->status_pengiriman === 'processing')
                             <div class="flex-1 sm:flex-initial px-4 py-2 bg-amber-50 text-amber-700 border border-amber-200 rounded-xl font-bold text-xs flex flex-col justify-center">
-                                <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span> Sedang Diproses (Pickup)</span>
-                                @if($order->nomor_resi)
-                                    <span class="text-[10px] opacity-80 mt-1">Resi: {{ $order->nomor_resi }}</span>
-                                @endif
+                                <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span> Sedang Dikirim Owner</span>
                             </div>
                         @endif
                         

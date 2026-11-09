@@ -27,6 +27,7 @@ class PaymentService
                 return new TripayDriver();
             case 'zannpay':
                 return new ZannpayDriver();
+            case 'cod':
             case 'manual':
             default:
                 return new ManualDriver();
@@ -43,7 +44,10 @@ class PaymentService
      */
     public function createPayment(Order $order, ?string $paymentMethod = null, ?string $gateway = null): array
     {
-        $driver = $this->driver($gateway);
+        $isCod = strtoupper($paymentMethod ?? '') === 'COD';
+        $actualGateway = $isCod ? 'cod' : ($gateway ?: config('payment.default', 'manual'));
+
+        $driver = $this->driver($actualGateway);
         $result = $driver->createTransaction($order, [
             'payment_method' => $paymentMethod ?: 'bank_transfer',
         ]);
@@ -51,7 +55,7 @@ class PaymentService
         if ($result['success']) {
             $order->update([
                 'payment_method' => $paymentMethod ?: 'bank_transfer',
-                'payment_gateway' => $result['payment_gateway'] ?? ($gateway ?: config('payment.default', 'manual')),
+                'payment_gateway' => $result['payment_gateway'] ?? $actualGateway,
                 'payment_reference' => $result['payment_reference'] ?? null,
                 'payment_url' => $result['payment_url'] ?? null,
                 'payment_token' => $result['payment_token'] ?? null,

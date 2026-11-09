@@ -136,6 +136,43 @@
                         </a>
                     </div>
 
+                @elseif(strtoupper($order->payment_method) === 'COD' || $activeGateway === 'cod')
+                    {{-- ══════════════════════════ COD (BAYAR DI TEMPAT) ══════════════════════════ --}}
+                    <div class="text-center py-6">
+                        <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto mb-4">
+                            <span class="material-symbols-outlined text-4xl">local_shipping</span>
+                        </div>
+                        <h2 class="font-headline-md text-2xl font-bold text-on-surface">Pesanan Bayar di Tempat (COD)</h2>
+                        <p class="text-secondary text-body-sm mt-2 max-w-lg mx-auto leading-relaxed">
+                            Pesanan Anda berhasil dibuat dan diteruskan ke penjual. Silakan siapkan uang tunai saat penjual mengantarkan pesanan langsung ke lokasi Anda.
+                        </p>
+
+                        <div class="mt-6 p-5 rounded-2xl bg-surface-container-low border border-outline-variant/30 max-w-md mx-auto text-left space-y-3">
+                            <div class="flex items-center justify-between text-xs sm:text-sm">
+                                <span class="text-secondary font-medium">Metode Pembayaran</span>
+                                <span class="font-bold text-on-surface flex items-center gap-1.5 text-emerald-700">
+                                    <span class="material-symbols-outlined text-sm">payments</span>
+                                    <span>Cash on Delivery (COD)</span>
+                                </span>
+                            </div>
+                            <div class="flex items-center justify-between text-xs sm:text-sm">
+                                <span class="text-secondary font-medium">Total Tagihan Tunai</span>
+                                <span class="font-extrabold text-primary text-base">Rp {{ number_format($order->total_harga, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="border-t border-outline-variant/20 pt-2 text-xs text-secondary flex items-start gap-2">
+                                <span class="material-symbols-outlined text-sm text-secondary flex-shrink-0 mt-0.5">location_on</span>
+                                <span class="line-clamp-2">{{ $order->alamat_pengiriman }}</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+                            <a href="{{ route('cust_recent_orders') }}" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-primary text-white font-bold rounded-xl text-sm shadow-md hover:brightness-110 transition-all">
+                                <span>Lihat Daftar Pesanan Saya</span>
+                                <span class="material-symbols-outlined text-base">arrow_forward</span>
+                            </a>
+                        </div>
+                    </div>
+
                 @elseif($activeGateway === 'zannpay')
                     {{-- ══════════════════════════ ZANNPAY ══════════════════════════ --}}
                     <div class="flex items-center gap-3 mb-6">
@@ -158,7 +195,7 @@
 
                         <form id="zannpay-form" action="{{ route('payment.zannpay.initiate', $order->id) }}" method="POST">
                             @csrf
-                            <input type="hidden" name="payment_method" id="selected-method" value="">
+                            <input type="hidden" name="payment_method" id="selected-method" value="{{ $order->payment_method }}">
 
                             <div class="space-y-5 mb-6">
                                 @foreach($grouped as $category => $methods)
@@ -290,30 +327,6 @@
                 @endif
             </div>
 
-            {{-- Developer Notice --}}
-            <div class="bg-surface-container-low border border-outline-variant/30 rounded-2xl p-6">
-                <h4 class="font-bold text-on-surface text-sm flex items-center gap-2 mb-2">
-                    <span class="material-symbols-outlined text-primary">key</span>
-                    Cara Memasang API Key Zannpay
-                </h4>
-                <p class="text-xs text-secondary leading-relaxed mb-3">
-                    Buka file <code class="bg-surface-container px-1 rounded">.env</code> di root proyek dan isi variabel berikut. Tidak perlu mengubah kode apapun setelah ini.
-                </p>
-                <div class="bg-inverse-surface text-inverse-on-surface p-4 rounded-xl font-mono text-[11px] overflow-x-auto space-y-1">
-                    <p class="text-emerald-400"># 1. Aktifkan Zannpay sebagai driver utama:</p>
-                    <p><span class="text-amber-400">PAYMENT_GATEWAY</span>=zannpay</p>
-                    <br/>
-                    <p class="text-emerald-400"># 2. Isi dari dashboard https://pay.zannstore.com/dashboard :</p>
-                    <p><span class="text-amber-400">ZANNPAY_MERCHANT_ID</span>=<span class="text-sky-300">M12345678</span></p>
-                    <p><span class="text-amber-400">ZANNPAY_SECRET_KEY</span>=<span class="text-sky-300">your-secret-key-here</span></p>
-                    <br/>
-                    <p class="text-emerald-400"># 3. false = sandbox, true = production:</p>
-                    <p><span class="text-amber-400">ZANNPAY_IS_PRODUCTION</span>=false</p>
-                    <br/>
-                    <p class="text-emerald-400"># 4. Jalankan setelah edit .env :</p>
-                    <p><span class="text-rose-400">php artisan config:clear</span></p>
-                </div>
-            </div>
 
         </div>
 
@@ -338,14 +351,10 @@
                 <div class="space-y-2 border-t border-outline-variant/30 pt-4 text-xs">
                     <div class="flex justify-between text-secondary">
                         <span>Subtotal Produk</span>
-                        <span class="font-bold text-on-surface">Rp {{ number_format($order->total_harga - ($order->shipping_cost + 1000), 0, ',', '.') }}</span>
+                        <span class="font-bold text-on-surface">Rp {{ number_format($order->total_harga - 1000, 0, ',', '.') }}</span>
                     </div>
                     <div class="flex justify-between text-secondary">
-                        <span>Ongkos Kirim ({{ strtoupper($order->courier_company ?? 'Kurir') }})</span>
-                        <span class="font-bold text-on-surface">Rp {{ number_format($order->shipping_cost, 0, ',', '.') }}</span>
-                    </div>
-                    <div class="flex justify-between text-secondary">
-                        <span>Biaya Operasional</span>
+                        <span>Biaya Layanan</span>
                         <span class="font-bold text-on-surface">Rp 1.000</span>
                     </div>
                     <div class="flex justify-between text-sm font-extrabold text-on-surface pt-3 border-t border-outline-variant/30">
@@ -389,6 +398,18 @@
             summary.classList.remove('hidden');
         }
     }
+
+    // Auto-select metode yang sudah dipilih di checkout
+    document.addEventListener('DOMContentLoaded', function() {
+        const preSelected = '{{ $order->payment_method }}';
+        if (preSelected) {
+            const card = document.querySelector(`.zann-method-card[data-code="${preSelected}"]`);
+            if (card) {
+                selectZannMethod(card);
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    });
 
     // Live Polling Payment Status
     @if($order->status_pembayaran !== 'paid')
